@@ -11,7 +11,7 @@ import { resolveModel } from "./config.js";
 import { SYSTEM_PROMPT } from "./prompt.js";
 import { createEventLogger } from "./logger.js";
 import { reprompt } from "./repl.js";
-import { notifyTaskComplete } from "./twilio.js";
+import { notifyTaskComplete } from "./telegram.js";
 import type { Task } from "./data_model/index.js";
 
 let running = false;
