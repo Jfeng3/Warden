@@ -106,7 +106,7 @@ export async function startRepl(
 
     if (mode === "queue") {
       try {
-        const task = await insertTask({ prompt: input });
+        const task = await insertTask({ instruction: input });
         console.log(`Task queued: ${task.id}`);
       } catch (err) {
         console.error("Failed to queue task:", err);

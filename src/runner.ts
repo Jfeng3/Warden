@@ -4,9 +4,8 @@ import {
   claimTask,
   completeTask,
   failTask,
-  createSession,
-  updateSessionStats,
-  resetStuckTasks,
+  failStuckTasks,
+  upsertConversationHistory,
 } from "./db.js";
 import { resolveModel } from "./config.js";
 import { SYSTEM_PROMPT } from "./prompt.js";
@@ -17,11 +16,10 @@ let running = false;
 let pollInterval: ReturnType<typeof setInterval> | null = null;
 
 async function executeTask(task: Task, provider: string, modelId: string) {
-  console.log(`[runner] Executing task ${task.id}: "${task.prompt.slice(0, 60)}"`);
+  console.log(`[runner] Executing task ${task.id}: "${task.instruction.slice(0, 60)}"`);
 
   const model = resolveModel(provider, modelId);
-  const dbSession = await createSession(task.id, modelId, provider);
-  const logger = createEventLogger(task.id, dbSession.id);
+  const logger = createEventLogger(task.id);
 
   const resourceLoader = new DefaultResourceLoader({
     systemPrompt: SYSTEM_PROMPT,
@@ -54,29 +52,25 @@ async function executeTask(task: Task, provider: string, modelId: string) {
         assistantText += msgEvent.delta;
       }
     }
+
+    // Save conversation history on turn_end
+    if (event.type === "turn_end") {
+      const messages = (session as any).messages;
+      if (messages) {
+        upsertConversationHistory(task.id, messages).catch((err) => {
+          console.error(`[runner] Failed to save conversation history:`, err);
+        });
+      }
+    }
   });
 
   try {
-    await session.prompt(task.prompt);
-    const stats = logger.getStats();
-    await updateSessionStats(
-      dbSession.id,
-      stats.totalTokensIn,
-      stats.totalTokensOut,
-      stats.totalCostUsd
-    );
+    await session.prompt(task.instruction);
     await completeTask(task.id, assistantText || "(no output)");
     console.log(`[runner] Task ${task.id} completed`);
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error(`[runner] Task ${task.id} failed:`, msg);
-    const stats = logger.getStats();
-    await updateSessionStats(
-      dbSession.id,
-      stats.totalTokensIn,
-      stats.totalTokensOut,
-      stats.totalCostUsd
-    );
     await failTask(task.id, msg);
   }
 }
@@ -104,10 +98,10 @@ export async function startRunner(
 ): Promise<void> {
   running = true;
 
-  // Reset any tasks stuck in "running" from a previous crash
-  const resetCount = await resetStuckTasks();
-  if (resetCount > 0) {
-    console.log(`[runner] Reset ${resetCount} stuck task(s) to queued`);
+  // Mark any tasks stuck in "running" as failed (from a previous crash)
+  const failedCount = await failStuckTasks();
+  if (failedCount > 0) {
+    console.log(`[runner] Marked ${failedCount} stuck task(s) as failed`);
   }
 
   console.log(`[runner] Polling for tasks every ${pollIntervalMs}ms`);
