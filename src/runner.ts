@@ -10,6 +10,7 @@ import {
 import { resolveModel } from "./config.js";
 import { SYSTEM_PROMPT } from "./prompt.js";
 import { createEventLogger } from "./logger.js";
+import { reprompt } from "./repl.js";
 import type { Task } from "./data_model/index.js";
 
 let running = false;
@@ -53,6 +54,21 @@ async function executeTask(task: Task, provider: string, modelId: string) {
       }
     }
 
+    // Log tool calls to terminal
+    if (event.type === "tool_execution_start") {
+      const toolEvent = event as any;
+      const argsStr = toolEvent.args ? JSON.stringify(toolEvent.args, null, 2) : "";
+      console.log(`[runner] [task ${task.id}] tool_start: ${toolEvent.toolName ?? "unknown"}\n${argsStr}`);
+    }
+    if (event.type === "tool_execution_end") {
+      const toolEvent = event as any;
+      const resultStr = typeof toolEvent.result === "string"
+        ? toolEvent.result.slice(0, 2000)
+        : JSON.stringify(toolEvent.result, null, 2)?.slice(0, 2000) ?? "";
+      const prefix = toolEvent.isError ? "tool_error" : "tool_end";
+      console.log(`[runner] [task ${task.id}] ${prefix}: ${toolEvent.toolName ?? "unknown"}\n${resultStr}`);
+    }
+
     // Save conversation history on turn_end
     if (event.type === "turn_end") {
       const messages = (session as any).messages;
@@ -67,11 +83,13 @@ async function executeTask(task: Task, provider: string, modelId: string) {
   try {
     await session.prompt(task.instruction);
     await completeTask(task.id, assistantText || "(no output)");
-    console.log(`[runner] Task ${task.id} completed`);
+    console.log(`[runner] Task ${task.id} completed\n${assistantText || "(no output)"}`);
+    reprompt();
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error(`[runner] Task ${task.id} failed:`, msg);
     await failTask(task.id, msg);
+    reprompt();
   }
 }
 
