@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import type { Task, TaskInput, AgentStep } from "./types.js";
+import type { Task, TaskInput, AgentStep, CronJob, CronJobInput, CronJobUpdate } from "./types.js";
 
 let client: SupabaseClient | null = null;
 
@@ -134,4 +134,92 @@ export async function getConversationHistory(
     .maybeSingle();
   if (error) throw error;
   return (data?.messages as unknown[]) ?? null;
+}
+
+// ── Cron Jobs ─────────────────────────────────────────────
+
+export async function insertCronJob(input: CronJobInput): Promise<CronJob> {
+  const { data, error } = await getSupabase()
+    .from("warden_cron_jobs")
+    .insert(input)
+    .select()
+    .single();
+  if (error) throw error;
+  return data as CronJob;
+}
+
+export async function getCronJob(id: string): Promise<CronJob | null> {
+  const { data, error } = await getSupabase()
+    .from("warden_cron_jobs")
+    .select()
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw error;
+  return data as CronJob | null;
+}
+
+export async function listCronJobs(enabledOnly = false): Promise<CronJob[]> {
+  let query = getSupabase().from("warden_cron_jobs").select().order("created_at", { ascending: true });
+  if (enabledOnly) query = query.eq("enabled", true);
+  const { data, error } = await query;
+  if (error) throw error;
+  return (data ?? []) as CronJob[];
+}
+
+export async function updateCronJob(id: string, updates: CronJobUpdate): Promise<CronJob> {
+  const { data, error } = await getSupabase()
+    .from("warden_cron_jobs")
+    .update(updates)
+    .eq("id", id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data as CronJob;
+}
+
+export async function deleteCronJob(id: string): Promise<void> {
+  const { error } = await getSupabase()
+    .from("warden_cron_jobs")
+    .delete()
+    .eq("id", id);
+  if (error) throw error;
+}
+
+export async function pollDueCronJobs(): Promise<CronJob[]> {
+  const { data, error } = await getSupabase()
+    .from("warden_cron_jobs")
+    .select()
+    .eq("enabled", true)
+    .lte("next_run_at", new Date().toISOString())
+    .order("next_run_at", { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as CronJob[];
+}
+
+export async function markCronJobRun(id: string, taskId: string, nextRunAt: string | null): Promise<void> {
+  const updates: Record<string, unknown> = {
+    last_run_at: new Date().toISOString(),
+    last_task_id: taskId,
+    run_count: undefined, // handled by raw increment below
+    next_run_at: nextRunAt,
+  };
+  // Supabase JS doesn't support raw SQL increment, so we do two operations
+  const { error } = await getSupabase()
+    .from("warden_cron_jobs")
+    .update({
+      last_run_at: new Date().toISOString(),
+      last_task_id: taskId,
+      next_run_at: nextRunAt,
+    })
+    .eq("id", id);
+  if (error) throw error;
+
+  // Increment run_count via RPC or a second update reading current value
+  const job = await getCronJob(id);
+  if (job) {
+    await getSupabase()
+      .from("warden_cron_jobs")
+      .update({ run_count: job.run_count + 1 })
+      .eq("id", id);
+  }
 }

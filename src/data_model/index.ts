@@ -1,4 +1,4 @@
-export type { Task, TaskStatus, TaskInput, AgentStep, ConversationHistory } from "./types.js";
+export type { Task, TaskStatus, TaskInput, AgentStep, ConversationHistory, CronJob, CronJobInput, CronJobUpdate, ScheduleType } from "./types.js";
 export {
   getSupabase,
   insertTask,
@@ -11,4 +11,11 @@ export {
   insertAgentStep,
   upsertConversationHistory,
   getConversationHistory,
+  insertCronJob,
+  getCronJob,
+  listCronJobs,
+  updateCronJob,
+  deleteCronJob,
+  pollDueCronJobs,
+  markCronJobRun,
 } from "./db.js";

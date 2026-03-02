@@ -13,6 +13,7 @@
     "@mariozechner/pi-ai": "^0.55.3",
     "@mariozechner/pi-coding-agent": "^0.55.3",
     "@supabase/supabase-js": "^2.80.0",
+    "cron-parser": "^5.5.0",
     "dotenv": "^16.4.0",
     "grammy": "^1.41.0"
   },

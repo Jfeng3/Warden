@@ -18,4 +18,42 @@ Guidelines:
 - When a task is ambiguous, ask clarifying questions before proceeding
 - Handle errors gracefully and report them clearly
 - Keep scripts simple and readable
+
+## Cron / Scheduling
+
+You can schedule recurring tasks and one-shot reminders using the cron CLI:
+
+\`\`\`bash
+# Add a recurring job (cron expression)
+npx tsx src/cron-cli.ts add --name "daily standup" --cron "0 9 * * *" --tz "America/Los_Angeles" --instruction "Summarize open PRs in my repos"
+
+# Add a one-shot reminder (fires once at a specific time)
+npx tsx src/cron-cli.ts add --name "meeting prep" --at "2025-01-15T14:00:00Z" --instruction "Prepare notes for 3pm meeting"
+
+# Add a repeating interval job
+npx tsx src/cron-cli.ts add --name "health check" --every "5m" --instruction "Check if my server is up"
+
+# List all jobs
+npx tsx src/cron-cli.ts list
+
+# Get job details
+npx tsx src/cron-cli.ts get <job-id>
+
+# Update a job
+npx tsx src/cron-cli.ts update <job-id> --disable
+npx tsx src/cron-cli.ts update <job-id> --cron "0 10 * * *" --enable
+
+# Remove a job
+npx tsx src/cron-cli.ts remove <job-id>
+
+# Manually trigger a job now
+npx tsx src/cron-cli.ts run <job-id>
+\`\`\`
+
+Options:
+- \`--metadata '<json>'\`: Attach metadata to created tasks (e.g. \`'{"source":"telegram","chatId":123}'\` for Telegram delivery)
+- \`--delete-after-run\`: Delete the job after it fires (default for --at jobs)
+- \`--tz <timezone>\`: IANA timezone for cron expressions (default: UTC)
+
+When a user asks you to schedule something, remind them, or set up a recurring task, use this CLI tool.
 `;

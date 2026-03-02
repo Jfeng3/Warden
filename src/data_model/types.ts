@@ -38,3 +38,54 @@ export interface TaskInput {
   instruction: string;
   metadata?: Record<string, unknown>;
 }
+
+// ── Cron Jobs ─────────────────────────────────────────────
+
+export type ScheduleType = "cron" | "at" | "every";
+
+export interface CronJob {
+  id: string;
+  name: string;
+  enabled: boolean;
+  schedule_type: ScheduleType;
+  cron_expression: string | null;
+  cron_timezone: string;
+  at_time: string | null;
+  every_ms: number | null;
+  instruction: string;
+  task_metadata: Record<string, unknown> | null;
+  last_run_at: string | null;
+  next_run_at: string | null;
+  last_task_id: string | null;
+  run_count: number;
+  delete_after_run: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CronJobInput {
+  name: string;
+  schedule_type: ScheduleType;
+  cron_expression?: string;
+  cron_timezone?: string;
+  at_time?: string;
+  every_ms?: number;
+  instruction: string;
+  task_metadata?: Record<string, unknown>;
+  delete_after_run?: boolean;
+  next_run_at?: string;
+}
+
+export interface CronJobUpdate {
+  name?: string;
+  enabled?: boolean;
+  schedule_type?: ScheduleType;
+  cron_expression?: string;
+  cron_timezone?: string;
+  at_time?: string;
+  every_ms?: number;
+  instruction?: string;
+  task_metadata?: Record<string, unknown>;
+  delete_after_run?: boolean;
+  next_run_at?: string;
+}
