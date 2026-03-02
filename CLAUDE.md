@@ -11,6 +11,7 @@ Warden is a CLI agent written in TypeScript that runs 24/7 on a Mac Mini. It use
 ```bash
 npm run dev 2>&1 | tee log.txt   # Always use this — logs to terminal + log.txt
 npm run build                     # Compile TypeScript
+npm test                          # Run e2e tests (requires dev server running)
 ```
 
 CLI flags: `--provider <anthropic|openrouter>` and `--model <model-id>`
@@ -43,11 +44,14 @@ warden/
 │   ├── config.ts             # Model/provider resolution: CLI args → env fallback
 │   ├── prompt.ts             # System prompt for the Warden agent persona
 │   ├── logger.ts             # Maps AgentSessionEvent types to agent_steps rows
+│   ├── resolve-metadata.ts   # Resolves task metadata: explicit --metadata flag → WARDEN_TASK_METADATA env fallback
 │   └── data_model/
 │       ├── index.ts          # Barrel export for all data model types and DB helpers
 │       ├── types.ts          # TypeScript interfaces: Task, AgentStep, ConversationHistory, TaskInput
 │       └── db.ts             # Supabase client + typed helpers (insertTask, claimTask, completeTask, failTask,
 │                             #   insertAgentStep, upsertConversationHistory, etc.)
+├── tests/
+│   └── resolve-metadata.test.ts  # E2E tests for metadata inheritance (cron → Telegram routing)
 └── dist/                     # Compiled output (gitignored)
 ```
 
@@ -73,6 +77,16 @@ Task submitted (REPL or Telegram) → INSERT into warden_tasks table (status: pe
 - `session.subscribe(event => ...)` for streaming events (`message_update`, `tool_execution_start/end`)
 - `session.prompt(text)` to send user input
 - Text deltas: `event.type === "message_update" && event.assistantMessageEvent.type === "text_delta"`
+
+## Testing
+
+Tests use Node's built-in test runner (`node:test`) and live against real Supabase. **The dev server must be running** (`npm run dev`) for e2e tests since they insert tasks and verify Warden processes them.
+
+```bash
+npm test   # Runs tests/**/*.test.ts via tsx
+```
+
+Test files live in the `tests/` directory (`tests/*.test.ts`). Current tests cover cron job metadata inheritance: env var propagation, task metadata flow, and Telegram delivery verification via `log.txt`.
 
 ## Environment Variables
 

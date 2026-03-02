@@ -12,7 +12,7 @@ import { describe, it, after } from "node:test";
 import assert from "node:assert/strict";
 import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
-import { getCronJob, getTask, deleteCronJob } from "./data_model/index.js";
+import { getCronJob, getTask, deleteCronJob } from "../src/data_model/index.js";
 
 const TELEGRAM_METADATA = { source: "telegram", chatId: 7823756809 };
 const LOG_PATH = "log.txt";
