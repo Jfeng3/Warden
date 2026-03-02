@@ -9,8 +9,8 @@ Warden is a CLI agent written in TypeScript that runs 24/7 on a Mac Mini. It use
 ## Build and Run
 
 ```bash
-npm run dev              # Run with tsx (server + runner + repl)
-npm run build            # Compile TypeScript
+npm run dev 2>&1 | tee log.txt   # Always use this — logs to terminal + log.txt
+npm run build                     # Compile TypeScript
 ```
 
 CLI flags: `--provider <anthropic|openrouter>` and `--model <model-id>`
@@ -31,14 +31,11 @@ warden/
 │   └── migrations/
 │       └── 001_initial_schema.sql  # 3 tables: tasks, agent_steps, conversation_history
 ├── src/
-│   ├── index.ts              # Orchestrator: starts server + runner + repl, graceful shutdown
-│   ├── server.ts             # HTTP server (node:http, port 3100)
-│   │                         #   POST /api/task — submit a new task
-│   │                         #   GET /health — health check
+│   ├── index.ts              # Orchestrator: starts runner + repl, graceful shutdown
 │   ├── runner.ts             # Polls Supabase for pending tasks (2s), claims & executes via pi-agent-core
 │   │                         #   Subscribes to session events → writes agent_steps + conversation_history
 │   │                         #   Crash recovery: resumes running tasks from conversation_history on startup
-│   ├── repl.ts               # Interactive REPL for local debugging
+│   ├── repl.ts               # Interactive REPL — queues tasks to Supabase
 │   ├── config.ts             # Model/provider resolution: CLI args → env fallback
 │   ├── prompt.ts             # System prompt for the Warden agent persona
 │   ├── logger.ts             # Maps AgentSessionEvent types to agent_steps rows
@@ -52,7 +49,7 @@ warden/
 
 ## Task Flow
 
-Task submitted (API / REPL) → INSERT into tasks table (status: pending) → `runner.ts` polls & claims oldest pending → creates AgentSession → subscribes to events (writes agent_steps + conversation_history to DB each step) → `session.prompt()` runs full agent loop → marks task done/failed → picks next pending.
+Task submitted (REPL) → INSERT into warden_tasks table (status: pending) → `runner.ts` polls & claims oldest pending → creates AgentSession → subscribes to events (writes agent_steps + conversation_history to DB each step) → `session.prompt()` runs full agent loop → marks task done/failed → picks next pending.
 
 ## Key Dependencies
 
@@ -74,4 +71,4 @@ Task submitted (API / REPL) → INSERT into tasks table (status: pending) → `r
 
 ## Environment Variables
 
-See `.env.example` for the full list: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `ANTHROPIC_API_KEY`, `OPENROUTER_API_KEY`, `WARDEN_PORT`
+See `.env.example` for the full list: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `ANTHROPIC_API_KEY`, `OPENROUTER_API_KEY`
