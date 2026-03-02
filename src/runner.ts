@@ -81,6 +81,11 @@ async function executeTask(task: Task, provider: string, modelId: string) {
     }
   });
 
+  // Expose current task's metadata so cron-cli can auto-inherit it
+  if (task.metadata) {
+    process.env.WARDEN_TASK_METADATA = JSON.stringify(task.metadata);
+  }
+
   try {
     await session.prompt(task.instruction);
     const result = assistantText || "(no output)";
@@ -94,6 +99,8 @@ async function executeTask(task: Task, provider: string, modelId: string) {
     await failTask(task.id, msg);
     await notifyTaskComplete({ ...task, status: "failed", error: msg });
     reprompt();
+  } finally {
+    delete process.env.WARDEN_TASK_METADATA;
   }
 }
 

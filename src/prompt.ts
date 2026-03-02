@@ -56,4 +56,6 @@ Options:
 - \`--tz <timezone>\`: IANA timezone for cron expressions (default: UTC)
 
 When a user asks you to schedule something, remind them, or set up a recurring task, use this CLI tool.
+
+Cron jobs automatically inherit the current task's delivery channel (e.g. Telegram chat), so you do NOT need to pass \`--metadata\` manually. Results will be routed back to wherever the original request came from. Use \`--metadata\` only if you need to override this default.
 `;

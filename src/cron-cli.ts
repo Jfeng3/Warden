@@ -103,6 +103,13 @@ async function cmdAdd(args: string[]): Promise<void> {
     }
   }
 
+  // Auto-inherit metadata from parent task (e.g. Telegram source)
+  if (!input.task_metadata && process.env.WARDEN_TASK_METADATA) {
+    try {
+      input.task_metadata = JSON.parse(process.env.WARDEN_TASK_METADATA);
+    } catch { /* ignore malformed env */ }
+  }
+
   // Compute initial next_run_at
   const stubJob = { ...input, id: "", enabled: true, last_run_at: null, next_run_at: null, last_task_id: null, run_count: 0, created_at: "", updated_at: "", cron_expression: input.cron_expression ?? null, at_time: input.at_time ?? null, every_ms: input.every_ms ?? null, cron_timezone: input.cron_timezone ?? "UTC", task_metadata: input.task_metadata ?? null, delete_after_run: input.delete_after_run ?? false } as CronJob;
   input.next_run_at = computeNextRun(stubJob) ?? undefined;
@@ -182,6 +189,13 @@ async function cmdUpdate(args: string[]): Promise<void> {
   if (values.metadata) {
     try { updates.task_metadata = JSON.parse(values.metadata); }
     catch { console.error("Error: --metadata must be valid JSON"); process.exit(1); }
+  }
+
+  // Auto-inherit metadata from parent task if --metadata wasn't explicitly passed
+  if (!values.metadata && !updates.task_metadata && process.env.WARDEN_TASK_METADATA) {
+    try {
+      updates.task_metadata = JSON.parse(process.env.WARDEN_TASK_METADATA);
+    } catch { /* ignore malformed env */ }
   }
 
   if (values.cron) {
