@@ -11,6 +11,7 @@ import {
 } from "./data_model/index.js";
 import type { CronJobInput, CronJobUpdate } from "./data_model/index.js";
 import { computeNextRun, parseInterval, validateCronExpression } from "./cron-utils.js";
+import { resolveTaskMetadata } from "./resolve-metadata.js";
 import type { CronJob } from "./data_model/index.js";
 
 function usage(): never {
@@ -94,20 +95,11 @@ async function cmdAdd(args: string[]): Promise<void> {
     input.every_ms = parseInterval(values.every);
   }
   if (values.tz) input.cron_timezone = values.tz;
-  if (values.metadata) {
-    try {
-      input.task_metadata = JSON.parse(values.metadata);
-    } catch {
-      console.error("Error: --metadata must be valid JSON");
-      process.exit(1);
-    }
-  }
-
-  // Auto-inherit metadata from parent task (e.g. Telegram source)
-  if (!input.task_metadata && process.env.WARDEN_TASK_METADATA) {
-    try {
-      input.task_metadata = JSON.parse(process.env.WARDEN_TASK_METADATA);
-    } catch { /* ignore malformed env */ }
+  try {
+    input.task_metadata = resolveTaskMetadata(values.metadata);
+  } catch {
+    console.error("Error: --metadata must be valid JSON");
+    process.exit(1);
   }
 
   // Compute initial next_run_at
@@ -186,16 +178,11 @@ async function cmdUpdate(args: string[]): Promise<void> {
   if (values.disable) updates.enabled = false;
   if (values.tz) updates.cron_timezone = values.tz;
   if (values["delete-after-run"] !== undefined) updates.delete_after_run = values["delete-after-run"];
-  if (values.metadata) {
-    try { updates.task_metadata = JSON.parse(values.metadata); }
-    catch { console.error("Error: --metadata must be valid JSON"); process.exit(1); }
-  }
-
-  // Auto-inherit metadata from parent task if --metadata wasn't explicitly passed
-  if (!values.metadata && !updates.task_metadata && process.env.WARDEN_TASK_METADATA) {
-    try {
-      updates.task_metadata = JSON.parse(process.env.WARDEN_TASK_METADATA);
-    } catch { /* ignore malformed env */ }
+  try {
+    updates.task_metadata = resolveTaskMetadata(values.metadata);
+  } catch {
+    console.error("Error: --metadata must be valid JSON");
+    process.exit(1);
   }
 
   if (values.cron) {

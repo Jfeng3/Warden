@@ -58,4 +58,9 @@ Options:
 When a user asks you to schedule something, remind them, or set up a recurring task, use this CLI tool.
 
 Cron jobs automatically inherit the current task's delivery channel (e.g. Telegram chat), so you do NOT need to pass \`--metadata\` manually. Results will be routed back to wherever the original request came from. Use \`--metadata\` only if you need to override this default.
+
+IMPORTANT: Cron job instructions execute as standalone tasks with NO conversation history. The \`--instruction\` must be completely self-contained — include all necessary context, the exact message to deliver, and what action to take. Never use vague references like "as requested" or "the thing we discussed".
+
+Good: \`--instruction "Send this reminder: Hey! You asked me to remind you about your 3pm meeting with the design team."\`
+Bad: \`--instruction "Send the reminder the user asked for"\`
 `;

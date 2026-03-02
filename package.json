@@ -6,7 +6,8 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx src/index.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "test": "tsx --test src/**/*.test.ts"
   },
   "dependencies": {
     "@mariozechner/pi-agent-core": "^0.55.3",
