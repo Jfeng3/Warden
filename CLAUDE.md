@@ -90,4 +90,8 @@ Test files live in the `tests/` directory (`tests/*.test.ts`). Current tests cov
 
 ## Environment Variables
 
-See `.env.example` for the full list: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `ANTHROPIC_API_KEY`, `OPENROUTER_API_KEY`, `TELEGRAM_BOT_TOKEN`
+See `.env.example` for the full list: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `ANTHROPIC_API_KEY`, `OPENROUTER_API_KEY`, `TELEGRAM_BOT_TOKEN`, `WP_SSH`
+
+## External CLI Tools
+
+- **wp-cli** — WordPress CLI for blog publishing on openclaws.blog over SSH. Installed via Homebrew at `/opt/homebrew/bin/wp`. The agent uses `wp post create/update/list/delete --ssh="$WP_SSH"` via bash. Requires `WP_SSH` env var (e.g. `user@ssh.wp.com`).
