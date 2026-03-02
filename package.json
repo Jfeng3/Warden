@@ -1,0 +1,25 @@
+{
+  "name": "warden",
+  "version": "0.1.0",
+  "description": "Warden - a CLI agent that writes and runs CLI scripts",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsc",
+    "setup-schedules": "tsx scripts/setup-schedules.ts"
+  },
+  "dependencies": {
+    "@mariozechner/pi-ai": "^0.55.3",
+    "@mariozechner/pi-agent-core": "^0.55.3",
+    "@mariozechner/pi-coding-agent": "^0.55.3",
+    "@supabase/supabase-js": "^2.80.0",
+    "@upstash/qstash": "^2.7.0",
+    "dotenv": "^16.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.5.0"
+  }
+}
