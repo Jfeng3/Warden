@@ -74,4 +74,4 @@ Task submitted (API / REPL) → INSERT into tasks table (status: pending) → `r
 
 ## Environment Variables
 
-See `.env.example` for the full list: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY`, `OPENROUTER_API_KEY`, `WARDEN_PORT`
+See `.env.example` for the full list: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `ANTHROPIC_API_KEY`, `OPENROUTER_API_KEY`, `WARDEN_PORT`

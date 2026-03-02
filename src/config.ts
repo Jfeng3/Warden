@@ -1,7 +1,7 @@
 import { getModel } from "@mariozechner/pi-ai";
 
-const DEFAULT_PROVIDER = "anthropic";
-const DEFAULT_MODEL = "claude-sonnet-4-20250514";
+const DEFAULT_PROVIDER = "openrouter";
+const DEFAULT_MODEL = "anthropic/claude-sonnet-4";
 
 export function resolveModel(provider: string, modelId: string) {
   // Check for required API key

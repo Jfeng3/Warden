@@ -1,10 +1,10 @@
 -- Warden: Initial Schema
--- Tables: tasks, agent_steps, conversation_history
+-- Tables: warden_tasks, warden_agent_steps, warden_conversation_history
 
 -- ============================================================
--- tasks: Central task queue
+-- warden_tasks: Central task queue
 -- ============================================================
-create table if not exists tasks (
+create table if not exists warden_tasks (
   id uuid primary key default gen_random_uuid(),
   instruction text not null,
   status text not null default 'pending'
@@ -17,14 +17,14 @@ create table if not exists tasks (
   completed_at timestamptz
 );
 
-create index idx_tasks_status on tasks (status, created_at asc);
+create index idx_warden_tasks_status on warden_tasks (status, created_at asc);
 
 -- ============================================================
--- agent_steps: Append-only event log per task
+-- warden_agent_steps: Append-only event log per task
 -- ============================================================
-create table if not exists agent_steps (
+create table if not exists warden_agent_steps (
   id bigint generated always as identity primary key,
-  task_id uuid not null references tasks(id) on delete cascade,
+  task_id uuid not null references warden_tasks(id) on delete cascade,
   step_type text not null,
   tool_name text,
   tool_args jsonb,
@@ -36,14 +36,14 @@ create table if not exists agent_steps (
   created_at timestamptz not null default now()
 );
 
-create index idx_agent_steps_task_id on agent_steps (task_id, created_at asc);
+create index idx_warden_agent_steps_task_id on warden_agent_steps (task_id, created_at asc);
 
 -- ============================================================
--- conversation_history: Full message log for crash recovery
+-- warden_conversation_history: Full message log for crash recovery
 -- ============================================================
-create table if not exists conversation_history (
+create table if not exists warden_conversation_history (
   id bigint generated always as identity primary key,
-  task_id uuid not null unique references tasks(id) on delete cascade,
+  task_id uuid not null unique references warden_tasks(id) on delete cascade,
   messages jsonb not null default '[]',
   updated_at timestamptz not null default now()
 );
@@ -59,10 +59,10 @@ begin
 end;
 $$ language plpgsql;
 
-create trigger trg_tasks_updated_at
-  before update on tasks
+create trigger trg_warden_tasks_updated_at
+  before update on warden_tasks
   for each row execute function update_updated_at();
 
-create trigger trg_conversation_history_updated_at
-  before update on conversation_history
+create trigger trg_warden_conversation_history_updated_at
+  before update on warden_conversation_history
   for each row execute function update_updated_at();
