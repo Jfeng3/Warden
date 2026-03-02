@@ -1,7 +1,7 @@
 import { createInterface } from "node:readline";
 import { createAgentSession, DefaultResourceLoader, SessionManager, type AgentSession } from "@mariozechner/pi-coding-agent";
 import { resolveModel } from "./config.js";
-import { insertTask } from "./db.js";
+import { insertTask } from "./data_model/index.js";
 import { SYSTEM_PROMPT } from "./prompt.js";
 
 type ReplMode = "direct" | "queue";
@@ -106,7 +106,7 @@ export async function startRepl(
 
     if (mode === "queue") {
       try {
-        const task = await insertTask({ prompt: input });
+        const task = await insertTask({ instruction: input });
         console.log(`Task queued: ${task.id}`);
       } catch (err) {
         console.error("Failed to queue task:", err);

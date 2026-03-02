@@ -1,8 +1,7 @@
-import { getModel, type KnownProvider } from "@mariozechner/pi-ai";
-import { getConfigValue } from "./db.js";
+import { getModel } from "@mariozechner/pi-ai";
 
-const DEFAULT_PROVIDER = "anthropic";
-const DEFAULT_MODEL = "claude-sonnet-4-20250514";
+const DEFAULT_PROVIDER = "openrouter";
+const DEFAULT_MODEL = "anthropic/claude-sonnet-4";
 
 export function resolveModel(provider: string, modelId: string) {
   // Check for required API key
@@ -17,26 +16,9 @@ export function resolveModel(provider: string, modelId: string) {
   return (getModel as (p: string, m: string) => ReturnType<typeof getModel>)(provider, modelId);
 }
 
-export async function getEffectiveConfig(cliProvider?: string, cliModel?: string) {
-  let provider = cliProvider ?? DEFAULT_PROVIDER;
-  let model = cliModel ?? DEFAULT_MODEL;
-
-  // Try Supabase config as middle layer (between defaults and CLI overrides)
-  if (!cliProvider) {
-    try {
-      provider = await getConfigValue<string>("default_provider", DEFAULT_PROVIDER);
-    } catch {
-      // Supabase not available, use default
-    }
-  }
-  if (!cliModel) {
-    try {
-      model = await getConfigValue<string>("default_model", DEFAULT_MODEL);
-    } catch {
-      // Supabase not available, use default
-    }
-  }
-
+export function getEffectiveConfig(cliProvider?: string, cliModel?: string) {
+  const provider = cliProvider ?? process.env.DEFAULT_PROVIDER ?? DEFAULT_PROVIDER;
+  const model = cliModel ?? process.env.DEFAULT_MODEL ?? DEFAULT_MODEL;
   return { provider, model };
 }
 

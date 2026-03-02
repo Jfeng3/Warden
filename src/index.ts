@@ -6,13 +6,13 @@ import { startRepl } from "./repl.js";
 
 async function main() {
   const cliArgs = parseCliArgs(process.argv.slice(2));
-  const { provider, model } = await getEffectiveConfig(cliArgs.provider, cliArgs.model);
+  const { provider, model } = getEffectiveConfig(cliArgs.provider, cliArgs.model);
 
   const port = parseInt(process.env.WARDEN_PORT ?? "3100", 10);
 
   console.log(`Warden starting — provider: ${provider}, model: ${model}`);
 
-  // Start HTTP server for QStash webhooks
+  // Start HTTP server for task submission
   await startServer(port);
 
   // Start task runner (polls Supabase for queued tasks)
