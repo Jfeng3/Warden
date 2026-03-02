@@ -29,9 +29,13 @@ warden/
 │   └── initial_plan.md       # Original project plan
 ├── supabase/
 │   └── migrations/
-│       └── 001_initial_schema.sql  # 3 tables: tasks, agent_steps, conversation_history
+│       ├── 001_initial_schema.sql  # 3 tables: tasks, agent_steps, conversation_history
+│       └── 002_add_task_metadata.sql  # Adds metadata jsonb column to warden_tasks
 ├── src/
-│   ├── index.ts              # Orchestrator: starts runner + repl, graceful shutdown
+│   ├── index.ts              # Orchestrator: starts twilio webhook + runner + repl, graceful shutdown
+│   ├── twilio.ts             # Twilio SMS integration (optional, enabled by env vars)
+│   │                         #   POST /sms — Twilio webhook for incoming SMS → insertTask()
+│   │                         #   notifyTaskComplete() — sends result back via SMS
 │   ├── runner.ts             # Polls Supabase for pending tasks (2s), claims & executes via pi-agent-core
 │   │                         #   Subscribes to session events → writes agent_steps + conversation_history
 │   │                         #   Crash recovery: resumes running tasks from conversation_history on startup
@@ -49,7 +53,7 @@ warden/
 
 ## Task Flow
 
-Task submitted (REPL) → INSERT into warden_tasks table (status: pending) → `runner.ts` polls & claims oldest pending → creates AgentSession → subscribes to events (writes agent_steps + conversation_history to DB each step) → `session.prompt()` runs full agent loop → marks task done/failed → picks next pending.
+Task submitted (REPL or SMS) → INSERT into warden_tasks table (status: pending) → `runner.ts` polls & claims oldest pending → creates AgentSession → subscribes to events (writes agent_steps + conversation_history to DB each step) → `session.prompt()` runs full agent loop → marks task done/failed → sends SMS reply if task came from SMS → picks next pending.
 
 ## Key Dependencies
 
@@ -71,4 +75,4 @@ Task submitted (REPL) → INSERT into warden_tasks table (status: pending) → `
 
 ## Environment Variables
 
-See `.env.example` for the full list: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `ANTHROPIC_API_KEY`, `OPENROUTER_API_KEY`
+See `.env.example` for the full list: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `ANTHROPIC_API_KEY`, `OPENROUTER_API_KEY`, `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_PHONE_NUMBER`, `TWILIO_WEBHOOK_PORT`

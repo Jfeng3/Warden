@@ -2,6 +2,7 @@ export type { Task, TaskStatus, TaskInput, AgentStep, ConversationHistory } from
 export {
   getSupabase,
   insertTask,
+  getTask,
   pollNextTask,
   claimTask,
   completeTask,

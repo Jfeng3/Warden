@@ -6,6 +6,7 @@ export interface Task {
   status: TaskStatus;
   result: string | null;
   error: string | null;
+  metadata: Record<string, unknown> | null;
   created_at: string;
   updated_at: string;
   started_at: string | null;
@@ -35,4 +36,5 @@ export interface ConversationHistory {
 
 export interface TaskInput {
   instruction: string;
+  metadata?: Record<string, unknown>;
 }

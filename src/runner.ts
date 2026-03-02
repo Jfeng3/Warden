@@ -11,6 +11,7 @@ import { resolveModel } from "./config.js";
 import { SYSTEM_PROMPT } from "./prompt.js";
 import { createEventLogger } from "./logger.js";
 import { reprompt } from "./repl.js";
+import { notifyTaskComplete } from "./twilio.js";
 import type { Task } from "./data_model/index.js";
 
 let running = false;
@@ -82,13 +83,16 @@ async function executeTask(task: Task, provider: string, modelId: string) {
 
   try {
     await session.prompt(task.instruction);
-    await completeTask(task.id, assistantText || "(no output)");
-    console.log(`[runner] Task ${task.id} completed\n${assistantText || "(no output)"}`);
+    const result = assistantText || "(no output)";
+    await completeTask(task.id, result);
+    console.log(`[runner] Task ${task.id} completed\n${result}`);
+    await notifyTaskComplete({ ...task, status: "done", result });
     reprompt();
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error(`[runner] Task ${task.id} failed:`, msg);
     await failTask(task.id, msg);
+    await notifyTaskComplete({ ...task, status: "failed", error: msg });
     reprompt();
   }
 }

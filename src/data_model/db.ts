@@ -17,13 +17,25 @@ export function getSupabase(): SupabaseClient {
 // ── Tasks ──────────────────────────────────────────────────
 
 export async function insertTask(input: TaskInput): Promise<Task> {
+  const row: Record<string, unknown> = { instruction: input.instruction };
+  if (input.metadata) row.metadata = input.metadata;
   const { data, error } = await getSupabase()
     .from("warden_tasks")
-    .insert({ instruction: input.instruction })
+    .insert(row)
     .select()
     .single();
   if (error) throw error;
   return data as Task;
+}
+
+export async function getTask(taskId: string): Promise<Task | null> {
+  const { data, error } = await getSupabase()
+    .from("warden_tasks")
+    .select()
+    .eq("id", taskId)
+    .maybeSingle();
+  if (error) throw error;
+  return data as Task | null;
 }
 
 export async function pollNextTask(): Promise<Task | null> {
