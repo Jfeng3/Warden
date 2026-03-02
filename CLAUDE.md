@@ -4,14 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Warden is a CLI agent written in TypeScript that runs 24/7 on a Mac Mini. It uses `@mariozechner/pi-coding-agent` as the agent loop, **Supabase** for persistence/observability, and **QStash** for durable task scheduling. Tasks arrive via QStash webhooks, get stored in Supabase, and are executed by a polling runner using pi-agent-core.
+Warden is a CLI agent written in TypeScript that runs 24/7 on a Mac Mini. It uses `@mariozechner/pi-coding-agent` as the agent loop and **Supabase** as the task queue + persistence layer. Tasks are inserted into the DB and executed by a polling runner using pi-agent-core. No external queue service — the DB is the queue.
 
 ## Build and Run
 
 ```bash
 npm run dev              # Run with tsx (server + runner + repl)
 npm run build            # Compile TypeScript
-npm run setup-schedules  # Create QStash cron schedules
 ```
 
 CLI flags: `--provider <anthropic|openrouter>` and `--model <model-id>`
@@ -30,39 +29,34 @@ warden/
 │   └── initial_plan.md       # Original project plan
 ├── supabase/
 │   └── migrations/
-│       └── 001_initial_schema.sql  # 5 tables: tasks, execution_logs, sessions, config, schedules
-├── scripts/
-│   └── setup-schedules.ts    # Creates QStash cron schedules, mirrors to Supabase
+│       └── 001_initial_schema.sql  # 3 tables: tasks, agent_steps, conversation_history
 ├── src/
 │   ├── index.ts              # Orchestrator: starts server + runner + repl, graceful shutdown
-│   ├── server.ts             # HTTP server (node:http, port 3100) for QStash webhooks
-│   │                         #   POST /webhook/task — receive task from QStash
-│   │                         #   POST /webhook/schedule — receive scheduled task
+│   ├── server.ts             # HTTP server (node:http, port 3100)
+│   │                         #   POST /api/task — submit a new task
 │   │                         #   GET /health — health check
-│   ├── runner.ts             # Polls Supabase for queued tasks (2s interval), claims & executes via pi-agent-core
-│   ├── repl.ts               # Interactive REPL with two modes:
-│   │                         #   direct — streams LLM responses inline
-│   │                         #   queue — inserts tasks into Supabase for runner
-│   ├── db.ts                 # Supabase client + typed helpers (insertTask, claimTask, completeTask, failTask, etc.)
-│   ├── queue.ts              # QStash client (publishTask, createSchedule, signature key helpers)
-│   ├── logger.ts             # Maps AgentSessionEvents → execution_logs rows in Supabase
-│   ├── config.ts             # Model/provider resolution: CLI args → Supabase config table → env fallback
+│   ├── runner.ts             # Polls Supabase for pending tasks (2s), claims & executes via pi-agent-core
+│   │                         #   Subscribes to session events → writes agent_steps + conversation_history
+│   │                         #   Crash recovery: resumes running tasks from conversation_history on startup
+│   ├── repl.ts               # Interactive REPL for local debugging
+│   ├── db.ts                 # Supabase client + typed helpers (insertTask, claimTask, completeTask, failTask,
+│   │                         #   insertAgentStep, upsertConversationHistory, etc.)
+│   ├── config.ts             # Model/provider resolution: CLI args → env fallback
 │   ├── prompt.ts             # System prompt for the Warden agent persona
-│   └── types.ts              # TypeScript interfaces: Task, ExecutionLog, Session, Config, Schedule, TaskPayload
+│   └── types.ts              # TypeScript interfaces: Task, AgentStep, ConversationHistory
 └── dist/                     # Compiled output (gitignored)
 ```
 
 ## Task Flow
 
-QStash delivers → `server.ts` receives & verifies signature → inserts task into Supabase → `runner.ts` polls & claims task → runs pi-agent-core session → `logger.ts` logs events to Supabase → marks task complete/failed.
+Task submitted (API / REPL) → INSERT into tasks table (status: pending) → `runner.ts` polls & claims oldest pending → creates AgentSession → subscribes to events (writes agent_steps + conversation_history to DB each step) → `session.prompt()` runs full agent loop → marks task done/failed → picks next pending.
 
 ## Key Dependencies
 
 - `@mariozechner/pi-coding-agent` — Agent session, built-in tools (read/write/edit/bash), `SessionManager`, `DefaultResourceLoader`
 - `@mariozechner/pi-ai` — `getModel()`, unified LLM API across providers
 - `@mariozechner/pi-agent-core` — Low-level `Agent` class, event types
-- `@supabase/supabase-js` — Supabase client for database operations
-- `@upstash/qstash` — QStash client for durable message queue
+- `@supabase/supabase-js` — Supabase client for database operations (task queue + persistence)
 - `dotenv` — Loads `.env` into `process.env`
 
 ## API Patterns
@@ -77,4 +71,4 @@ QStash delivers → `server.ts` receives & verifies signature → inserts task i
 
 ## Environment Variables
 
-See `.env.example` for the full list: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `QSTASH_TOKEN`, `QSTASH_CURRENT_SIGNING_KEY`, `QSTASH_NEXT_SIGNING_KEY`, `ANTHROPIC_API_KEY`, `OPENROUTER_API_KEY`, `WARDEN_WEBHOOK_URL`, `WARDEN_PORT`
+See `.env.example` for the full list: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY`, `OPENROUTER_API_KEY`, `WARDEN_PORT`
