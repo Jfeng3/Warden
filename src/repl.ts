@@ -1,7 +1,7 @@
 import { createInterface } from "node:readline";
 import { createAgentSession, DefaultResourceLoader, SessionManager, type AgentSession } from "@mariozechner/pi-coding-agent";
 import { resolveModel } from "./config.js";
-import { insertTask } from "./db.js";
+import { insertTask } from "./data_model/index.js";
 import { SYSTEM_PROMPT } from "./prompt.js";
 
 type ReplMode = "direct" | "queue";

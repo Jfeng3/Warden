@@ -1,4 +1,4 @@
-import { insertAgentStep } from "./db.js";
+import { insertAgentStep } from "./data_model/index.js";
 
 // Maps AgentSessionEvent types to agent_steps rows.
 // Best-effort logger — failures are logged to console but don't crash the runner.

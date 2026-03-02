@@ -39,11 +39,14 @@ warden/
 │   │                         #   Subscribes to session events → writes agent_steps + conversation_history
 │   │                         #   Crash recovery: resumes running tasks from conversation_history on startup
 │   ├── repl.ts               # Interactive REPL for local debugging
-│   ├── db.ts                 # Supabase client + typed helpers (insertTask, claimTask, completeTask, failTask,
-│   │                         #   insertAgentStep, upsertConversationHistory, etc.)
 │   ├── config.ts             # Model/provider resolution: CLI args → env fallback
 │   ├── prompt.ts             # System prompt for the Warden agent persona
-│   └── types.ts              # TypeScript interfaces: Task, AgentStep, ConversationHistory
+│   ├── logger.ts             # Maps AgentSessionEvent types to agent_steps rows
+│   └── data_model/
+│       ├── index.ts          # Barrel export for all data model types and DB helpers
+│       ├── types.ts          # TypeScript interfaces: Task, AgentStep, ConversationHistory, TaskInput
+│       └── db.ts             # Supabase client + typed helpers (insertTask, claimTask, completeTask, failTask,
+│                             #   insertAgentStep, upsertConversationHistory, etc.)
 └── dist/                     # Compiled output (gitignored)
 ```
 

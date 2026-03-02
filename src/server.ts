@@ -1,6 +1,6 @@
 import { createServer, IncomingMessage, ServerResponse } from "node:http";
-import { insertTask } from "./db.js";
-import type { TaskInput } from "./types.js";
+import { insertTask } from "./data_model/index.js";
+import type { TaskInput } from "./data_model/index.js";
 
 function readBody(req: IncomingMessage): Promise<string> {
   return new Promise((resolve, reject) => {

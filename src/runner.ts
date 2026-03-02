@@ -6,11 +6,11 @@ import {
   failTask,
   failStuckTasks,
   upsertConversationHistory,
-} from "./db.js";
+} from "./data_model/index.js";
 import { resolveModel } from "./config.js";
 import { SYSTEM_PROMPT } from "./prompt.js";
 import { createEventLogger } from "./logger.js";
-import type { Task } from "./types.js";
+import type { Task } from "./data_model/index.js";
 
 let running = false;
 let pollInterval: ReturnType<typeof setInterval> | null = null;
