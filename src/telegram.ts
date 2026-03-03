@@ -76,6 +76,7 @@ export async function notifyTaskComplete(task: Task): Promise<void> {
     await bot.api.sendMessage(chatId, truncated);
     console.log(`[telegram] Sent reply to chat ${chatId} for task ${task.id}`);
   } catch (err) {
-    console.error(`[telegram] Failed to send reply to chat ${chatId}:`, err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error(`[telegram] Failed to send reply to chat ${chatId}: ${msg}`);
   }
 }

@@ -103,8 +103,15 @@ async function cmdAdd(args: string[]): Promise<void> {
   }
 
   // Compute initial next_run_at
-  const stubJob = { ...input, id: "", enabled: true, last_run_at: null, next_run_at: null, last_task_id: null, run_count: 0, created_at: "", updated_at: "", cron_expression: input.cron_expression ?? null, at_time: input.at_time ?? null, every_ms: input.every_ms ?? null, cron_timezone: input.cron_timezone ?? "UTC", task_metadata: input.task_metadata ?? null, delete_after_run: input.delete_after_run ?? false } as CronJob;
-  input.next_run_at = computeNextRun(stubJob) ?? undefined;
+  // For "at" jobs, always use the at_time directly — computeNextRun returns null
+  // if the time is already past (which can happen due to CLI startup delay),
+  // but the scheduler should still fire it on the next poll.
+  if (input.at_time) {
+    input.next_run_at = input.at_time;
+  } else {
+    const stubJob = { ...input, id: "", enabled: true, last_run_at: null, next_run_at: null, last_task_id: null, run_count: 0, created_at: "", updated_at: "", cron_expression: input.cron_expression ?? null, at_time: input.at_time ?? null, every_ms: input.every_ms ?? null, cron_timezone: input.cron_timezone ?? "UTC", task_metadata: input.task_metadata ?? null, delete_after_run: input.delete_after_run ?? false } as CronJob;
+    input.next_run_at = computeNextRun(stubJob) ?? undefined;
+  }
 
   const job = await insertCronJob(input);
   console.log(`Created cron job: ${job.id}`);

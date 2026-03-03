@@ -103,16 +103,15 @@ async function executeTask(task: Task, session: AgentSession) {
     await completeTask(task.id, result);
     console.log(`[runner] Task ${task.id} completed\n${result}`);
     await notifyTaskComplete({ ...task, status: "done", result });
-    reprompt();
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error(`[runner] Task ${task.id} failed:`, msg);
     await failTask(task.id, msg);
     await notifyTaskComplete({ ...task, status: "failed", error: msg });
-    reprompt();
   } finally {
     taskContext.delete(session);
     delete process.env.WARDEN_TASK_METADATA;
+    reprompt();
   }
 }
 

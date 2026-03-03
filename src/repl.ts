@@ -5,7 +5,11 @@ import { markNewSession } from "./session-store.js";
 let rl: Interface | null = null;
 
 export function reprompt() {
-  if (rl) rl.prompt();
+  try {
+    if (rl) rl.prompt();
+  } catch {
+    // readline may be closed (e.g. no stdin in background mode)
+  }
 }
 
 export function startRepl() {
