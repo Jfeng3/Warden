@@ -1,4 +1,4 @@
-import { createAgentSession, DefaultResourceLoader, SessionManager } from "@mariozechner/pi-coding-agent";
+import type { AgentSession } from "@mariozechner/pi-coding-agent";
 import {
   pollNextTask,
   claimTask,
@@ -7,43 +7,37 @@ import {
   failStuckTasks,
   upsertConversationHistory,
 } from "./data_model/index.js";
-import { resolveModel } from "./config.js";
-import { SYSTEM_PROMPT } from "./prompt.js";
 import { createEventLogger } from "./logger.js";
 import { reprompt } from "./repl.js";
 import { notifyTaskComplete } from "./telegram.js";
+import { getSessionForTask, deriveSessionKey } from "./session-store.js";
 import type { Task } from "./data_model/index.js";
 
 let running = false;
 let pollInterval: ReturnType<typeof setInterval> | null = null;
+let executing = false; // Guard against concurrent task execution
 
-async function executeTask(task: Task, provider: string, modelId: string) {
-  console.log(`[runner] Executing task ${task.id}: "${task.instruction.slice(0, 60)}"`);
+// Track which sessions already have a subscriber attached
+const subscribedSessions = new WeakSet<AgentSession>();
 
-  const model = resolveModel(provider, modelId);
-  const logger = createEventLogger(task.id);
+// Track per-task context on the session so the subscriber can reference it
+interface TaskCtx {
+  taskId: string;
+  assistantText: string;
+  logger: { log: (event: Record<string, unknown>) => void };
+}
+const taskContext = new WeakMap<AgentSession, TaskCtx>();
 
-  const resourceLoader = new DefaultResourceLoader({
-    systemPrompt: SYSTEM_PROMPT,
-    noExtensions: true,
-    noSkills: true,
-    noPromptTemplates: true,
-    noThemes: true,
-  });
-  await resourceLoader.reload();
-
-  const { session } = await createAgentSession({
-    model,
-    sessionManager: SessionManager.inMemory(),
-    resourceLoader,
-  });
-
-  // Collect final assistant text
-  let assistantText = "";
+function attachSubscriber(session: AgentSession): void {
+  if (subscribedSessions.has(session)) return;
+  subscribedSessions.add(session);
 
   session.subscribe((event) => {
+    const ctx = taskContext.get(session);
+    if (!ctx) return;
+
     // Log to Supabase
-    logger.log(event as Record<string, unknown>);
+    ctx.logger.log(event as Record<string, unknown>);
 
     // Collect text output
     if (event.type === "message_update") {
@@ -51,7 +45,7 @@ async function executeTask(task: Task, provider: string, modelId: string) {
         | { type: string; delta?: string }
         | undefined;
       if (msgEvent?.type === "text_delta" && msgEvent.delta) {
-        assistantText += msgEvent.delta;
+        ctx.assistantText += msgEvent.delta;
       }
     }
 
@@ -59,7 +53,7 @@ async function executeTask(task: Task, provider: string, modelId: string) {
     if (event.type === "tool_execution_start") {
       const toolEvent = event as any;
       const argsStr = toolEvent.args ? JSON.stringify(toolEvent.args, null, 2) : "";
-      console.log(`[runner] [task ${task.id}] tool_start: ${toolEvent.toolName ?? "unknown"}\n${argsStr}`);
+      console.log(`[runner] [task ${ctx.taskId}] tool_start: ${toolEvent.toolName ?? "unknown"}\n${argsStr}`);
     }
     if (event.type === "tool_execution_end") {
       const toolEvent = event as any;
@@ -67,19 +61,35 @@ async function executeTask(task: Task, provider: string, modelId: string) {
         ? toolEvent.result.slice(0, 2000)
         : JSON.stringify(toolEvent.result, null, 2)?.slice(0, 2000) ?? "";
       const prefix = toolEvent.isError ? "tool_error" : "tool_end";
-      console.log(`[runner] [task ${task.id}] ${prefix}: ${toolEvent.toolName ?? "unknown"}\n${resultStr}`);
+      console.log(`[runner] [task ${ctx.taskId}] ${prefix}: ${toolEvent.toolName ?? "unknown"}\n${resultStr}`);
     }
 
     // Save conversation history on turn_end
     if (event.type === "turn_end") {
-      const messages = (session as any).messages;
+      const messages = session.messages;
       if (messages) {
-        upsertConversationHistory(task.id, messages).catch((err) => {
+        upsertConversationHistory(ctx.taskId, messages).catch((err) => {
           console.error(`[runner] Failed to save conversation history:`, err);
         });
       }
     }
   });
+}
+
+async function executeTask(task: Task, session: AgentSession) {
+  console.log(`[runner] Executing task ${task.id}: "${task.instruction.slice(0, 60)}"`);
+
+  const key = deriveSessionKey(task.metadata);
+  if (key) {
+    console.log(`[runner] Session: ${key} (persistent)`);
+  }
+
+  // Set per-task context for the subscriber
+  const logger = createEventLogger(task.id);
+  taskContext.set(session, { taskId: task.id, assistantText: "", logger });
+
+  // Attach subscriber (idempotent for cached sessions)
+  attachSubscriber(session);
 
   // Expose current task's metadata so cron-cli can auto-inherit it
   if (task.metadata) {
@@ -88,7 +98,8 @@ async function executeTask(task: Task, provider: string, modelId: string) {
 
   try {
     await session.prompt(task.instruction);
-    const result = assistantText || "(no output)";
+    const ctx = taskContext.get(session)!;
+    const result = ctx.assistantText || "(no output)";
     await completeTask(task.id, result);
     console.log(`[runner] Task ${task.id} completed\n${result}`);
     await notifyTaskComplete({ ...task, status: "done", result });
@@ -100,12 +111,16 @@ async function executeTask(task: Task, provider: string, modelId: string) {
     await notifyTaskComplete({ ...task, status: "failed", error: msg });
     reprompt();
   } finally {
+    taskContext.delete(session);
     delete process.env.WARDEN_TASK_METADATA;
   }
 }
 
 async function pollAndRun(provider: string, modelId: string) {
-  if (!running) return;
+  if (!running || executing) return;
+
+  let claimedTaskId: string | null = null;
+  executing = true;
 
   try {
     const task = await pollNextTask();
@@ -113,10 +128,19 @@ async function pollAndRun(provider: string, modelId: string) {
 
     const claimed = await claimTask(task.id);
     if (!claimed) return; // Another runner got it
+    claimedTaskId = task.id;
 
-    await executeTask(task, provider, modelId);
+    const session = await getSessionForTask(task, provider, modelId);
+    await executeTask(task, session);
   } catch (err) {
     console.error(`[runner] Poll error:`, err);
+    // If we claimed a task but session creation failed, mark it failed
+    if (claimedTaskId) {
+      const msg = err instanceof Error ? err.message : String(err);
+      await failTask(claimedTaskId, msg).catch(() => {});
+    }
+  } finally {
+    executing = false;
   }
 }
 

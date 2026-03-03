@@ -1,5 +1,6 @@
 import { createInterface, type Interface } from "node:readline";
 import { insertTask } from "./data_model/index.js";
+import { markNewSession } from "./session-store.js";
 
 let rl: Interface | null = null;
 
@@ -14,7 +15,7 @@ export function startRepl() {
     prompt: "warden> ",
   });
 
-  console.log("Warden REPL. Tasks are queued to Supabase. Type /quit to exit.");
+  console.log("Warden REPL. Tasks are queued to Supabase. /new = reset session, /quit = exit.");
   rl.prompt();
 
   rl.on("line", async (line) => {
@@ -30,8 +31,15 @@ export function startRepl() {
       process.exit(0);
     }
 
+    if (input === "/new") {
+      markNewSession("repl");
+      console.log("Session reset. Starting fresh.");
+      rl!.prompt();
+      return;
+    }
+
     try {
-      const task = await insertTask({ instruction: input });
+      const task = await insertTask({ instruction: input, metadata: { source: "repl" } });
       console.log(`Task queued: ${task.id}`);
     } catch (err) {
       console.error("Failed to queue task:", err);

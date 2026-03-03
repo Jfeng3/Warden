@@ -1,6 +1,7 @@
 import { Bot } from "grammy";
 import { insertTask } from "./data_model/index.js";
 import type { Task } from "./data_model/index.js";
+import { markNewSession } from "./session-store.js";
 
 let bot: Bot | null = null;
 
@@ -18,6 +19,14 @@ export function startTelegram(): void {
     const chatId = ctx.chat.id;
     const text = ctx.message.text.trim();
     if (!text) return;
+
+    // Handle /new command — reset session for this chat
+    if (text === "/new" || text.startsWith("/new@")) {
+      markNewSession(`telegram-${chatId}`);
+      console.log(`[telegram] Session reset for chat ${chatId}`);
+      await ctx.reply("Session reset. Starting fresh.").catch(() => {});
+      return;
+    }
 
     try {
       const task = await insertTask({

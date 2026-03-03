@@ -22,7 +22,7 @@ async function fireDueJobs(): Promise<void> {
         // Create a task from the cron job
         const task = await insertTask({
           instruction: job.instruction,
-          metadata: job.task_metadata ?? undefined,
+          metadata: { ...(job.task_metadata ?? {}), cron: true },
         });
         console.log(`[cron] Fired job "${job.name}" (${job.id}) → task ${task.id}`);
 
