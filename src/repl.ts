@@ -1,5 +1,5 @@
 import { createInterface, type Interface } from "node:readline";
-import { insertTask, listActiveTasks, listRecentTasks, getRunningTask, getStepsForTask, findTaskByPrefix } from "./data_model/index.js";
+import { insertTask, listActiveTasks, listRecentTasks, getRunningTask, getStepsForTask, findTaskByPrefix, listCronJobs, deleteCronJob } from "./data_model/index.js";
 import type { Task, AgentStep } from "./data_model/index.js";
 import { markNewSession } from "./session-store.js";
 import { listSkillNames } from "./skill-tool.js";
@@ -21,7 +21,7 @@ export function startRepl() {
     prompt: "warden> ",
   });
 
-  console.log("Warden REPL. Tasks are queued to Supabase. /new = reset session, /tasks = list active, /quit = exit.");
+  console.log("Warden REPL. /new = reset session, /tasks = list active, /cronJobs = list cron, /deleteCron <id> = delete cron, /quit = exit.");
   rl.prompt();
 
   rl.on("line", async (line) => {
@@ -123,6 +123,51 @@ export function startRepl() {
         }
       } catch (err) {
         console.error("Failed to get task:", err);
+      }
+      rl!.prompt();
+      return;
+    }
+
+    if (input === "/cronJobs") {
+      try {
+        const jobs = await listCronJobs(true);
+        if (jobs.length === 0) {
+          console.log("No active cron jobs.");
+        } else {
+          for (const j of jobs) {
+            const schedule = j.schedule_type === "cron" ? j.cron_expression
+              : j.schedule_type === "every" ? `every ${j.every_ms}ms`
+              : j.at_time ?? "?";
+            const instr = j.instruction.length > 50 ? j.instruction.slice(0, 47) + "..." : j.instruction;
+            const next = j.next_run_at ? new Date(j.next_run_at).toLocaleString() : "—";
+            console.log(`  ${j.id.slice(0, 8)}  ${j.name}  [${schedule}]  next: ${next}  ${instr}`);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to list cron jobs:", err);
+      }
+      rl!.prompt();
+      return;
+    }
+
+    if (input.startsWith("/deleteCron ")) {
+      const idPrefix = input.slice(12).trim();
+      if (!idPrefix) {
+        console.log("Usage: /deleteCron <id-prefix>");
+        rl!.prompt();
+        return;
+      }
+      try {
+        const jobs = await listCronJobs();
+        const match = jobs.find(j => j.id.startsWith(idPrefix));
+        if (!match) {
+          console.log(`No cron job found matching "${idPrefix}".`);
+        } else {
+          await deleteCronJob(match.id);
+          console.log(`Deleted cron job: ${match.id} (${match.name})`);
+        }
+      } catch (err) {
+        console.error("Failed to delete cron job:", err);
       }
       rl!.prompt();
       return;

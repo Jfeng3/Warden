@@ -1,5 +1,5 @@
 import { Bot } from "grammy";
-import { insertTask, listActiveTasks, listRecentTasks, getRunningTask, getStepsForTask, findTaskByPrefix } from "./data_model/index.js";
+import { insertTask, listActiveTasks, listRecentTasks, getRunningTask, getStepsForTask, findTaskByPrefix, listCronJobs, deleteCronJob } from "./data_model/index.js";
 import type { Task, AgentStep } from "./data_model/index.js";
 import { markNewSession } from "./session-store.js";
 
@@ -86,6 +86,51 @@ export function startTelegram(): void {
         }
       } catch (err) {
         await ctx.reply("Failed to get active task.").catch(() => {});
+      }
+      return;
+    }
+
+    // Handle /cronJobs command — list active cron jobs
+    if (text === "/cronJobs" || text.startsWith("/cronJobs@")) {
+      try {
+        const jobs = await listCronJobs(true);
+        if (jobs.length === 0) {
+          await ctx.reply("No active cron jobs.");
+        } else {
+          const lines = jobs.map((j) => {
+            const schedule = j.schedule_type === "cron" ? j.cron_expression
+              : j.schedule_type === "every" ? `every ${j.every_ms}ms`
+              : j.at_time ?? "?";
+            const instr = j.instruction.length > 50 ? j.instruction.slice(0, 47) + "..." : j.instruction;
+            const next = j.next_run_at ? new Date(j.next_run_at).toLocaleString() : "—";
+            return `${j.id.slice(0, 8)}  ${j.name}  [${schedule}]  next: ${next}  ${instr}`;
+          });
+          await ctx.reply(lines.join("\n"));
+        }
+      } catch (err) {
+        await ctx.reply("Failed to list cron jobs.").catch(() => {});
+      }
+      return;
+    }
+
+    // Handle /deleteCron <id> command — delete a cron job by id prefix
+    if (text.startsWith("/deleteCron ") || text.startsWith("/deleteCron@")) {
+      const idPrefix = text.replace(/^\/deleteCron(@\S+)?\s*/, "").trim();
+      if (!idPrefix) {
+        await ctx.reply("Usage: /deleteCron <id-prefix>");
+        return;
+      }
+      try {
+        const jobs = await listCronJobs();
+        const match = jobs.find(j => j.id.startsWith(idPrefix));
+        if (!match) {
+          await ctx.reply(`No cron job found matching "${idPrefix}".`);
+        } else {
+          await deleteCronJob(match.id);
+          await ctx.reply(`Deleted cron job: ${match.id} (${match.name})`);
+        }
+      } catch (err) {
+        await ctx.reply("Failed to delete cron job.").catch(() => {});
       }
       return;
     }
