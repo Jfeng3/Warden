@@ -107,19 +107,16 @@ export async function listRecentTasks(limit = 3): Promise<Task[]> {
 }
 
 export async function findTaskByPrefix(prefix: string): Promise<Task | null> {
-  // Try exact match first
-  const exact = await getTask(prefix);
-  if (exact) return exact;
-  // Prefix match across all tasks
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(prefix);
+  if (isUuid) return getTask(prefix);
+  // PostgREST can't cast uuid to text for LIKE, so fetch recent tasks and filter in JS
   const { data, error } = await getSupabase()
     .from("warden_tasks")
     .select()
-    .like("id", `${prefix}%`)
     .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .limit(100);
   if (error) throw error;
-  return data as Task | null;
+  return (data as Task[])?.find((t) => t.id.startsWith(prefix)) ?? null;
 }
 
 export async function getRunningTask(): Promise<Task | null> {

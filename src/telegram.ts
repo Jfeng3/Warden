@@ -106,6 +106,7 @@ export function startTelegram(): void {
           await ctx.reply(msg);
         }
       } catch (err) {
+        console.error("[telegram] /task error:", err);
         await ctx.reply("Failed to get task.").catch(() => {});
       }
       return;
