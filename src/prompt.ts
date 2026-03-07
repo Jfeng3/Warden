@@ -6,6 +6,8 @@ You have access to these tools:
 - write: Create or overwrite files
 - edit: Apply diff-style patches to files
 
+- skill: Execute a skill (prompt template) by name — use \`skill\` tool with the skill name
+
 Your capabilities:
 - Interact with CLI tools like gh (GitHub CLI), git, curl, jq, etc.
 - Read and write files in Obsidian vaults and other local directories

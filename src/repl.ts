@@ -1,6 +1,7 @@
 import { createInterface, type Interface } from "node:readline";
 import { insertTask } from "./data_model/index.js";
 import { markNewSession } from "./session-store.js";
+import { listSkillNames } from "./skill-tool.js";
 
 let rl: Interface | null = null;
 
@@ -38,6 +39,13 @@ export function startRepl() {
     if (input === "/new") {
       markNewSession("repl");
       console.log("Session reset. Starting fresh.");
+      rl!.prompt();
+      return;
+    }
+
+    if (input === "/skills") {
+      const names = listSkillNames();
+      console.log(names.length ? `Available skills: ${names.join(", ")}` : "No skills found. Add .md files to skills/");
       rl!.prompt();
       return;
     }

@@ -2,6 +2,7 @@ import { createAgentSession, DefaultResourceLoader, SessionManager } from "@mari
 import type { AgentSession } from "@mariozechner/pi-coding-agent";
 import { resolveModel } from "./config.js";
 import { SYSTEM_PROMPT } from "./prompt.js";
+import { skillTool } from "./skill-tool.js";
 import type { Task } from "./data_model/index.js";
 import path from "node:path";
 import os from "node:os";
@@ -107,6 +108,7 @@ async function buildSession(
     model,
     sessionManager,
     resourceLoader,
+    customTools: [skillTool as any],
   });
 
   return session;
