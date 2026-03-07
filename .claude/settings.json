@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "Bash(npm run build)",
+      "Bash(npm test)",
+      "Bash(npm run dev*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(pm2 *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(wc *)"
+    ],
+    "deny": [
+      "Edit(tests/resolve-metadata.test.ts)",
+      "Edit(tests/session-persistence.test.ts)",
+      "Edit(tests/session-reset.test.ts)",
+      "Bash(rm tests/*)",
+      "Bash(rm -rf tests)",
+      "Bash(git checkout -- tests/*)"
+    ]
+  }
+}

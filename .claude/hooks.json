@@ -1,0 +1,20 @@
+[
+  {
+    "event": "PostToolUse",
+    "matcher": {
+      "tool": "Edit",
+      "path": "src/**/*.ts"
+    },
+    "command": "npm run build 2>&1 | tail -5",
+    "description": "Type-check after editing source files"
+  },
+  {
+    "event": "PostToolUse",
+    "matcher": {
+      "tool": "Write",
+      "path": "src/**/*.ts"
+    },
+    "command": "npm run build 2>&1 | tail -5",
+    "description": "Type-check after writing source files"
+  }
+]

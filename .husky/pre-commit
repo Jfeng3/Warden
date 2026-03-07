@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# Protect baseline test files — block commits that delete them
+BASELINE_TESTS="tests/resolve-metadata.test.ts tests/session-persistence.test.ts tests/session-reset.test.ts"
+
+for test_file in $BASELINE_TESTS; do
+  if ! [ -f "$test_file" ]; then
+    echo "ERROR: Protected test file '$test_file' is missing."
+    echo "Baseline tests cannot be deleted. Restore it before committing."
+    exit 1
+  fi
+done
+
+# Block commits that reduce test count (empty out assertions)
+for test_file in $BASELINE_TESTS; do
+  if git diff --cached -- "$test_file" | grep -q '^-.*\(assert\|test(\|it(\|describe(\)' ; then
+    added=$(git diff --cached -- "$test_file" | grep -c '^+.*\(assert\|test(\|it(\|describe(\)' || true)
+    removed=$(git diff --cached -- "$test_file" | grep -c '^-.*\(assert\|test(\|it(\|describe(\)' || true)
+    if [ "$removed" -gt "$added" ]; then
+      echo "ERROR: Commit reduces test assertions in '$test_file'."
+      echo "Removed $removed test lines but only added $added. Baseline tests are protected."
+      exit 1
+    fi
+  fi
+done
+
+# Type check
+npm run build 2>&1 || exit 1
