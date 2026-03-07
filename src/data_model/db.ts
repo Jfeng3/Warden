@@ -96,6 +96,16 @@ export async function listActiveTasks(): Promise<Task[]> {
   return (data ?? []) as Task[];
 }
 
+export async function listRecentTasks(limit = 3): Promise<Task[]> {
+  const { data, error } = await getSupabase()
+    .from("warden_tasks")
+    .select()
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return (data ?? []) as Task[];
+}
+
 export async function getRunningTask(): Promise<Task | null> {
   const { data, error } = await getSupabase()
     .from("warden_tasks")

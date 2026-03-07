@@ -1,5 +1,5 @@
 import { createInterface, type Interface } from "node:readline";
-import { insertTask, listActiveTasks, getRunningTask, getStepsForTask, getTask } from "./data_model/index.js";
+import { insertTask, listActiveTasks, listRecentTasks, getRunningTask, getStepsForTask, getTask } from "./data_model/index.js";
 import type { Task, AgentStep } from "./data_model/index.js";
 import { markNewSession } from "./session-store.js";
 import { listSkillNames } from "./skill-tool.js";
@@ -59,6 +59,32 @@ export function startRepl() {
         }
       } catch (err) {
         console.error("Failed to list tasks:", err);
+      }
+      rl!.prompt();
+      return;
+    }
+
+    if (input === "/history" || input.startsWith("/history ")) {
+      const countStr = input.slice(8).trim();
+      const count = countStr ? parseInt(countStr, 10) : 3;
+      if (isNaN(count) || count < 1) {
+        console.log("Usage: /history [count]");
+        rl!.prompt();
+        return;
+      }
+      try {
+        const tasks = await listRecentTasks(count);
+        if (tasks.length === 0) {
+          console.log("No tasks found.");
+        } else {
+          for (const t of tasks) {
+            const age = formatAge(t.created_at);
+            const instr = t.instruction.length > 50 ? t.instruction.slice(0, 47) + "..." : t.instruction;
+            console.log(`  ${t.id.slice(0, 8)}  ${t.status.padEnd(7)}  ${age.padStart(4)}  ${instr}`);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to list history:", err);
       }
       rl!.prompt();
       return;

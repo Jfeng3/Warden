@@ -1,5 +1,5 @@
 import { Bot } from "grammy";
-import { insertTask, listActiveTasks, getRunningTask, getStepsForTask, getTask } from "./data_model/index.js";
+import { insertTask, listActiveTasks, listRecentTasks, getRunningTask, getStepsForTask, getTask } from "./data_model/index.js";
 import type { Task, AgentStep } from "./data_model/index.js";
 import { markNewSession } from "./session-store.js";
 
@@ -25,6 +25,32 @@ export function startTelegram(): void {
       markNewSession(`telegram-${chatId}`);
       console.log(`[telegram] Session reset for chat ${chatId}`);
       await ctx.reply("Session reset. Starting fresh.").catch(() => {});
+      return;
+    }
+
+    // Handle /history command — list recent tasks (all statuses)
+    if (text === "/history" || text.startsWith("/history@") || text.startsWith("/history ")) {
+      const countStr = text.replace(/^\/history(@\S+)?\s*/, "").trim();
+      const count = countStr ? parseInt(countStr, 10) : 3;
+      if (isNaN(count) || count < 1) {
+        await ctx.reply("Usage: /history [count]");
+        return;
+      }
+      try {
+        const tasks = await listRecentTasks(count);
+        if (tasks.length === 0) {
+          await ctx.reply("No tasks found.");
+        } else {
+          const lines = tasks.map((t) => {
+            const age = formatAge(t.created_at);
+            const instr = t.instruction.length > 50 ? t.instruction.slice(0, 47) + "..." : t.instruction;
+            return `${t.id.slice(0, 8)}  ${t.status}  ${age}  ${instr}`;
+          });
+          await ctx.reply(lines.join("\n"));
+        }
+      } catch (err) {
+        await ctx.reply("Failed to list history.").catch(() => {});
+      }
       return;
     }
 
