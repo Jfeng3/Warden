@@ -130,3 +130,19 @@ User submits task (HTTP API or REPL)
 1. Copy `.env.example` to `.env` and fill in: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY` (and optionally `OPENROUTER_API_KEY`, `WARDEN_PORT`).
 2. Run the migration in `supabase/migrations/001_initial_schema.sql` against your Supabase project.
 3. `npm install && npm run dev`
+
+## Running 24/7 with pm2
+
+```bash
+npm run build                          # Compile TypeScript
+pm2 start dist/index.js --name warden  # Start the agent
+pm2 save                               # Save process list for auto-resurrection
+pm2 startup                            # Generate boot startup script (follow the sudo command it prints)
+```
+
+To stop:
+
+```bash
+pm2 delete warden && pm2 save --force  # Stop and remove from saved list
+pm2 unstartup launchd                  # Remove boot startup script (follow the sudo command it prints)
+```

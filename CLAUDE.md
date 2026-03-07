@@ -16,6 +16,15 @@ npm test                          # Run e2e tests (requires dev server running)
 
 CLI flags: `--provider <anthropic|openrouter>` and `--model <model-id>`
 
+### Running 24/7 with pm2
+
+```bash
+npm run build && pm2 start dist/index.js --name warden  # Start
+pm2 save && pm2 startup                                  # Persist across reboots
+pm2 delete warden && pm2 save --force                    # Stop + remove
+pm2 unstartup launchd                                    # Remove boot script
+```
+
 ## File Structure
 
 ```
