@@ -140,6 +140,13 @@ pm2 save                               # Save process list for auto-resurrection
 pm2 startup                            # Generate boot startup script (follow the sudo command it prints)
 ```
 
+To restart (e.g. after code changes or .env updates):
+
+```bash
+npm run build && pm2 restart warden    # Rebuild and restart
+pm2 restart warden --update-env        # Restart and reload .env changes
+```
+
 To stop:
 
 ```bash

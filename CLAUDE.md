@@ -21,6 +21,8 @@ CLI flags: `--provider <anthropic|openrouter>` and `--model <model-id>`
 ```bash
 npm run build && pm2 start dist/index.js --name warden  # Start
 pm2 save && pm2 startup                                  # Persist across reboots
+npm run build && pm2 restart warden                      # Rebuild + restart
+pm2 restart warden --update-env                          # Restart + reload .env
 pm2 delete warden && pm2 save --force                    # Stop + remove
 pm2 unstartup launchd                                    # Remove boot script
 ```
