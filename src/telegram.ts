@@ -1,6 +1,6 @@
 import { Bot } from "grammy";
-import { insertTask } from "./data_model/index.js";
-import type { Task } from "./data_model/index.js";
+import { insertTask, listActiveTasks, getRunningTask, getStepsForTask, getTask } from "./data_model/index.js";
+import type { Task, AgentStep } from "./data_model/index.js";
 import { markNewSession } from "./session-store.js";
 
 let bot: Bot | null = null;
@@ -25,6 +25,63 @@ export function startTelegram(): void {
       markNewSession(`telegram-${chatId}`);
       console.log(`[telegram] Session reset for chat ${chatId}`);
       await ctx.reply("Session reset. Starting fresh.").catch(() => {});
+      return;
+    }
+
+    // Handle /tasks command — list active tasks
+    if (text === "/tasks" || text.startsWith("/tasks@")) {
+      try {
+        const tasks = await listActiveTasks();
+        if (tasks.length === 0) {
+          await ctx.reply("No active tasks.");
+        } else {
+          const lines = tasks.map((t) => {
+            const age = formatAge(t.created_at);
+            const instr = t.instruction.length > 50 ? t.instruction.slice(0, 47) + "..." : t.instruction;
+            return `${t.id.slice(0, 8)}  ${t.status}  ${age}  ${instr}`;
+          });
+          await ctx.reply(lines.join("\n"));
+        }
+      } catch (err) {
+        await ctx.reply("Failed to list tasks.").catch(() => {});
+      }
+      return;
+    }
+
+    // Handle /activeTask command — show running task + tool steps
+    if (text === "/activeTask" || text.startsWith("/activeTask@")) {
+      try {
+        const task = await getRunningTask();
+        if (!task) {
+          await ctx.reply("No task currently running.");
+        } else {
+          const msg = await formatTaskDetail(task);
+          await ctx.reply(msg);
+        }
+      } catch (err) {
+        await ctx.reply("Failed to get active task.").catch(() => {});
+      }
+      return;
+    }
+
+    // Handle /task <id> command — show task details + tool steps
+    if (text.startsWith("/task ") || text.startsWith("/task@")) {
+      const idPrefix = text.replace(/^\/task(@\S+)?\s*/, "").trim();
+      if (!idPrefix) {
+        await ctx.reply("Usage: /task <id-prefix>");
+        return;
+      }
+      try {
+        const task = await findTaskByPrefix(idPrefix);
+        if (!task) {
+          await ctx.reply(`No task found matching "${idPrefix}".`);
+        } else {
+          const msg = await formatTaskDetail(task);
+          await ctx.reply(msg);
+        }
+      } catch (err) {
+        await ctx.reply("Failed to get task.").catch(() => {});
+      }
       return;
     }
 
@@ -79,4 +136,51 @@ export async function notifyTaskComplete(task: Task): Promise<void> {
     const msg = err instanceof Error ? err.message : String(err);
     console.error(`[telegram] Failed to send reply to chat ${chatId}: ${msg}`);
   }
+}
+
+// ── Helpers for task inspection commands ─────────────────
+
+function formatAge(dateStr: string): string {
+  const age = Math.round((Date.now() - new Date(dateStr).getTime()) / 1000);
+  if (age < 60) return `${age}s`;
+  if (age < 3600) return `${Math.floor(age / 60)}m`;
+  return `${Math.floor(age / 3600)}h`;
+}
+
+async function formatTaskDetail(task: Task): Promise<string> {
+  const lines: string[] = [];
+  lines.push(`ID: ${task.id}`);
+  lines.push(`Status: ${task.status}`);
+  lines.push(`Age: ${formatAge(task.created_at)}`);
+  lines.push(`Instr: ${task.instruction}`);
+  if (task.result) lines.push(`Result: ${task.result.slice(0, 200)}`);
+  if (task.error) lines.push(`Error: ${task.error.slice(0, 200)}`);
+
+  const steps = await getStepsForTask(task.id);
+  const toolSteps = steps.filter((s) => s.step_type === "tool_start" || s.step_type === "tool_end");
+  if (toolSteps.length === 0) {
+    lines.push("(no tool invocations yet)");
+  } else {
+    lines.push(`── Tool invocations (${toolSteps.length} steps) ──`);
+    for (const s of toolSteps) {
+      const time = new Date(s.created_at).toLocaleTimeString();
+      if (s.step_type === "tool_start") {
+        const args = s.tool_args ? JSON.stringify(s.tool_args).slice(0, 80) : "";
+        lines.push(`${time}  ▶ ${s.tool_name}  ${args}`);
+      } else {
+        const result = s.tool_result ? s.tool_result.slice(0, 100).replace(/\n/g, "↵") : "";
+        const marker = s.is_error ? "✗" : "✓";
+        lines.push(`${time}  ${marker} ${s.tool_name}  ${result}`);
+      }
+    }
+  }
+  return lines.join("\n");
+}
+
+async function findTaskByPrefix(prefix: string): Promise<Task | null> {
+  const exact = await getTask(prefix);
+  if (exact) return exact;
+  const active = await listActiveTasks();
+  const match = active.find((t) => t.id.startsWith(prefix));
+  return match ?? null;
 }
