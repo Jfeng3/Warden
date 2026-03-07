@@ -2,6 +2,26 @@
 
 `au` is a CLI toolkit installed at `/opt/homebrew/bin/au`. Use it via bash for news, weather, Reddit, YouTube, PDFs, file conversion, and slides.
 
+## Updating the `au` CLI
+
+The `au` CLI is built from the `agent-utils` project. If commands are missing or outdated, rebuild and reinstall:
+
+```bash
+cd /Users/jie/Codes/cue-agent-utils
+npm run build && npm install -g .
+au --help                         # Verify installation
+```
+
+## Discovering skill docs
+
+Each command has a bundled skill with detailed usage:
+
+```bash
+au skill list           # List all skills
+au skill read <name>    # Read full docs for a skill
+au news --help          # Command-specific help
+```
+
 ## News
 
 Fetch headlines from Hacker News, BBC, CBS, ITHome, Product Hunt, TechCrunch, and WIRED.
