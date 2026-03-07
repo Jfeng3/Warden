@@ -86,6 +86,38 @@ export async function failTask(taskId: string, errorMsg: string): Promise<void> 
   if (error) throw error;
 }
 
+export async function listActiveTasks(): Promise<Task[]> {
+  const { data, error } = await getSupabase()
+    .from("warden_tasks")
+    .select()
+    .in("status", ["pending", "running"])
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as Task[];
+}
+
+export async function getRunningTask(): Promise<Task | null> {
+  const { data, error } = await getSupabase()
+    .from("warden_tasks")
+    .select()
+    .eq("status", "running")
+    .order("started_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw error;
+  return data as Task | null;
+}
+
+export async function getStepsForTask(taskId: string): Promise<AgentStep[]> {
+  const { data, error } = await getSupabase()
+    .from("warden_agent_steps")
+    .select()
+    .eq("task_id", taskId)
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as AgentStep[];
+}
+
 export async function failStuckTasks(): Promise<number> {
   const { data, error } = await getSupabase()
     .from("warden_tasks")
