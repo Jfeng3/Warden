@@ -1,5 +1,5 @@
 import { Bot } from "grammy";
-import { insertTask, listActiveTasks, listRecentTasks, getRunningTask, getStepsForTask, getTask } from "./data_model/index.js";
+import { insertTask, listActiveTasks, listRecentTasks, getRunningTask, getStepsForTask, findTaskByPrefix } from "./data_model/index.js";
 import type { Task, AgentStep } from "./data_model/index.js";
 import { markNewSession } from "./session-store.js";
 
@@ -203,10 +203,3 @@ async function formatTaskDetail(task: Task): Promise<string> {
   return lines.join("\n");
 }
 
-async function findTaskByPrefix(prefix: string): Promise<Task | null> {
-  const exact = await getTask(prefix);
-  if (exact) return exact;
-  const active = await listActiveTasks();
-  const match = active.find((t) => t.id.startsWith(prefix));
-  return match ?? null;
-}

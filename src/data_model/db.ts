@@ -106,6 +106,22 @@ export async function listRecentTasks(limit = 3): Promise<Task[]> {
   return (data ?? []) as Task[];
 }
 
+export async function findTaskByPrefix(prefix: string): Promise<Task | null> {
+  // Try exact match first
+  const exact = await getTask(prefix);
+  if (exact) return exact;
+  // Prefix match across all tasks
+  const { data, error } = await getSupabase()
+    .from("warden_tasks")
+    .select()
+    .like("id", `${prefix}%`)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw error;
+  return data as Task | null;
+}
+
 export async function getRunningTask(): Promise<Task | null> {
   const { data, error } = await getSupabase()
     .from("warden_tasks")

@@ -1,5 +1,5 @@
 import { createInterface, type Interface } from "node:readline";
-import { insertTask, listActiveTasks, listRecentTasks, getRunningTask, getStepsForTask, getTask } from "./data_model/index.js";
+import { insertTask, listActiveTasks, listRecentTasks, getRunningTask, getStepsForTask, findTaskByPrefix } from "./data_model/index.js";
 import type { Task, AgentStep } from "./data_model/index.js";
 import { markNewSession } from "./session-store.js";
 import { listSkillNames } from "./skill-tool.js";
@@ -187,12 +187,3 @@ async function printTaskSteps(taskId: string) {
   }
 }
 
-async function findTaskByPrefix(prefix: string): Promise<Task | null> {
-  // Try exact match first
-  const exact = await getTask(prefix);
-  if (exact) return exact;
-  // Try prefix match on active tasks
-  const active = await listActiveTasks();
-  const match = active.find(t => t.id.startsWith(prefix));
-  return match ?? null;
-}

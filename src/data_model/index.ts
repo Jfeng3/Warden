@@ -8,6 +8,7 @@ export {
   completeTask,
   failTask,
   listActiveTasks,
+  findTaskByPrefix,
   listRecentTasks,
   getRunningTask,
   getStepsForTask,
