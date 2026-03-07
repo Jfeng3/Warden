@@ -55,3 +55,12 @@ wp post create --post_title="Tagged Post" --post_content="..." --post_status=pub
 ```bash
 wp post create /tmp/post-content.html --post_title="My Post" --post_status=publish --porcelain --ssh="$WP_SSH"
 ```
+
+## Post-Publish Checklist
+
+After publishing a post:
+
+1. **Verify live**: Visit the post URL and confirm it renders correctly
+2. **Share to social**: Use the `social-distribution` skill to draft social posts for Reddit, X, and HN
+3. **Update internal links**: Check 2-3 related existing posts and add a link to the new post
+4. **Update content calendar**: Mark the topic as published in the editorial calendar

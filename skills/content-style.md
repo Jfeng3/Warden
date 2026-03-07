@@ -1,6 +1,18 @@
-# V2Cloud-style blog post format guide
+# Content Style Guide
 
 When writing blog posts for openclaws.blog, follow this structure and style consistently.
+
+## Product Messaging
+
+**OpenClaw** — Your own personal AI assistant. Any OS. Any Platform. The lobster way. Open-source, runs locally, privacy-first.
+- Key angles: local-first AI, open-source alternative to closed assistants, cross-platform, extensible
+- GitHub: https://github.com/openclaw/openclaw
+
+**Warden** — A CLI agent that runs 24/7, automates workflows, publishes content, and monitors the competitive landscape.
+- Key angles: always-on automation, CLI-native, task queue architecture, self-hosted
+- GitHub: https://github.com/qwibitai/warden (or link to actual repo)
+
+When writing about these products, emphasize: developer empowerment, open-source values, privacy/local-first, and practical automation.
 
 ## Structure Template
 
@@ -83,3 +95,16 @@ Every post follows: **Problem → Solution → Proof → Action**
 
 - One mid-content CTA after the solution section (link to related post or project)
 - One closing CTA before FAQ (subscription, GitHub link, or related reading)
+
+## SEO Checklist
+
+Before publishing, verify:
+
+- [ ] **Title tag**: Under 60 characters, includes primary keyword, compelling
+- [ ] **Meta description**: 150-160 characters, includes keyword, has a call to action
+- [ ] **URL slug**: Short, keyword-rich, hyphenated (e.g. `/local-ai-assistant-guide`)
+- [ ] **H1**: Matches title tag intent (can differ slightly for readability)
+- [ ] **Internal links**: Link to at least 2 other posts on openclaws.blog
+- [ ] **External links**: Cite at least 1-2 authoritative sources
+- [ ] **Images**: Alt text describes the image and includes keyword where natural
+- [ ] **Target keyword**: Appears in first 100 words, H2, and naturally throughout
