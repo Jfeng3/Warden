@@ -62,7 +62,10 @@ export function startTelegram(): void {
       if (!session) {
         await ctx.reply("No active session. Send a message first to create one.");
       } else {
-        const msg = formatContextSummary(session);
+        let msg = formatContextSummary(session);
+        if (msg.length > TELEGRAM_MAX_LENGTH) {
+          msg = msg.slice(0, TELEGRAM_MAX_LENGTH - 3) + "...";
+        }
         await ctx.reply(msg);
       }
       return;
