@@ -1,3 +1,7 @@
+---
+trigger: When writing or editing blog content for openclaws.blog
+description: Writing style guide for openclaws.blog
+---
 # Content Style Guide
 
 When writing blog posts for openclaws.blog, follow this structure and style consistently.

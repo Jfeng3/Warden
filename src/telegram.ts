@@ -1,5 +1,6 @@
 import { Bot } from "grammy";
 import { insertTask, listActiveTasks, listRecentTasks, getRunningTask, getStepsForTask, findTaskByPrefix, listCronJobs, deleteCronJob } from "./data_model/index.js";
+import { listSkillNames, getSkillContent } from "./skill-tool.js";
 import type { Task, AgentStep } from "./data_model/index.js";
 import { markNewSession, getCachedSession } from "./session-store.js";
 import type { AgentSession } from "@mariozechner/pi-coding-agent";
@@ -144,6 +145,48 @@ export function startTelegram(): void {
         }
       } catch (err) {
         await ctx.reply("Failed to delete cron job.").catch(() => {});
+      }
+      return;
+    }
+
+    // Handle /skills command — list available skills
+    if (text === "/skills" || text.startsWith("/skills@")) {
+      const names = listSkillNames();
+      await ctx.reply(names.length ? `Available skills: ${names.join(", ")}` : "No skills found.");
+      return;
+    }
+
+    // Handle /skill <name> [args] command — run a task with skill context
+    if (text.startsWith("/skill ") || text.startsWith("/skill@")) {
+      const rest = text.replace(/^\/skill(@\S+)?\s*/, "").trim();
+      const spaceIdx = rest.indexOf(" ");
+      const skillName = spaceIdx > 0 ? rest.slice(0, spaceIdx) : rest;
+      const args = spaceIdx > 0 ? rest.slice(spaceIdx + 1).trim() : "";
+
+      if (!skillName) {
+        await ctx.reply("Usage: /skill <name> [args]");
+        return;
+      }
+
+      const content = getSkillContent(skillName);
+      if (!content) {
+        const names = listSkillNames();
+        await ctx.reply(`Unknown skill "${skillName}". Available: ${names.join(", ") || "(none)"}`);
+        return;
+      }
+
+      const instruction = args
+        ? `Use the following skill guide:\n\n${content}\n\n## User Request\n\n${args}`
+        : `Use the following skill guide:\n\n${content}`;
+
+      try {
+        const task = await insertTask({
+          instruction,
+          metadata: { source: "telegram", chatId: ctx.chat.id },
+        });
+        await ctx.reply(`Task queued (skill: ${skillName}): ${task.id}`);
+      } catch (err) {
+        await ctx.reply("Failed to queue task.").catch(() => {});
       }
       return;
     }

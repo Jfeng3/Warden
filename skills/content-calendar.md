@@ -1,3 +1,7 @@
+---
+trigger: When planning, reviewing, or updating the editorial calendar
+description: Editorial calendar management for openclaws.blog
+---
 # Content Calendar
 
 Manage the editorial calendar for openclaws.blog. The calendar is a markdown file at `content/calendar.md` -- simple, version-controlled, and editable.

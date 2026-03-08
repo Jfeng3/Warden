@@ -1,3 +1,7 @@
+---
+trigger: When publishing, updating, or managing blog posts on openclaws.blog via wp-cli
+description: wp-cli reference for publishing to openclaws.blog
+---
 # WordPress / Blog Publishing
 
 Publish and manage blog posts on openclaws.blog using wp-cli over SSH. The connection is configured via the `WP_SSH` env var. Before running wp commands, verify it is set: `[ -z "$WP_SSH" ] && echo "WP_SSH not configured" && exit 1`.

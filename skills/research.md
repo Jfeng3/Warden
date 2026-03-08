@@ -1,3 +1,7 @@
+---
+trigger: When researching topics, finding trending discussions, or generating content ideas
+description: Research and topic ideation using CLI tools
+---
 # Research & Topic Ideation
 
 Use CLI tools to research topics, find trending discussions, and generate content ideas for openclaws.blog.

@@ -1,3 +1,7 @@
+---
+trigger: When using the au CLI for news, Reddit, weather, YouTube, PDFs, or file conversion
+description: au CLI toolkit reference (news, Reddit, weather, YouTube, PDF, slides)
+---
 # Agent Utilities (au CLI)
 
 `au` is a CLI toolkit installed at `/opt/homebrew/bin/au`. Use it via bash for news, weather, Reddit, YouTube, PDFs, file conversion, and slides.

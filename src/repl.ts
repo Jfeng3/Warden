@@ -4,7 +4,7 @@ import type { Task, AgentStep } from "./data_model/index.js";
 import type { AgentSession } from "@mariozechner/pi-coding-agent";
 import { markNewSession, getCachedSession } from "./session-store.js";
 import { resolveModel } from "./config.js";
-import { listSkillNames } from "./skill-tool.js";
+import { listSkillNames, getSkillContent } from "./skill-tool.js";
 
 let rl: Interface | null = null;
 
@@ -189,6 +189,33 @@ export function startRepl() {
     if (input === "/skills") {
       const names = listSkillNames();
       console.log(names.length ? `Available skills: ${names.join(", ")}` : "No skills found. Add .md files to skills/");
+      rl!.prompt();
+      return;
+    }
+
+    if (input.startsWith("/skill ")) {
+      const rest = input.slice(7).trim();
+      const spaceIdx = rest.indexOf(" ");
+      const skillName = spaceIdx > 0 ? rest.slice(0, spaceIdx) : rest;
+      const args = spaceIdx > 0 ? rest.slice(spaceIdx + 1).trim() : "";
+
+      const content = getSkillContent(skillName);
+      if (!content) {
+        console.log(`Unknown skill "${skillName}". Use /skills to list available skills.`);
+        rl!.prompt();
+        return;
+      }
+
+      const instruction = args
+        ? `Use the following skill guide:\n\n${content}\n\n## User Request\n\n${args}`
+        : `Use the following skill guide:\n\n${content}`;
+
+      try {
+        const task = await insertTask({ instruction, metadata: { source: "repl" } });
+        console.log(`Task queued (skill: ${skillName}): ${task.id}`);
+      } catch (err) {
+        console.error("Failed to queue task:", err);
+      }
       rl!.prompt();
       return;
     }

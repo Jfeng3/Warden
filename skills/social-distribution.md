@@ -1,3 +1,7 @@
+---
+trigger: When sharing or amplifying blog content on Reddit, X/Twitter, or Hacker News
+description: Social media distribution playbooks for blog content
+---
 # Social Distribution
 
 Amplify blog content by sharing to social platforms. All posts require user approval before publishing.

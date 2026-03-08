@@ -1,3 +1,7 @@
+---
+trigger: When monitoring competitors, tracking AI agent landscape, or gathering competitive data
+description: Competitive landscape monitoring for AI agents/assistants
+---
 # Competitive Intelligence
 
 Monitor the AI agent/assistant landscape to inform content strategy and product positioning.

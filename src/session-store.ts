@@ -1,7 +1,7 @@
 import { createAgentSession, DefaultResourceLoader, SessionManager } from "@mariozechner/pi-coding-agent";
 import type { AgentSession } from "@mariozechner/pi-coding-agent";
 import { resolveModel } from "./config.js";
-import { SYSTEM_PROMPT } from "./prompt.js";
+import { buildSystemPrompt } from "./prompt.js";
 import { skillTool } from "./skill-tool.js";
 import type { Task } from "./data_model/index.js";
 import path from "node:path";
@@ -104,7 +104,7 @@ async function buildSession(
   const model = resolveModel(provider, modelId);
 
   const resourceLoader = new DefaultResourceLoader({
-    systemPrompt: SYSTEM_PROMPT,
+    systemPrompt: buildSystemPrompt(),
     noExtensions: true,
     noSkills: true,
     noPromptTemplates: true,
