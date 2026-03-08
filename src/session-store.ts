@@ -88,6 +88,14 @@ export async function getSessionForTask(
   return session;
 }
 
+/**
+ * Get the cached session for a given key (e.g. "repl", "telegram-123").
+ * Returns undefined if no session is cached.
+ */
+export function getCachedSession(key: string): AgentSession | undefined {
+  return sessionCache.get(key);
+}
+
 async function buildSession(
   sessionManager: SessionManager,
   provider: string,

@@ -1,7 +1,9 @@
 import { createInterface, type Interface } from "node:readline";
 import { insertTask, listActiveTasks, listRecentTasks, getRunningTask, getStepsForTask, findTaskByPrefix, listCronJobs, deleteCronJob } from "./data_model/index.js";
 import type { Task, AgentStep } from "./data_model/index.js";
-import { markNewSession } from "./session-store.js";
+import type { AgentSession } from "@mariozechner/pi-coding-agent";
+import { markNewSession, getCachedSession } from "./session-store.js";
+import { resolveModel } from "./config.js";
 import { listSkillNames } from "./skill-tool.js";
 
 let rl: Interface | null = null;
@@ -21,7 +23,7 @@ export function startRepl() {
     prompt: "warden> ",
   });
 
-  console.log("Warden REPL. /new = reset session, /tasks = list active, /cronJobs = list cron, /deleteCron <id> = delete cron, /quit = exit.");
+  console.log("Warden REPL. /new = reset, /context = show context, /tasks = active, /cronJobs = cron, /quit = exit.");
   rl.prompt();
 
   rl.on("line", async (line) => {
@@ -173,6 +175,17 @@ export function startRepl() {
       return;
     }
 
+    if (input === "/context") {
+      const session = getCachedSession("repl");
+      if (!session) {
+        console.log("No active session. Send a message first to create one.");
+      } else {
+        printContext(session);
+      }
+      rl!.prompt();
+      return;
+    }
+
     if (input === "/skills") {
       const names = listSkillNames();
       console.log(names.length ? `Available skills: ${names.join(", ")}` : "No skills found. Add .md files to skills/");
@@ -209,6 +222,56 @@ function printTaskDetail(task: Task) {
   console.log(`  Instr:   ${task.instruction}`);
   if (task.result) console.log(`  Result:  ${task.result.slice(0, 200)}`);
   if (task.error) console.log(`  Error:   ${task.error.slice(0, 200)}`);
+}
+
+function printContext(session: AgentSession) {
+  const state = session.state;
+  const messages = state.messages;
+
+  console.log("── Agent Context ──");
+  console.log(`  Model:    ${state.model?.id ?? "unknown"}`);
+  console.log(`  Provider: ${state.model?.provider ?? "unknown"}`);
+  console.log(`  Tools:    ${state.tools.map(t => t.name).join(", ")}`);
+  console.log(`  Messages: ${messages.length}`);
+  console.log(`  System prompt: ${state.systemPrompt.length} chars`);
+  console.log("");
+
+  if (messages.length === 0) {
+    console.log("  (no messages yet)");
+    return;
+  }
+
+  // Estimate token count (~4 chars per token)
+  const totalChars = messages.reduce((sum, m) => {
+    return sum + JSON.stringify(m).length;
+  }, 0) + state.systemPrompt.length;
+  console.log(`  Estimated context size: ~${Math.round(totalChars / 4)} tokens (${totalChars} chars)`);
+  console.log("");
+
+  for (let i = 0; i < messages.length; i++) {
+    const m = messages[i];
+    if (!("role" in m)) {
+      console.log(`  [${i}] custom message`);
+      continue;
+    }
+    const role = m.role;
+    if (role === "user") {
+      const content = typeof m.content === "string" ? m.content : JSON.stringify(m.content);
+      const preview = content.length > 120 ? content.slice(0, 117) + "..." : content;
+      console.log(`  [${i}] user: ${preview}`);
+    } else if (role === "assistant") {
+      const textParts = m.content.filter((c: any) => c.type === "text");
+      const toolCalls = m.content.filter((c: any) => c.type === "tool_call");
+      const textPreview = textParts.map((c: any) => c.text || "").join("").slice(0, 120);
+      const suffix = toolCalls.length > 0 ? ` [+${toolCalls.length} tool calls]` : "";
+      console.log(`  [${i}] assistant: ${textPreview ? textPreview + "..." : "(no text)"}${suffix}`);
+    } else if (role === "toolResult") {
+      const name = (m as any).toolName || (m as any).toolCallId || "?";
+      console.log(`  [${i}] toolResult: ${name}`);
+    } else {
+      console.log(`  [${i}] ${role}`);
+    }
+  }
 }
 
 async function printTaskSteps(taskId: string) {

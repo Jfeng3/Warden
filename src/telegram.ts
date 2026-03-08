@@ -1,7 +1,8 @@
 import { Bot } from "grammy";
 import { insertTask, listActiveTasks, listRecentTasks, getRunningTask, getStepsForTask, findTaskByPrefix, listCronJobs, deleteCronJob } from "./data_model/index.js";
 import type { Task, AgentStep } from "./data_model/index.js";
-import { markNewSession } from "./session-store.js";
+import { markNewSession, getCachedSession } from "./session-store.js";
+import type { AgentSession } from "@mariozechner/pi-coding-agent";
 
 let bot: Bot | null = null;
 
@@ -50,6 +51,18 @@ export function startTelegram(): void {
         }
       } catch (err) {
         await ctx.reply("Failed to list history.").catch(() => {});
+      }
+      return;
+    }
+
+    // Handle /context command — show agent context
+    if (text === "/context" || text.startsWith("/context@")) {
+      const session = getCachedSession(`telegram-${chatId}`);
+      if (!session) {
+        await ctx.reply("No active session. Send a message first to create one.");
+      } else {
+        const msg = formatContextSummary(session);
+        await ctx.reply(msg);
       }
       return;
     }
@@ -211,6 +224,50 @@ export async function notifyTaskComplete(task: Task): Promise<void> {
 }
 
 // ── Helpers for task inspection commands ─────────────────
+
+function formatContextSummary(session: AgentSession): string {
+  const state = session.state;
+  const messages = state.messages;
+  const lines: string[] = [];
+
+  lines.push("-- Agent Context --");
+  lines.push(`Model: ${state.model?.id ?? "unknown"}`);
+  lines.push(`Provider: ${state.model?.provider ?? "unknown"}`);
+  lines.push(`Tools: ${state.tools.map(t => t.name).join(", ")}`);
+  lines.push(`Messages: ${messages.length}`);
+  lines.push(`System prompt: ${state.systemPrompt.length} chars`);
+
+  const totalChars = messages.reduce((sum, m) => sum + JSON.stringify(m).length, 0) + state.systemPrompt.length;
+  lines.push(`Est. context: ~${Math.round(totalChars / 4)} tokens (${totalChars} chars)`);
+
+  if (messages.length > 0) {
+    lines.push("");
+    for (let i = 0; i < messages.length; i++) {
+      const m = messages[i];
+      if (!("role" in m)) {
+        lines.push(`[${i}] custom`);
+        continue;
+      }
+      if (m.role === "user") {
+        const content = typeof m.content === "string" ? m.content : JSON.stringify(m.content);
+        const preview = content.length > 80 ? content.slice(0, 77) + "..." : content;
+        lines.push(`[${i}] user: ${preview}`);
+      } else if (m.role === "assistant") {
+        const textParts = m.content.filter((c: any) => c.type === "text");
+        const toolCalls = m.content.filter((c: any) => c.type === "tool_call");
+        const textPreview = textParts.map((c: any) => c.text || "").join("").slice(0, 80);
+        const suffix = toolCalls.length > 0 ? ` [+${toolCalls.length} tool calls]` : "";
+        lines.push(`[${i}] assistant: ${textPreview || "(no text)"}${suffix}`);
+      } else if (m.role === "toolResult") {
+        lines.push(`[${i}] toolResult`);
+      } else {
+        lines.push(`[${i}] ${(m as any).role}`);
+      }
+    }
+  }
+
+  return lines.join("\n");
+}
 
 function formatAge(dateStr: string): string {
   const age = Math.round((Date.now() - new Date(dateStr).getTime()) / 1000);
