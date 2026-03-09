@@ -115,6 +115,39 @@ Every post follows: **Problem → Solution → Proof → Action**
 3. **Proof**: Case study, comparison table, or data backing the claim
 4. **Action**: Getting started steps + FAQ to remove objections
 
+## Topic Selection: Problem-First Approach
+
+Every topic must start from a **real problem people are searching for** — never from a product feature or technology name.
+
+### The rule
+- **Wrong**: "Why Mac Mini is great for AI agents" (product-first)
+- **Right**: "My automation stops every time I close my laptop" (problem-first)
+- **Wrong**: "OpenClaw features overview" (feature-first)
+- **Right**: "How to keep your business running 24/7 without hiring night staff" (problem-first)
+
+### How to find problem-first topics
+1. **What are people complaining about?** Check Reddit, forums, support threads — real frustrations in real language
+2. **What are they Googling?** "How to..." and "Why does..." queries reveal problems. "Best X for Y" reveals decisions.
+3. **What does V2Cloud's audience struggle with?** Slow laptops, expensive cloud bills, security worries, scaling without hiring
+4. **What would someone ask their IT person?** That's the title of your post.
+
+### Topic framing formula
+```
+[Audience's problem] → [Why it's getting worse] → [Our solution approach]
+```
+
+Examples:
+| Problem people have | Our angle |
+|--------------------|-----------|
+| "My laptop freezes when I run AI tools and Zoom at the same time" | Dedicated hardware separates workloads |
+| "Cloud bills keep going up and I can't predict costs" | One-time hardware vs monthly subscriptions |
+| "I don't know if AI automation is safe for my business data" | Physical isolation = simplest security model |
+| "My competitor is showing up in AI search results and I'm not" | AEO strategy for brand control |
+| "I want to automate but I'm not technical" | No-code agent setup on Mac Mini |
+
+### Title test
+Before writing, ask: **"Would a business owner type this into Google?"** If no, reframe until the answer is yes.
+
 ## Opening Hook Formulas
 
 - Statistic + source: "Eight out of ten companies have already..."
