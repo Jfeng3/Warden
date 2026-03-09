@@ -16,7 +16,7 @@ When writing blog posts for openclaws.blog, follow this structure and style cons
 - Key angles: always-on automation, CLI-native, task queue architecture, self-hosted
 - GitHub: https://github.com/qwibitai/warden (or link to actual repo)
 
-When writing about these products, emphasize: developer empowerment, open-source values, privacy/local-first, and practical automation.
+When writing about these products, emphasize: business efficiency, cost savings, privacy/data sovereignty, always-on reliability, and practical automation that non-technical teams can benefit from.
 
 ## Structure Template
 
@@ -62,6 +62,33 @@ H2: Frequently Asked Questions
   - Address common objections and clarifications
   - 50-150 words per answer
 ```
+
+## Target Audience
+
+Our audience matches V2Cloud.com's readers: **non-technical business professionals** at small-to-medium businesses.
+
+- **Primary personas**: IT managers, business owners, SMB decision-makers, marketing leaders
+- **Technical level**: Low-to-moderate. Assume readers understand business concepts but NOT developer tools.
+- **Their questions**: "Should my team adopt this?" not "How do I deploy this?"
+- **Industries**: Healthcare, education, finance, marketing agencies, engineering firms
+
+### Audience Rules
+
+- **NEVER use unexplained jargon**: No SSH, Docker, pm2, pyenv, webpack, API keys, vCPUs, egress bandwidth, ACID transactions, or similar developer terms without inline plain-language explanation
+- **Replace developer terms** with business equivalents:
+  - SSH → "remote access"
+  - API keys → "service credentials (the digital passwords that connect your tools)"
+  - vCPUs → "virtual processors"
+  - Egress bandwidth → "data transfer fees"
+  - Noisy neighbors → "other users competing for the same resources"
+  - IAM/networking → "security configuration"
+  - Process manager → "automatic restart software"
+- **Introduce branded metaphors** and repeat them as anchors throughout the post (V2Cloud style):
+  - Examples: "The Infrastructure Gap", "The Always-On Tax", "The Laptop Trap", "The Deployment Desert", "The Separation Principle"
+  - Bold on first use, then reference naturally throughout
+- **Explain concepts inline** using parenthetical definitions: "Total Cost of Ownership (what you actually pay when you add up every expense over time)"
+- **Frame everything as business outcomes**: revenue impact, time saved, client satisfaction, billable hours recovered — not technical elegance
+- **Case study personas** should be business roles: agency owners, marketing VPs, operations managers — not developers or engineers
 
 ## Writing Style
 
