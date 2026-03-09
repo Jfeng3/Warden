@@ -47,6 +47,40 @@ wp post get <post-id> --field=post_content --ssh="$WP_SSH"
 wp post create --post_title="Tagged Post" --post_content="..." --post_status=publish --post_category=1,2 --tags_input="tech,tutorial" --ssh="$WP_SSH"
 ```
 
+## Updating Pages (Homepage, About, etc.)
+
+Pages work the same as posts — they're just posts with a different type. Use the same `wp post update` command.
+
+```bash
+# Known page IDs on openclaws.blog:
+#   37 = Home (homepage content, hero, value propositions)
+#   1  = About (about page)
+#   38 = Blog (blog listing page)
+
+# Update homepage content
+wp post update 37 --post_content="$(cat /tmp/homepage.html)" --ssh="$WP_SSH"
+
+# Update about page
+wp post update 1 --post_content="$(cat /tmp/about.html)" --ssh="$WP_SSH"
+
+# List all pages
+wp post list --post_type=page --fields=ID,post_title,post_status --ssh="$WP_SSH"
+```
+
+## Updating Site Settings (Tagline, etc.)
+
+`wp option update` works over SSH for WordPress.com:
+
+```bash
+# Update site tagline
+wp option update blogdescription "AI automation guides for business owners and IT leaders" --ssh="$WP_SSH"
+
+# Update site title
+wp option update blogname "OpenClaws" --ssh="$WP_SSH"
+```
+
+**Note:** Some wp-cli commands (like `wp theme`, `wp plugin`) do NOT work on WordPress.com SSH. The following DO work: `wp post`, `wp option update`, `wp media`.
+
 ## Post Statuses
 
 `draft` (default), `publish` (live), `future` (scheduled, requires --post_date), `pending` (awaiting review), `private` (admin-only).
