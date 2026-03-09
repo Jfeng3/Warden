@@ -1,8 +1,9 @@
-import { createAgentSession, DefaultResourceLoader, SessionManager } from "@mariozechner/pi-coding-agent";
+import { createAgentSession, createCodingTools, DefaultResourceLoader, SessionManager } from "@mariozechner/pi-coding-agent";
 import type { AgentSession } from "@mariozechner/pi-coding-agent";
 import { resolveModel } from "./config.js";
 import { buildSystemPrompt } from "./prompt.js";
 import { skillTool } from "./skill-tool.js";
+import { wpTool } from "./wp-tool.js";
 import type { Task } from "./data_model/index.js";
 import path from "node:path";
 import os from "node:os";
@@ -112,11 +113,28 @@ async function buildSession(
   });
   await resourceLoader.reload();
 
+  // Block git and gh commands — this agent focuses on content, not code
+  const BLOCKED_COMMANDS = ["git", "gh"];
+  const tools = createCodingTools(process.cwd(), {
+    bash: {
+      spawnHook: (context) => {
+        const firstWord = context.command.trimStart().split(/\s+/)[0];
+        if (BLOCKED_COMMANDS.includes(firstWord)) {
+          throw new Error(
+            `Command '${firstWord}' is not available. Use the wp tool for WordPress operations and bash for other tasks.`
+          );
+        }
+        return context;
+      },
+    },
+  });
+
   const { session } = await createAgentSession({
     model,
     sessionManager,
     resourceLoader,
-    customTools: [skillTool as any],
+    tools,
+    customTools: [skillTool as any, wpTool as any],
   });
 
   return session;

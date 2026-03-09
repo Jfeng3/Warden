@@ -1,80 +1,76 @@
 ---
-trigger: When monitoring competitors, tracking AI agent landscape, or gathering competitive data
-description: Competitive landscape monitoring for AI agents/assistants
+trigger: When monitoring content competitors, analyzing rival blogs, or finding content gaps
+description: Content competitor analysis for blog strategy
 ---
-# Competitive Intelligence
+# Content Competitor Analysis
 
-Monitor the AI agent/assistant landscape to inform content strategy and product positioning.
+Monitor competing blogs and publications to find content gaps, trending angles, and positioning opportunities for openclaws.blog.
 
-## Competitor Tracker
+## Content Competitors
 
-Key tools and projects to monitor:
+Key blogs and publications to monitor:
 
-| Project | Category | What to Watch |
-|---------|----------|---------------|
-| Goose (Block) | CLI agent | New features, blog posts, community growth |
-| Aider | Coding agent | Release notes, supported models |
-| Continue | IDE agent | VS Code marketplace stats, changelog |
-| Cursor | AI IDE | Pricing changes, new capabilities |
-| Claude Code | CLI agent | Feature releases, docs updates |
-| Open Interpreter | CLI agent | Releases, community activity |
+| Publication | Focus | What to Watch |
+|-------------|-------|---------------|
+| Cursor blog | AI coding tools | Feature announcements, tutorials, positioning |
+| Aider blog/docs | Coding agent | Technical deep-dives, changelog posts |
+| Continue docs/blog | IDE integration | Developer workflow content |
+| Simon Willison's blog | AI tools/local LLMs | Trending topics, tool reviews |
+| The Pragmatic Engineer | Developer tools | Industry trends, market analysis |
+| Hacker News (front page) | Tech/startups | What resonates with developer audience |
 
-## GitHub Repo Monitoring
+## Monitoring Methods
 
+### Blog & Content Scanning
 ```bash
-# Check repo stats (stars, forks, recent activity)
-gh api repos/OWNER/REPO --jq '{stars: .stargazers_count, forks: .forks_count, open_issues: .open_issues_count, updated: .updated_at}'
+# Fetch competitor blog pages for recent posts
+curl -s https://aider.chat/blog/ | head -100
+curl -s https://docs.cursor.com/changelog | head -100
 
-# List recent releases
-gh release list --repo OWNER/REPO --limit 5
+# Search Reddit for competitor content
+au reddit search "cursor vs aider" top month 10
+au reddit search "best ai coding tool" top month 10
 
-# View latest release details
-gh release view --repo OWNER/REPO
-
-# Compare star growth (check periodically and track)
-gh api repos/OWNER/REPO --jq '.stargazers_count'
-
-# List recent commits (activity pulse)
-gh api repos/OWNER/REPO/commits --jq '.[0:5] | .[] | {date: .commit.author.date, message: .commit.message}'
-```
-
-## Reddit & HN Monitoring
-
-```bash
-# Search Reddit for competitor mentions
-au reddit search "OpenInterpreter OR Aider OR Goose AI agent" new all 10
-
-# Check relevant subreddits for trending topics
-au reddit hot LocalLLaMA 10
-au reddit hot selfhosted 10
-
-# Monitor HN for AI agent discussions
+# Check HN for trending AI tool discussions
 au news latest --provider hacker-news --limit 15
 ```
+
+### Content Gap Analysis
+
+When reviewing competitor content, look for:
+
+1. **Topics they cover that we don't** → Opportunity to write our take
+2. **Topics they cover poorly** → Opportunity to write a better version
+3. **Questions in their comments** → Topics their audience wants but isn't getting
+4. **Keywords they rank for** → Can we create competing content?
 
 ## Turning Intel into Content
 
 When you find something notable:
 
-1. **New competitor release** -> Write a comparison post ("X just launched Y -- here's how OpenClaw compares")
-2. **Trending topic** -> Write an explainer that positions OpenClaw as a solution
-3. **Community pain point** -> Write a tutorial addressing it with OpenClaw
-4. **Market shift** -> Write a thought leadership piece on the trend
+1. **Competitor publishes a comparison** → Write our own with a different angle or more depth
+2. **Trending topic on HN/Reddit** → Write an explainer that positions OpenClaw as relevant
+3. **Community pain point in comments** → Write a tutorial addressing it
+4. **Content gap** → Create the definitive resource on that topic
 
-## Tracking Format
+## Reporting Format
 
 When reporting competitive intel, use this format:
 
 ```
-## Competitive Update - [Date]
+## Content Competitor Scan — [Date]
 
-### Notable Changes
-- [Project]: [What changed] - [Content opportunity]
+### Content Gaps Found
+- [Topic]: [Who's covering it] — [Our angle]
 
 ### Trending Topics
-- [Topic]: [Where trending] - [Angle for openclaws.blog]
+- [Topic]: [Where trending] — [Angle for openclaws.blog]
+
+### Keyword Opportunities
+- [Keyword]: [Competitor ranking] — [Can we compete?]
 
 ### Action Items
 - [ ] Write: [post idea]
-- [ ] Monitor: [thing to keep watching]
+- [ ] Update: [existing post that needs refresh]
+- [ ] Monitor: [emerging topic to keep watching]
 ```
