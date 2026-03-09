@@ -62,6 +62,9 @@ wp post create --post_title="Chinese Title Here" \
   --post_content="$(cat /tmp/post_zh.html)" \
   --post_status=publish \
   --ssh="$WP_SSH"
+
+# IMPORTANT: Assign the Chinese category (ID 1361) so it appears on /zh-blog/ not /blog/
+wp post term add <new-post-id> category chinese --ssh="$WP_SSH"
 ```
 
 ### Step 4: Cross-link

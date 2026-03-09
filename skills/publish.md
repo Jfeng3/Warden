@@ -45,7 +45,32 @@ wp post get <post-id> --field=post_content --ssh="$WP_SSH"
 
 # Add categories and tags
 wp post create --post_title="Tagged Post" --post_content="..." --post_status=publish --post_category=1,2 --tags_input="tech,tutorial" --ssh="$WP_SSH"
+
+# Add a category to an existing post
+wp post term add <post-id> category <slug> --ssh="$WP_SSH"
 ```
+
+## Language Categories
+
+The blog uses categories to separate English and Chinese content on the blog listing pages:
+
+| Category | ID | Slug | Purpose |
+|----------|-----|------|---------|
+| English | 1362 | `english` | Assigned to all English posts |
+| Chinese | 1361 | `chinese` | Assigned to all Chinese (`zh-`) posts |
+
+**When publishing a new English post**, always assign the `english` category:
+```bash
+wp post term add <post-id> category english --ssh="$WP_SSH"
+```
+
+**When publishing a Chinese translation**, always assign the `chinese` category:
+```bash
+wp post term add <post-id> category chinese --ssh="$WP_SSH"
+```
+
+The `/blog/` page uses a Query Loop block filtered to category 1362 (English only).
+The `/zh-blog/` page uses a Query Loop block filtered to category 1361 (Chinese only).
 
 ## Updating Pages (Homepage, About, etc.)
 
@@ -55,7 +80,10 @@ Pages work the same as posts — they're just posts with a different type. Use t
 # Known page IDs on openclaws.blog:
 #   37 = Home (homepage content, hero, value propositions)
 #   1  = About (about page)
-#   38 = Blog (blog listing page)
+#   38 = Blog (blog listing page — Query Loop filtered to English category)
+#   64 = zh-home (Chinese homepage)
+#   65 = zh-about (Chinese about page)
+#   81 = zh-blog (Chinese blog listing — Query Loop filtered to Chinese category)
 
 # Update homepage content
 wp post update 37 --post_content="$(cat /tmp/homepage.html)" --ssh="$WP_SSH"
