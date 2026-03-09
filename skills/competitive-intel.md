@@ -106,7 +106,17 @@ Run this workflow daily. For each change detected, generate a topic idea for ope
 
 ### Step 1: Detect changes
 
-Query the WordPress REST API for posts and pages modified in the last 24 hours. Classify each as NEW or REFRESH.
+Use **all three methods** to catch changes comprehensively:
+
+**Method 1 — WordPress REST API** (primary): Query for posts and pages modified in the last 24 hours. Classify each as NEW or REFRESH by comparing `date` vs `modified`.
+
+**Method 2 — Sitemap lastmod** (catch non-blog changes): Fetch `https://v2cloud.com/sitemap_index.xml` and check lastmod dates on each sub-sitemap. If any sitemap was updated in the last 24 hours, fetch it and identify which URLs changed. This catches pages the REST API might miss (solutions, applications, custom post types).
+
+**Method 3 — Wayback Machine diffing** (understand what changed): For significant changes found in Methods 1-2, check if a Wayback snapshot exists from before the change:
+```bash
+curl -s "https://web.archive.org/cdx/search/cdx?url=v2cloud.com/blog/SLUG&output=text&fl=timestamp,statuscode&limit=3"
+```
+Compare old vs live content to identify what was added, removed, or rewritten.
 
 ### Step 2: Fetch and analyze changed content
 
@@ -155,6 +165,15 @@ Prioritize topics scoring 15+ out of 20.
 - [ ] Refresh: [our existing post that needs updating]
 - [ ] Pitch: [co-marketing opportunity to propose]
 ```
+
+## Detecting Theme/Infrastructure Deploys
+
+Check CSS/JS asset URLs for version query params that reveal deploy times:
+```bash
+# Look for ?v= params in page source — often Unix timestamps of the build
+curl -s https://v2cloud.com | grep -o 'bundle\.\(min\.\)\?[cj]ss?v=[0-9]*'
+```
+Theme directory name in asset paths (e.g. `/app/themes/frogspark/`) reveals the dev agency.
 
 ## Other Content Competitors
 
