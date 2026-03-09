@@ -1,16 +1,18 @@
 ---
-trigger: When monitoring content competitors, analyzing rival blogs, detecting site changes, or generating daily topic ideas
-description: Content competitor monitoring via WordPress REST API and sitemap diffing
+trigger: When monitoring V2Cloud content, generating co-marketing topic ideas, or preparing for weekly partner sync
+description: V2Cloud co-marketing partner monitoring via WordPress REST API and sitemap diffing
 ---
-# Content Competitor Analysis
+# Co-Marketing Partner Monitoring
 
-Monitor competing WordPress sites to detect new pages, content refreshes, and strategic shifts — then generate daily topic ideas for openclaws.blog.
+Monitor V2Cloud's site to detect new pages, content refreshes, and strategic shifts — then generate **complementary** topic ideas for openclaws.blog that both sites benefit from.
+
+**IMPORTANT**: V2Cloud is a co-marketing partner, NOT a competitor. We meet their content marketing manager weekly. All topic ideas must pass this test: "Would V2Cloud's content team happily cross-link to this post?" If the answer is no, don't write it.
 
 ## Primary Monitoring Target
 
 | Site | Base URL | Focus | Why We Monitor |
 |------|----------|-------|----------------|
-| V2 Cloud | v2cloud.com | Cloud VDI, AI agent hosting | Same audience (AI agent builders), complementary positioning, co-marketing target |
+| V2 Cloud | v2cloud.com | Cloud VDI, AI agent hosting | Co-marketing partner. Same audience (SMB decision-makers). Weekly sync with their content marketing manager. |
 
 ## WordPress REST API Monitoring
 
@@ -125,30 +127,34 @@ For each new or refreshed page, fetch the live content and identify:
 - **Content angle** (tutorial, comparison, thought leadership, product page)
 - **Audience segment** (enterprise IT, developers, MSPs, remote workers)
 
-### Step 3: Generate topic ideas using this matrix
+### Step 3: Generate complementary topic ideas
 
-| Their change type | Our response |
-|-------------------|-------------|
-| ✨ New blog post on topic X | Write a complementary or counter-perspective post on topic X |
-| ✨ New solutions/product page | Write a "how to do X without cloud vendor lock-in" alternative |
-| 🔄 Refreshed old post | Check if we have competing content — if so, refresh ours too; if not, write our take |
-| 📄 New template pages (bulk) | Identify the keyword cluster they're targeting → write a definitive guide covering that cluster |
-| 🔧 New hub/structure page | They're building topic authority — write content that links to/from the same topic cluster |
+**Golden rule**: Every topic must strengthen BOTH sites. We write about the "why" and "how to think about it"; V2Cloud writes about the "how to do it with our platform." Together we own the topic.
+
+| Their change type | Our complementary response |
+|-------------------|---------------------------|
+| ✨ New blog post on topic X | Write a broader industry perspective that links to their post as a solution example |
+| ✨ New product/solution page | Write a "business case for [category]" post that naturally references their offering |
+| 🔄 Refreshed old post | Write a fresh take on the same topic from a different angle they can cross-link to |
+| 📄 New template pages (bulk) | Write a definitive guide for that keyword cluster — they link to us for education, we link to them for implementation |
+| 🔧 New hub/structure page | Write thought leadership content in that topic cluster that complements their product pages |
+
+**Never write**: "You don't need X" where X is something V2Cloud sells. Instead write: "How to evaluate X for your business" and include them as an option.
 
 ### Step 4: Score and prioritize
 
 For each topic idea, score on:
-1. **Keyword overlap** (1-5): Does this target the same searches as their content?
-2. **Content gap** (1-5): How different is our angle from theirs?
-3. **Co-marketing potential** (1-5): Would they want to cross-link this?
+1. **Cross-link value** (1-5): Would V2Cloud's team want to link to this from their site?
+2. **Audience overlap** (1-5): Does this reach the same SMB decision-makers both sites target?
+3. **Content gap** (1-5): Does this fill a gap neither site currently covers?
 4. **Our expertise fit** (1-5): Can we write this authentically?
 
-Prioritize topics scoring 15+ out of 20.
+Prioritize topics scoring 15+ out of 20. **Reject any topic scoring below 3 on cross-link value.**
 
 ## Reporting Format
 
 ```
-## Daily Competitor Scan — [Date]
+## Daily Partner Scan — [Date]
 
 ### Changes Detected
 | Type | Slug | Author | Notes |
@@ -193,8 +199,8 @@ Set up cron jobs to automate monitoring:
 
 ```bash
 # Daily V2Cloud scan at 8am PT
-npx tsx src/cron-cli.ts add --name "daily-v2cloud-scan" --cron "0 8 * * *" --tz "America/Los_Angeles" --instruction "Use the competitive-intel skill. Query the V2Cloud WordPress REST API for posts and pages modified in the last 24 hours (use today's date). For each change detected, classify it (new vs refresh), fetch the content, and generate 1-2 topic ideas for openclaws.blog. Report findings using the Daily Competitor Scan format."
+npx tsx src/cron-cli.ts add --name "daily-v2cloud-scan" --cron "0 8 * * *" --tz "America/Los_Angeles" --instruction "Use the co-marketing skill. Query the V2Cloud WordPress REST API for posts and pages modified in the last 24 hours (use today's date). For each change detected, classify it (new vs refresh), fetch the content, and generate 1-2 topic ideas for openclaws.blog. Report findings using the Daily Partner Scan format."
 
 # Weekly broader competitor scan on Mondays at 9am PT
-npx tsx src/cron-cli.ts add --name "weekly-competitor-scan" --cron "0 9 * * MON" --tz "America/Los_Angeles" --instruction "Use the competitive-intel skill. Check Cursor changelog, Aider blog, HN front page, and Reddit r/LocalLLaMA for notable content from the past week. Generate 2-3 topic ideas for openclaws.blog and report using the Daily Competitor Scan format."
+npx tsx src/cron-cli.ts add --name "weekly-competitor-scan" --cron "0 9 * * MON" --tz "America/Los_Angeles" --instruction "Use the co-marketing skill. Check Cursor changelog, Aider blog, HN front page, and Reddit r/LocalLLaMA for notable content from the past week. Generate 2-3 topic ideas for openclaws.blog and report using the Daily Partner Scan format."
 ```

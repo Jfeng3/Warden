@@ -135,11 +135,17 @@ See `.env.example` for the full list: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `ANTH
 
 Warden runs an automated content marketing pipeline for **openclaws.blog**, targeting non-technical business professionals (matching V2Cloud.com's audience: IT managers, business owners, SMB decision-makers).
 
+### V2Cloud Partnership
+
+V2Cloud (v2cloud.com) is a **co-marketing partner**, not a competitor. We share the same audience (SMB decision-makers, IT managers) with complementary positioning: they sell managed cloud VMs, we write about self-hosted AI automation. Weekly sync with their content marketing manager to discuss collaboration.
+
+**Content rule**: Never write adversarial content ("you don't need cloud desktops"). Always write complementary content that both sites would cross-link to. Every topic idea must pass: "Would V2Cloud's content team happily link to this?"
+
 ### Cron Jobs
 
 | Job | Schedule | What It Does |
 |-----|----------|-------------|
-| `daily-v2cloud-scan` | Daily 8am PT | Queries V2Cloud WordPress REST API for content changes in the last 24 hours. Classifies each as new vs refresh, generates 1-2 topic ideas for openclaws.blog. Uses `competitive-intel` skill. |
+| `daily-v2cloud-scan` | Daily 8am PT | Monitors V2Cloud site for content changes. Classifies each as new vs refresh, generates 1-2 **complementary** topic ideas for openclaws.blog. Uses `co-marketing` skill. |
 | `biweekly-blog-publish` | Wed + Sun 9am PT | Reviews topic ideas from recent daily scans, picks the best one, writes a full blog post, and **publishes** it on WordPress. Uses `content-style` + `seo-audit` skills. |
 | `Ting walk reminder` | Daily 3pm PT | Sends walk reminder to Telegram. |
 
@@ -166,7 +172,7 @@ Wed + Sun (9am PT)
 | Skill | File | Purpose |
 |-------|------|---------|
 | `content-style` | `skills/content-style.md` | Writing style, structure template, **target audience rules**, branded metaphor patterns, jargon blacklist |
-| `competitive-intel` | `skills/competitive-intel.md` | V2Cloud REST API monitoring, topic generation matrix, competitor scanning |
+| `co-marketing` | `skills/co-marketing.md` | V2Cloud partner monitoring, complementary topic generation, REST API + sitemap + Wayback scanning |
 | `seo-audit` | `skills/seo-audit.md` | On-page SEO checklist, keyword research workflow |
 | `aeo-audit` | `skills/aeo-audit.md` | Answer Engine Optimization for AI-generated answers (ChatGPT, Perplexity, Google AI Overviews) |
 | `publish` | `skills/publish.md` | wp-cli reference, page IDs (Home=37, About=1, Blog=38), site settings |
