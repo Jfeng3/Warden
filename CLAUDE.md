@@ -131,6 +131,82 @@ See `.env.example` for the full list: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `ANTH
 
 - **wp-cli** — WordPress CLI for blog publishing on openclaws.blog over SSH. Installed via Homebrew at `/opt/homebrew/bin/wp`. The agent uses `wp post create/update/list/delete --ssh="$WP_SSH"` via bash. Requires `WP_SSH` env var (e.g. `user@ssh.wp.com`).
 
+## Automated Content Workflow
+
+Warden runs an automated content marketing pipeline for **openclaws.blog**, targeting non-technical business professionals (matching V2Cloud.com's audience: IT managers, business owners, SMB decision-makers).
+
+### Cron Jobs
+
+| Job | Schedule | What It Does |
+|-----|----------|-------------|
+| `daily-v2cloud-scan` | Daily 8am PT | Queries V2Cloud WordPress REST API for content changes in the last 24 hours. Classifies each as new vs refresh, generates 1-2 topic ideas for openclaws.blog. Uses `competitive-intel` skill. |
+| `biweekly-blog-publish` | Wed + Sun 9am PT | Reviews topic ideas from recent daily scans, picks the best one, writes a full blog post, and **publishes** it on WordPress. Uses `content-style` + `seo-audit` skills. |
+| `Ting walk reminder` | Daily 3pm PT | Sends walk reminder to Telegram. |
+
+### Content Pipeline Flow
+
+```
+Daily scan (8am PT)
+  → Query V2Cloud REST API for posts/pages modified in last 24h
+  → Classify: new content vs refresh
+  → Generate 1-2 topic ideas with scoring (keyword overlap, content gap, co-marketing potential)
+  → Report findings via task result
+
+Wed + Sun (9am PT)
+  → Collect topic ideas from recent daily scans
+  → Pick best topic based on scoring criteria
+  → Load content-style skill (audience rules, branded metaphors, structure template)
+  → Load seo-audit skill (on-page SEO checklist)
+  → Write full blog post (2,000-3,000 words)
+  → Publish to WordPress via wp-cli: wp post create --post_status=publish --ssh="$WP_SSH"
+```
+
+### Skills Used in Content Workflow
+
+| Skill | File | Purpose |
+|-------|------|---------|
+| `content-style` | `skills/content-style.md` | Writing style, structure template, **target audience rules**, branded metaphor patterns, jargon blacklist |
+| `competitive-intel` | `skills/competitive-intel.md` | V2Cloud REST API monitoring, topic generation matrix, competitor scanning |
+| `seo-audit` | `skills/seo-audit.md` | On-page SEO checklist, keyword research workflow |
+| `aeo-audit` | `skills/aeo-audit.md` | Answer Engine Optimization for AI-generated answers (ChatGPT, Perplexity, Google AI Overviews) |
+| `publish` | `skills/publish.md` | wp-cli reference, page IDs (Home=37, About=1, Blog=38), site settings |
+
+### Target Audience
+
+All blog content targets **non-technical business professionals** at SMBs — the same audience as V2Cloud.com. Key rules enforced by `content-style` skill:
+
+- No unexplained developer jargon (SSH, Docker, pm2, API keys, etc.)
+- Branded metaphors repeated as anchors ("The Always-On Tax", "The Deployment Desert", etc.)
+- Business outcomes over technical details (revenue, time saved, billable hours)
+- Case study personas are business roles (agency owners, marketing VPs), not developers
+
+### WordPress Site Structure
+
+| Page ID | Page | Purpose |
+|---------|------|---------|
+| 37 | Home | Hero headline, value propositions, latest posts |
+| 1 | About | Blog mission, what we cover, our tools |
+| 38 | Blog | Blog listing page |
+
+Site tagline: "AI automation guides for business owners and IT leaders"
+
+### Managing Cron Jobs
+
+```bash
+# List all cron jobs
+npx tsx src/cron-cli.ts list
+
+# Add a new cron job
+npx tsx src/cron-cli.ts add --name "job-name" --cron "0 8 * * *" --tz "America/Los_Angeles" --instruction "..."
+
+# Disable/enable
+npx tsx src/cron-cli.ts update <id> --enabled false
+npx tsx src/cron-cli.ts update <id> --enabled true
+
+# Delete
+npx tsx src/cron-cli.ts delete <id>
+```
+
 ## Related Repositories
 
 - **OpenClaw** — https://github.com/openclaw/openclaw — Your own personal AI assistant. Any OS. Any Platform. The lobster way.
