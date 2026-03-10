@@ -368,16 +368,16 @@ export default function LandingPage() {
             </div>
 
             <h1 className="font-display text-5xl md:text-6xl lg:text-7xl leading-[1.05] text-text-primary mb-6">
-              AI agents cite{" "}
-              <span className="italic text-phosphor">your brand</span>,{" "}
-              not your competitors&apos;
+              More posts, zero new hires —{" "}
+              <span className="italic text-phosphor">every one built for AI agents to read</span>
             </h1>
 
             <p className="text-lg text-text-secondary leading-relaxed max-w-lg mb-8">
-              An AI content assistant that drafts agent-optimized posts your team
-              reviews. Every post is structured so ChatGPT, Perplexity, and Google
-              AI Overviews parse your content, pull direct quotes, and cite you as
-              the authoritative source — not the other guys.
+              An AI content assistant that finds high-value topics, writes
+              publish-ready posts following your style guide, and structures
+              every piece so ChatGPT, Perplexity, and Google AI Overviews
+              can parse, quote, and cite your brand. Your team reviews and
+              approves — the pipeline handles the rest.
             </p>
 
             <div className="flex flex-wrap gap-4">
