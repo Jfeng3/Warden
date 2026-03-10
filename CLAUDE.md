@@ -66,6 +66,7 @@ warden/
 │                             #   insertAgentStep, upsertConversationHistory, etc.)
 ├── tests/
 │   └── resolve-metadata.test.ts  # E2E tests for metadata inheritance (cron → Telegram routing)
+├── landing/                  # Next.js landing page for openclaws.blog (deployed to Vercel)
 └── dist/                     # Compiled output (gitignored)
 ```
 
@@ -212,6 +213,29 @@ npx tsx src/cron-cli.ts update <id> --enabled true
 # Delete
 npx tsx src/cron-cli.ts delete <id>
 ```
+
+## Landing Page
+
+The `landing/` directory contains a standalone Next.js app for the openclaws.blog landing page. It is a separate project from the main Warden CLI.
+
+```bash
+cd landing
+npm run dev              # Local dev server (http://localhost:3000)
+npm run build            # Production build
+vercel --prod            # Deploy to Vercel (run from landing/)
+```
+
+- **Stack**: Next.js 15, React 19, Tailwind CSS v4, TypeScript
+- **Deployed to**: Vercel
+- **Design**: Dark terminal-noir theme with amber/cyan accents
+- **Key sections**: Hero with animated terminal, pipeline visualization, AEO features, stats, branded concepts
+- **Target buyer**: Content marketing managers/directors (e.g. V2Cloud's content team)
+
+### Landing Page Messaging Rules
+
+1. **Never mention monitoring or scanning other companies' sites** — no "scans partner sites," "monitors V2Cloud," "competitive scanning," or anything implying surveillance of another company's content. Frame capabilities as "industry trend analysis" or "content gap research" instead.
+2. **Never say content is fully AI-written** — position as "AI-assisted content marketer" or "AI content assistant." The AI drafts and optimizes; humans review and approve. Never say "no human in the loop," "autonomously written," or "100% automated."
+3. **Frame for content marketing buyers** — every feature should answer "why should a content director pay for this?" Focus on AEO, time savings, consistent publishing cadence, and brand citation by AI models.
 
 ## Related Repositories
 

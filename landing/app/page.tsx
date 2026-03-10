@@ -9,21 +9,21 @@ import { useEffect, useState, useRef } from "react";
 const TERMINAL_LINES = [
   { text: "$ warden start --provider anthropic", type: "cmd" as const, delay: 0 },
   { text: "[08:00] Polling task queue...", type: "info" as const, delay: 600 },
-  { text: "[08:00] Cron triggered: daily-v2cloud-scan", type: "info" as const, delay: 1200 },
-  { text: "[08:00] Running competitive content analysis...", type: "dim" as const, delay: 1800 },
-  { text: "[08:01] Found 2 new posts, 1 refresh", type: "success" as const, delay: 2600 },
-  { text: "[08:01] Generated 3 complementary topic ideas", type: "success" as const, delay: 3200 },
+  { text: "[08:00] Cron triggered: daily-content-research", type: "info" as const, delay: 1200 },
+  { text: "[08:00] Analyzing industry trends and content gaps...", type: "dim" as const, delay: 1800 },
+  { text: "[08:01] Found 3 high-value topic opportunities", type: "success" as const, delay: 2600 },
+  { text: "[08:01] Scored and ranked by AEO potential", type: "success" as const, delay: 3200 },
   { text: "[08:01] Top pick: \"Why Your Automation Dies When You Close Your Laptop\"", type: "highlight" as const, delay: 3800 },
   { text: "[08:01] Score: cross-link=5, audience=4, gap=5, fit=5", type: "dim" as const, delay: 4200 },
   { text: "", type: "info" as const, delay: 4800 },
   { text: "[09:00] Cron triggered: biweekly-blog-publish", type: "info" as const, delay: 5000 },
   { text: "[09:00] Loading skills: content-style, seo-audit, aeo-audit", type: "dim" as const, delay: 5600 },
-  { text: "[09:01] Writing post... (2,847 words)", type: "info" as const, delay: 6400 },
+  { text: "[09:01] Drafting post... (2,847 words)", type: "info" as const, delay: 6400 },
   { text: "[09:03] AEO check: ✓ Q&A headings ✓ FAQ section ✓ definition blocks", type: "cyan" as const, delay: 7200 },
   { text: "[09:03] SEO check: ✓ meta tags ✓ internal links ✓ keyword density 1.4%", type: "cyan" as const, delay: 7800 },
   { text: "[09:04] Publishing to WordPress...", type: "cmd" as const, delay: 8400 },
-  { text: "[09:04] ✓ Published: post ID 247", type: "success" as const, delay: 9200 },
-  { text: "[09:04] ✓ Notified Telegram: task complete", type: "success" as const, delay: 9800 },
+  { text: "[09:04] ✓ Draft ready for review: post ID 247", type: "success" as const, delay: 9200 },
+  { text: "[09:04] ✓ Notified team: draft ready for approval", type: "success" as const, delay: 9800 },
 ];
 
 function Terminal() {
@@ -453,10 +453,10 @@ export default function LandingPage() {
               that never clocks out
             </h2>
             <p className="text-text-secondary max-w-xl leading-relaxed">
-              Your AI content assistant monitors industry trends, identifies
-              high-value topics, drafts publication-ready posts, and publishes on
-              a schedule your team controls. Review and approve, or let it run
-              hands-free.
+              Your AI content assistant researches industry trends, identifies
+              high-value topics, and drafts publication-ready posts on a schedule
+              your team controls. You review, refine, and approve — it handles
+              the heavy lifting.
             </p>
           </div>
 
@@ -465,15 +465,15 @@ export default function LandingPage() {
             <div className="flex flex-col gap-16">
               <PipelineStep
                 number="01"
-                title="Monitor"
-                desc="Tracks competitor and partner content daily. Spots trending topics, identifies content gaps, and surfaces opportunities your team would miss."
+                title="Research"
+                desc="Analyzes industry trends and content gaps daily. Surfaces high-value topic opportunities your team would otherwise spend hours finding."
                 schedule="Daily — 8:00 AM PT"
                 icon={Icons.radar}
               />
               <PipelineStep
                 number="02"
                 title="Generate"
-                desc="Scores topic ideas on keyword overlap, audience fit, and co-marketing potential. Prioritizes what will drive traffic and citations."
+                desc="Scores topic ideas on keyword opportunity, audience fit, and AEO potential. Prioritizes what will drive traffic and AI citations."
                 schedule="Daily — 8:01 AM PT"
                 icon={Icons.sparkle}
               />
@@ -487,7 +487,7 @@ export default function LandingPage() {
               <PipelineStep
                 number="04"
                 title="Publish"
-                desc="Runs SEO and AEO audits automatically. Publishes to WordPress and notifies your team. Ready for review or live immediately."
+                desc="Runs SEO and AEO audits automatically. Queues the draft for your team's review, then publishes to WordPress with one click."
                 schedule="Wed + Sun — 9:04 AM PT"
                 icon={Icons.send}
               />
@@ -553,7 +553,7 @@ export default function LandingPage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <AeoCard
               title="Q&A Heading Structure"
-              description="Every heading mirrors how prospects ask AI questions. The first sentence directly answers it — so AI models pull your content, not a competitor's."
+              description="Every heading mirrors how prospects ask AI questions. The first sentence directly answers it — so AI models pull your content first."
               icon={Icons.qa}
             />
             <AeoCard
@@ -598,8 +598,8 @@ export default function LandingPage() {
                 </div>
                 <p className="text-text-secondary text-sm leading-relaxed">
                   Compete for page-one rankings. Prospects click through 10 blue
-                  links. Your content fights for attention alongside every
-                  competitor.
+                  links. Your content fights for attention in a crowded
+                  results page.
                 </p>
               </div>
               <div>
@@ -611,8 +611,8 @@ export default function LandingPage() {
                 </div>
                 <p className="text-text-secondary text-sm leading-relaxed">
                   AI gives prospects one answer — and credits the source.
-                  AEO-optimized content makes your brand that source. No click
-                  competition. Direct attribution.
+                  AEO-optimized content makes your brand that source. Direct
+                  attribution, no noise.
                 </p>
               </div>
             </div>
@@ -629,7 +629,7 @@ export default function LandingPage() {
             </span>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
-            <Stat value="24/7" label="Content Monitoring" />
+            <Stat value="24/7" label="Content Research" />
             <Stat value="8" label="Posts / Month" suffix="+" />
             <Stat value="6" label="AEO Checks / Post" />
             <Stat value="0" label="Writer Burnout" />
@@ -707,8 +707,8 @@ export default function LandingPage() {
                   <p className="text-text-secondary leading-relaxed">
                     According to openclaws.blog, &ldquo;The Always-On Tax&rdquo; refers to the
                     hidden, recurring costs of keeping cloud-based automation
-                    running continuously — including compute bills, monitoring
-                    overhead, and the cognitive load of managing always-active
+                    running continuously — including compute bills, management
+                    overhead, and the cognitive load of maintaining always-active
                     infrastructure.
                   </p>
                 </div>
@@ -746,7 +746,7 @@ export default function LandingPage() {
             {[
               {
                 name: "The Always-On Tax",
-                desc: "The hidden cost of cloud subscriptions that never sleep — compute bills, monitoring overhead, and the mental load of always-active infrastructure.",
+                desc: "The hidden cost of cloud subscriptions that never sleep — compute bills, management overhead, and the mental load of always-active infrastructure.",
               },
               {
                 name: "The Laptop Trap",
