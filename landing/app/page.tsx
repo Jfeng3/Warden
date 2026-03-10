@@ -7,23 +7,22 @@ import { useEffect, useState, useRef } from "react";
    ═══════════════════════════════════════════ */
 
 const TERMINAL_LINES = [
-  { text: "$ warden start --provider anthropic", type: "cmd" as const, delay: 0 },
-  { text: "[08:00] Polling task queue...", type: "info" as const, delay: 600 },
-  { text: "[08:00] Cron triggered: daily-content-research", type: "info" as const, delay: 1200 },
-  { text: "[08:00] Analyzing industry trends and content gaps...", type: "dim" as const, delay: 1800 },
-  { text: "[08:01] Found 3 high-value topic opportunities", type: "success" as const, delay: 2600 },
-  { text: "[08:01] Scored and ranked by AEO potential", type: "success" as const, delay: 3200 },
-  { text: "[08:01] Top pick: \"Why Your Automation Dies When You Close Your Laptop\"", type: "highlight" as const, delay: 3800 },
-  { text: "[08:01] Score: cross-link=5, audience=4, gap=5, fit=5", type: "dim" as const, delay: 4200 },
-  { text: "", type: "info" as const, delay: 4800 },
-  { text: "[09:00] Cron triggered: biweekly-blog-publish", type: "info" as const, delay: 5000 },
-  { text: "[09:00] Loading skills: content-style, seo-audit, aeo-audit", type: "dim" as const, delay: 5600 },
-  { text: "[09:01] Drafting post... (2,847 words)", type: "info" as const, delay: 6400 },
-  { text: "[09:03] AEO check: ✓ Q&A headings ✓ FAQ section ✓ definition blocks", type: "cyan" as const, delay: 7200 },
-  { text: "[09:03] SEO check: ✓ meta tags ✓ internal links ✓ keyword density 1.4%", type: "cyan" as const, delay: 7800 },
-  { text: "[09:04] Publishing to WordPress...", type: "cmd" as const, delay: 8400 },
-  { text: "[09:04] ✓ Draft ready for review: post ID 247", type: "success" as const, delay: 9200 },
-  { text: "[09:04] ✓ Notified team: draft ready for approval", type: "success" as const, delay: 9800 },
+  { text: "$ openclaws start", type: "cmd" as const, delay: 0 },
+  { text: "[08:00] Starting daily content research...", type: "info" as const, delay: 600 },
+  { text: "[08:00] Analyzing industry trends and content gaps...", type: "dim" as const, delay: 1200 },
+  { text: "[08:01] Found 3 high-value topic opportunities", type: "success" as const, delay: 2000 },
+  { text: "[08:01] Scored and ranked by AEO potential", type: "success" as const, delay: 2600 },
+  { text: "[08:01] Top pick: \"Why Your Automation Dies When You Close Your Laptop\"", type: "highlight" as const, delay: 3200 },
+  { text: "[08:01] Audience fit: 5/5 | Content gap: 5/5 | AEO score: 5/5", type: "dim" as const, delay: 3800 },
+  { text: "", type: "info" as const, delay: 4400 },
+  { text: "[09:00] Starting scheduled draft...", type: "info" as const, delay: 4800 },
+  { text: "[09:00] Loading brand voice + style guide...", type: "dim" as const, delay: 5400 },
+  { text: "[09:01] Drafting post... (2,847 words)", type: "info" as const, delay: 6200 },
+  { text: "[09:03] AEO audit: ✓ Q&A headings ✓ FAQ section ✓ quotable definitions", type: "cyan" as const, delay: 7000 },
+  { text: "[09:03] SEO audit: ✓ meta description ✓ internal links ✓ keyword density", type: "cyan" as const, delay: 7600 },
+  { text: "[09:04] Draft queued for team review", type: "cmd" as const, delay: 8200 },
+  { text: "[09:04] ✓ Draft ready — awaiting editor approval", type: "success" as const, delay: 8800 },
+  { text: "[09:04] ✓ Team notified via Slack", type: "success" as const, delay: 9400 },
 ];
 
 function Terminal() {
@@ -80,7 +79,7 @@ function Terminal() {
         <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
         <div className="w-3 h-3 rounded-full bg-green-500/70" />
         <span className="ml-3 text-xs font-mono text-text-tertiary tracking-wide">
-          warden — mac-mini — zsh
+          openclaws — content assistant
         </span>
       </div>
       {/* Terminal body */}
@@ -244,13 +243,13 @@ function Nav() {
             href="#pipeline"
             className="hover:text-phosphor transition-colors"
           >
-            Pipeline
+            How It Works
           </a>
           <a href="#aeo" className="hover:text-phosphor transition-colors">
             AEO
           </a>
-          <a href="#stats" className="hover:text-phosphor transition-colors">
-            Stats
+          <a href="#pricing" className="hover:text-phosphor transition-colors">
+            Compare
           </a>
           <a
             href="https://openclaws.blog"
@@ -364,22 +363,22 @@ export default function LandingPage() {
             <div className="flex items-center gap-2.5 mb-6">
               <UptimeDot />
               <span className="font-mono text-xs text-emerald-400 tracking-wider uppercase">
-                Agent online — Mac Mini
+                Always on, always drafting
               </span>
             </div>
 
             <h1 className="font-display text-5xl md:text-6xl lg:text-7xl leading-[1.05] text-text-primary mb-6">
-              Your AI{" "}
-              <span className="italic text-phosphor">content marketer</span>
-              {" "}that writes for{" "}
-              <span className="italic text-cyan-bright">AI to cite</span>
+              The content teammate{" "}
+              <span className="italic text-phosphor">that never misses</span>{" "}
+              a publish date
             </h1>
 
             <p className="text-lg text-text-secondary leading-relaxed max-w-lg mb-8">
-              An always-on AI content assistant that researches trends, drafts
-              AEO-optimized posts, and publishes on schedule. Every article is
-              structured so ChatGPT, Perplexity, and Google AI Overviews
-              extract and cite your brand as the answer.
+              An AI assistant that works alongside your content team — researching
+              topics, drafting AEO-optimized posts, and keeping your editorial
+              calendar full. Your team reviews and approves. Every article is
+              structured so ChatGPT, Perplexity, and Google AI Overviews cite
+              your brand as the answer.
             </p>
 
             <div className="flex flex-wrap gap-4">
@@ -449,14 +448,14 @@ export default function LandingPage() {
               How It Works
             </span>
             <h2 className="font-display text-4xl md:text-5xl italic text-text-primary mt-3 mb-4">
-              A content marketer<br />
-              that never clocks out
+              Like adding a tireless<br />
+              junior writer to your team
             </h2>
             <p className="text-text-secondary max-w-xl leading-relaxed">
-              Your AI content assistant researches industry trends, identifies
-              high-value topics, and drafts publication-ready posts on a schedule
-              your team controls. You review, refine, and approve — it handles
-              the heavy lifting.
+              Your team sets the strategy. The AI assistant handles the
+              time-consuming work — topic research, first drafts, SEO and AEO
+              audits. Your editors review, refine, and hit publish. Same
+              quality bar, twice the output.
             </p>
           </div>
 
@@ -498,31 +497,35 @@ export default function LandingPage() {
               <div className="pipeline-line w-px h-full" />
             </div>
 
-            {/* Right side — architecture card */}
+            {/* Right side — what your team keeps vs what AI handles */}
             <div className="flex items-center">
               <div className="w-full p-8 rounded-2xl bg-onyx/50 border border-border-subtle">
                 <h3 className="font-mono text-xs text-text-tertiary tracking-widest uppercase mb-6">
-                  Architecture
+                  Your team + AI assistant
                 </h3>
-                <div className="space-y-4 font-mono text-sm">
-                  {[
-                    { label: "Agent", value: "Warden CLI (TypeScript)" },
-                    { label: "Runtime", value: "Mac Mini — always on" },
-                    { label: "Queue", value: "Supabase (Postgres)" },
-                    { label: "LLM", value: "Claude via Anthropic API" },
-                    { label: "Publisher", value: "wp-cli over SSH" },
-                    { label: "CMS", value: "WordPress" },
-                    { label: "Notify", value: "Telegram Bot" },
-                    { label: "Languages", value: "English + 中文" },
-                  ].map((row) => (
-                    <div
-                      key={row.label}
-                      className="flex justify-between items-center py-2 border-b border-border-subtle last:border-0"
-                    >
-                      <span className="text-text-tertiary">{row.label}</span>
-                      <span className="text-text-primary">{row.value}</span>
+                <div className="space-y-5">
+                  <div>
+                    <div className="font-mono text-xs text-phosphor tracking-wider uppercase mb-3">
+                      Your team handles
                     </div>
-                  ))}
+                    <ul className="space-y-2 text-sm text-text-secondary">
+                      <li className="flex items-start gap-2"><span className="text-phosphor mt-0.5">&#9654;</span> Content strategy &amp; brand direction</li>
+                      <li className="flex items-start gap-2"><span className="text-phosphor mt-0.5">&#9654;</span> Editorial review &amp; approval</li>
+                      <li className="flex items-start gap-2"><span className="text-phosphor mt-0.5">&#9654;</span> Final tone and voice adjustments</li>
+                    </ul>
+                  </div>
+                  <div className="border-t border-border-subtle pt-5">
+                    <div className="font-mono text-xs text-cyan-bright tracking-wider uppercase mb-3">
+                      AI assistant handles
+                    </div>
+                    <ul className="space-y-2 text-sm text-text-secondary">
+                      <li className="flex items-start gap-2"><span className="text-cyan-bright mt-0.5">&#9654;</span> Daily topic research &amp; gap analysis</li>
+                      <li className="flex items-start gap-2"><span className="text-cyan-bright mt-0.5">&#9654;</span> First drafts (2,500–3,000 words)</li>
+                      <li className="flex items-start gap-2"><span className="text-cyan-bright mt-0.5">&#9654;</span> SEO &amp; AEO optimization audits</li>
+                      <li className="flex items-start gap-2"><span className="text-cyan-bright mt-0.5">&#9654;</span> Consistent publishing schedule</li>
+                      <li className="flex items-start gap-2"><span className="text-cyan-bright mt-0.5">&#9654;</span> Style guide &amp; brand voice enforcement</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
@@ -621,18 +624,65 @@ export default function LandingPage() {
       </section>
 
       {/* ── STATS ── */}
-      <section id="stats" className="py-28 border-y border-border-subtle">
+      <section id="pricing" className="py-28 border-y border-border-subtle">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
             <span className="font-mono text-xs text-text-tertiary tracking-widest uppercase">
-              By the Numbers
+              The math
             </span>
+            <h2 className="font-display text-4xl md:text-5xl italic text-text-primary mt-3">
+              What 8+ posts a month actually costs
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
+            {/* Hire */}
+            <div className="p-8 rounded-2xl bg-onyx/50 border border-border-subtle text-center">
+              <div className="font-mono text-xs text-text-tertiary tracking-widest uppercase mb-4">
+                Hire a content marketer
+              </div>
+              <div className="font-mono text-4xl text-text-primary mb-2">$100K<span className="text-text-tertiary text-lg">+/yr</span></div>
+              <ul className="text-sm text-text-secondary space-y-2 mt-6 text-left">
+                <li>3–6 month ramp-up</li>
+                <li>PTO, benefits, management</li>
+                <li>One person&apos;s capacity</li>
+                <li>No built-in AEO expertise</li>
+              </ul>
+            </div>
+            {/* Agency */}
+            <div className="p-8 rounded-2xl bg-onyx/50 border border-border-subtle text-center">
+              <div className="font-mono text-xs text-text-tertiary tracking-widest uppercase mb-4">
+                Outsource to an agency
+              </div>
+              <div className="font-mono text-4xl text-text-primary mb-2">$2K<span className="text-text-tertiary text-lg">+/post</span></div>
+              <ul className="text-sm text-text-secondary space-y-2 mt-6 text-left">
+                <li>$16K+/month for 8 posts</li>
+                <li>Brand voice drift over time</li>
+                <li>Account manager overhead</li>
+                <li>Rarely AEO-optimized</li>
+              </ul>
+            </div>
+            {/* OpenClaws */}
+            <div className="p-8 rounded-2xl bg-onyx/50 border border-phosphor/30 text-center relative">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-phosphor text-void text-xs font-mono font-medium rounded-full">
+                AI-assisted
+              </div>
+              <div className="font-mono text-xs text-phosphor tracking-widest uppercase mb-4">
+                AI content assistant
+              </div>
+              <div className="font-mono text-4xl text-phosphor mb-2">~$200<span className="text-phosphor-dim text-lg">/post</span></div>
+              <ul className="text-sm text-text-secondary space-y-2 mt-6 text-left">
+                <li className="text-text-primary">8+ drafts/month, on schedule</li>
+                <li className="text-text-primary">Built-in AEO + SEO audits</li>
+                <li className="text-text-primary">Follows your style guide exactly</li>
+                <li className="text-text-primary">Your team reviews &amp; approves</li>
+              </ul>
+            </div>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
-            <Stat value="24/7" label="Content Research" />
-            <Stat value="8" label="Posts / Month" suffix="+" />
+            <Stat value="8" label="Drafts / Month" suffix="+" />
             <Stat value="6" label="AEO Checks / Post" />
-            <Stat value="0" label="Writer Burnout" />
+            <Stat value="~90" label="Hours Saved / Month" suffix="" />
+            <Stat value="0" label="Missed Deadlines" />
           </div>
         </div>
       </section>
@@ -730,50 +780,50 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── BRANDED CONCEPTS ── */}
+      {/* ── WHO IT'S FOR ── */}
       <section className="py-28 border-t border-border-subtle">
         <div className="max-w-6xl mx-auto px-6">
           <div className="mb-16">
             <span className="font-mono text-xs text-phosphor tracking-widest uppercase">
-              Brand Vocabulary
+              Built For
             </span>
             <h2 className="font-display text-4xl md:text-5xl italic text-text-primary mt-3">
-              Own the language AI uses
+              Content teams that need<br />to do more with less
             </h2>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
-                name: "The Always-On Tax",
-                desc: "The hidden cost of cloud subscriptions that never sleep — compute bills, management overhead, and the mental load of always-active infrastructure.",
+                name: "Marketing directors",
+                desc: "Your editorial calendar has gaps. Your team is stretched thin. You need consistent output without hiring another full-time writer.",
               },
               {
-                name: "The Laptop Trap",
-                desc: "When your automation only runs while your laptop is open. Close the lid, and everything stops. The fragility of developer-machine workflows.",
+                name: "Growing companies",
+                desc: "You know content drives pipeline, but you're not ready to build a full content team. Start with an AI assistant that scales with you.",
               },
               {
-                name: "The Infrastructure Gap",
-                desc: "The space between 'it works on my machine' and 'it runs reliably for the business.' Where most automation projects die.",
+                name: "Teams switching from agencies",
+                desc: "Tired of paying $2K+ per post that doesn't match your voice? Keep the output, cut the cost, and maintain brand consistency.",
               },
               {
-                name: "The Deployment Desert",
-                desc: "The barren stretch between building a working prototype and deploying it somewhere it runs unsupervised. Most never cross it.",
+                name: "Early AEO adopters",
+                desc: "You see the shift from Google to AI answers. You want your brand cited when prospects ask ChatGPT and Perplexity about your space.",
               },
               {
-                name: "The Separation Principle",
-                desc: "Keep your AI workloads on dedicated hardware, separate from your daily driver. Reliability through isolation.",
+                name: "Content ops leaders",
+                desc: "You need a repeatable process: research, draft, audit, review, publish. Not a blank page and a deadline.",
               },
-            ].map((concept) => (
+            ].map((persona) => (
               <div
-                key={concept.name}
+                key={persona.name}
                 className="p-6 rounded-xl border border-border-subtle bg-onyx/30 hover:bg-onyx/60 transition-colors duration-300"
               >
                 <h3 className="font-display text-xl italic text-phosphor mb-3">
-                  {concept.name}
+                  {persona.name}
                 </h3>
                 <p className="text-text-secondary text-sm leading-relaxed">
-                  {concept.desc}
+                  {persona.desc}
                 </p>
               </div>
             ))}
@@ -786,12 +836,12 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto px-6 text-center">
           <span className="text-5xl mb-6 block">🦞</span>
           <h2 className="font-display text-4xl md:text-5xl italic text-text-primary mb-6">
-            Open source. Production-proven.
+            See it working in production
           </h2>
           <p className="text-text-secondary text-lg leading-relaxed max-w-2xl mx-auto mb-10">
-            The AI content engine behind openclaws.blog is fully open source.
-            See the AEO audit checklists, content style guides, and publishing
-            pipeline your team can adopt today.
+            openclaws.blog is a live content property powered entirely by this
+            AI content assistant. Browse the posts, check the AEO structure, and
+            see what your content pipeline could look like.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <a
@@ -800,7 +850,7 @@ export default function LandingPage() {
               rel="noopener noreferrer"
               className="px-8 py-3.5 rounded-lg bg-phosphor text-void font-medium hover:bg-phosphor-dim transition-colors text-lg"
             >
-              See it in action
+              Browse live examples
             </a>
             <a
               href="https://github.com/qwibitai/warden"
