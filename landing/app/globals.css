@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+@theme {
+  --color-void: #06060a;
+  --color-obsidian: #0a0a10;
+  --color-onyx: #111118;
+  --color-graphite: #1a1a24;
+  --color-slate-dark: #252530;
+  --color-phosphor: #f0a030;
+  --color-phosphor-dim: #c47a18;
+  --color-phosphor-glow: #f0a03040;
+  --color-cyan-bright: #22d3ee;
+  --color-cyan-dim: #0891b2;
+  --color-cyan-glow: #22d3ee30;
+  --color-text-primary: #e8e6e1;
+  --color-text-secondary: #8a8690;
+  --color-text-tertiary: #5a5660;
+  --color-border-subtle: #ffffff0a;
+  --color-border-visible: #ffffff14;
+
+  --font-display: "Instrument Serif", Georgia, serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+  --font-body: "DM Sans", system-ui, sans-serif;
+}
+
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap");
+}
+
+/* ---- Base ---- */
+html {
+  scroll-behavior: smooth;
+  background: var(--color-void);
+  color: var(--color-text-primary);
+}
+
+body {
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--color-phosphor);
+  color: var(--color-void);
+}
+
+/* ---- Noise overlay ---- */
+.noise::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* ---- Terminal cursor blink ---- */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.cursor-blink {
+  animation: blink 1s step-end infinite;
+}
+
+/* ---- Glow pulse ---- */
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+.glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+/* ---- Typing animation ---- */
+@keyframes typewriter {
+  from { max-width: 0; }
+  to { max-width: 100%; }
+}
+
+/* ---- Fade in up ---- */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s ease-out both;
+}
+
+/* stagger delays */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+.delay-600 { animation-delay: 0.6s; }
+.delay-700 { animation-delay: 0.7s; }
+.delay-800 { animation-delay: 0.8s; }
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--color-void); }
+::-webkit-scrollbar-thumb {
+  background: var(--color-slate-dark);
+  border-radius: 3px;
+}
+
+/* ---- Pipeline connector line ---- */
+.pipeline-line {
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    var(--color-phosphor-dim) 15%,
+    var(--color-phosphor) 50%,
+    var(--color-phosphor-dim) 85%,
+    transparent 100%
+  );
+}
+
+/* ---- Grid pattern background ---- */
+.grid-pattern {
+  background-image:
+    linear-gradient(var(--color-border-subtle) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-border-subtle) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* ---- Gradient mesh for hero ---- */
+.hero-gradient {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, var(--color-phosphor-glow), transparent),
+    radial-gradient(ellipse 60% 40% at 80% 60%, var(--color-cyan-glow), transparent),
+    var(--color-void);
+}
