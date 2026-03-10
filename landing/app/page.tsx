@@ -630,13 +630,13 @@ export default function LandingPage() {
               What 8+ posts a month actually costs
             </h2>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-5 mb-16">
             {/* Do nothing */}
-            <div className="p-8 rounded-2xl bg-onyx/50 border border-border-subtle text-center">
+            <div className="p-6 rounded-2xl bg-onyx/50 border border-border-subtle text-center">
               <div className="font-mono text-xs text-text-tertiary tracking-widest uppercase mb-4">
                 Do nothing
               </div>
-              <div className="font-mono text-4xl text-text-primary mb-2">$0<span className="text-text-tertiary text-lg">/post</span></div>
+              <div className="font-mono text-3xl text-text-primary mb-2">$0<span className="text-text-tertiary text-lg">/post</span></div>
               <ul className="text-sm text-text-secondary space-y-2 mt-6 text-left">
                 <li>38% of searches end in AI answers</li>
                 <li>3% citation rate for unoptimized content</li>
@@ -644,25 +644,38 @@ export default function LandingPage() {
                 <li>Competitors fill the gap</li>
               </ul>
             </div>
+            {/* Freelancers */}
+            <div className="p-6 rounded-2xl bg-onyx/50 border border-border-subtle text-center">
+              <div className="font-mono text-xs text-text-tertiary tracking-widest uppercase mb-4">
+                Freelance writers
+              </div>
+              <div className="font-mono text-3xl text-text-primary mb-2">$500<span className="text-text-tertiary text-lg">+/post</span></div>
+              <ul className="text-sm text-text-secondary space-y-2 mt-6 text-left">
+                <li>Timezone gaps, availability varies</li>
+                <li>Voice drifts across writers</li>
+                <li>You manage briefs &amp; feedback</li>
+                <li>No AEO structure</li>
+              </ul>
+            </div>
             {/* Hire */}
-            <div className="p-8 rounded-2xl bg-onyx/50 border border-border-subtle text-center">
+            <div className="p-6 rounded-2xl bg-onyx/50 border border-border-subtle text-center">
               <div className="font-mono text-xs text-text-tertiary tracking-widest uppercase mb-4">
                 Hire a content marketer
               </div>
-              <div className="font-mono text-4xl text-text-primary mb-2">$100K<span className="text-text-tertiary text-lg">+/yr</span></div>
+              <div className="font-mono text-3xl text-text-primary mb-2">$100K<span className="text-text-tertiary text-lg">+/yr</span></div>
               <ul className="text-sm text-text-secondary space-y-2 mt-6 text-left">
                 <li>3–6 month ramp-up</li>
                 <li>PTO, benefits, management</li>
-                <li>One person&apos;s capacity</li>
+                <li>4–6 posts/month capacity</li>
                 <li>No built-in AEO expertise</li>
               </ul>
             </div>
             {/* Agency */}
-            <div className="p-8 rounded-2xl bg-onyx/50 border border-border-subtle text-center">
+            <div className="p-6 rounded-2xl bg-onyx/50 border border-border-subtle text-center">
               <div className="font-mono text-xs text-text-tertiary tracking-widest uppercase mb-4">
-                Outsource to an agency
+                Outsource to agency
               </div>
-              <div className="font-mono text-4xl text-text-primary mb-2">$2K<span className="text-text-tertiary text-lg">+/post</span></div>
+              <div className="font-mono text-3xl text-text-primary mb-2">$2K<span className="text-text-tertiary text-lg">+/post</span></div>
               <ul className="text-sm text-text-secondary space-y-2 mt-6 text-left">
                 <li>$16K+/month for 8 posts</li>
                 <li>Brand voice drift over time</li>
@@ -671,14 +684,14 @@ export default function LandingPage() {
               </ul>
             </div>
             {/* Warden */}
-            <div className="p-8 rounded-2xl bg-onyx/50 border border-phosphor/30 text-center relative">
+            <div className="p-6 rounded-2xl bg-onyx/50 border border-phosphor/30 text-center relative">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-phosphor text-void text-xs font-mono font-medium rounded-full">
                 AI-assisted
               </div>
               <div className="font-mono text-xs text-phosphor tracking-widest uppercase mb-4">
                 AI content assistant
               </div>
-              <div className="font-mono text-4xl text-phosphor mb-2">~$200<span className="text-phosphor-dim text-lg">/post</span></div>
+              <div className="font-mono text-3xl text-phosphor mb-2">~$200<span className="text-phosphor-dim text-lg">/post</span></div>
               <ul className="text-sm text-text-secondary space-y-2 mt-6 text-left">
                 <li className="text-text-primary">8+ drafts/month, on schedule</li>
                 <li className="text-text-primary">Built-in AEO + SEO audits</li>
@@ -756,7 +769,7 @@ export default function LandingPage() {
                     USER QUERY
                   </div>
                   <p className="text-text-primary italic">
-                    &ldquo;What are the hidden costs of always-on cloud infrastructure?&rdquo;
+                    &ldquo;What are the hidden costs of running AI agents 24/7?&rdquo;
                   </p>
                 </div>
                 <div>
@@ -765,10 +778,10 @@ export default function LandingPage() {
                   </div>
                   <p className="text-text-secondary leading-relaxed">
                     According to openclaws.blog, &ldquo;The Always-On Tax&rdquo; refers to the
-                    hidden, recurring costs of keeping cloud-based automation
-                    running continuously — including compute bills, management
-                    overhead, and the cognitive load of maintaining always-active
-                    infrastructure.
+                    hidden, recurring costs of keeping AI agents running
+                    continuously — including token costs of $200K–$600K per agent
+                    per year, infrastructure overhead, and the management burden
+                    of maintaining always-active automation.
                   </p>
                 </div>
                 <div className="pt-4 border-t border-border-subtle">
@@ -805,19 +818,23 @@ export default function LandingPage() {
             {[
               {
                 name: "Demand gen directors",
-                desc: "You own the blog and SEO pipeline. Your team of 1-2 writers ships 3-4 posts a month but you need 8+. You can't justify another $100K hire — you need leverage.",
+                desc: "You own the blog and SEO pipeline. Your team of 1-2 writers plus a freelancer ships 3-4 posts a month — but you need 8+ to cover every vertical. You can't justify a $100K hire. You need overflow capacity that follows your style guide from day one.",
+              },
+              {
+                name: "Teams juggling freelancers",
+                desc: "Your contract writers are talented, but managing briefs, feedback loops, and timezone gaps eats your week. You need consistent output without the coordination tax — and AEO optimization your freelancers weren't trained on.",
               },
               {
                 name: "Teams outgrowing agencies",
                 desc: "You're spending $2K+ per post on agency overflow, frustrated by voice drift and slow turnarounds. Same output, a tenth of the cost, your style guide followed exactly.",
               },
               {
-                name: "Budget-conscious leaders",
-                desc: "Every content dollar has to be justified to your VP or CMO. At ~$200/post with built-in audits, the math speaks for itself.",
+                name: "Early AEO adopters",
+                desc: "You see traffic eroding as AI answers replace clicks. Optimized content gets cited 18% of the time vs 3% for unoptimized. Your competitors have massive content teams — you need a structural edge to get cited alongside them.",
               },
               {
-                name: "Early AEO adopters",
-                desc: "You see traffic eroding as AI answers replace clicks. Optimized content gets cited 18% of the time vs 3% for unoptimized. You want to be in the 18%.",
+                name: "Bootstrapped teams punching up",
+                desc: "You're competing against companies with 10x your content budget. You can't outspend them — but you can out-structure them. AEO optimization is a leverage play that makes a 50-person company's content citeable alongside the enterprise giants.",
               },
               {
                 name: "Content ops leaders",

@@ -8,8 +8,11 @@ Publish and manage blog posts on openclaws.blog using wp-cli over SSH. The conne
 
 ## Commands
 
+**IMPORTANT**: Every post MUST be assigned a language category after creation, or it will NOT appear on the blog listing pages or homepage. See "Language Categories" below. Always run `wp post term set <post-id> category english` (or `chinese`) immediately after creating a post. Use the **slug** (`english`/`chinese`), NOT the numeric term ID — wp-cli treats numbers as names, not IDs.
+
 ```bash
 # Create and publish a post (--porcelain returns just the post ID)
+# ALWAYS assign category after — see Language Categories section
 wp post create --post_title="My Post" --post_content="Body here..." --post_status=publish --porcelain --ssh="$WP_SSH"
 
 # Create a draft for review
@@ -115,18 +118,28 @@ wp option update blogname "OpenClaws" --ssh="$WP_SSH"
 
 ## Tips
 
-- For long posts, write content as HTML in a temp file, then pass it to `wp post create`. This avoids shell escaping issues.
-- Use `--porcelain` to get just the post ID for scripting.
+- **WordPress does NOT render markdown.** All post content must be HTML (`<p>`, `<h2>`, `<strong>`, `<ul>`, `<li>`, `<a>`, `<table>`, etc.). If the draft is in markdown, convert before publishing:
+  ```bash
+  npx marked < draft.md > /tmp/post-content.html
+  ```
+- For long posts, pipe HTML via stdin over SSH to avoid shell escaping issues:
+  ```bash
+  # Create new post from stdin
+  cat /tmp/post-content.html | ssh "$WP_SSH" 'wp post create - --post_title="My Post" --post_status=publish --porcelain'
 
-```bash
-wp post create /tmp/post-content.html --post_title="My Post" --post_status=publish --porcelain --ssh="$WP_SSH"
-```
+  # Update existing post from stdin (use - as positional arg, NOT --post_content=-)
+  cat /tmp/post-content.html | ssh "$WP_SSH" 'wp post update <post-id> - --post_status=publish'
+  ```
+- **WARNING**: `--post_content=-` sets content to the literal string "-". Always use positional `-` for stdin.
+- Use `--porcelain` to get just the post ID for scripting.
 
 ## Post-Publish Checklist
 
 After publishing a post:
 
-1. **Verify live**: Visit the post URL and confirm it renders correctly
-2. **Share to social**: Use the `social-distribution` skill to draft social posts for Reddit, X, and HN
-3. **Update internal links**: Check 2-3 related existing posts and add a link to the new post
-4. **Update content calendar**: Mark the topic as published in the editorial calendar
+1. **Assign language category**: `wp post term set <post-id> category english` (or `chinese`). Without this, the post will NOT appear on the homepage or blog listing page. This is the most common publishing mistake.
+2. **Verify live**: Visit the post URL and confirm it renders correctly
+3. **Check homepage**: Confirm the post appears in "Latest from the blog" on the homepage
+4. **Share to social**: Use the `social-distribution` skill to draft social posts for Reddit, X, and HN
+5. **Update internal links**: Check 2-3 related existing posts and add a link to the new post
+6. **Update content calendar**: Mark the topic as published in the editorial calendar
