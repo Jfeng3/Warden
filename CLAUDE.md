@@ -18,10 +18,12 @@ CLI flags: `--provider <anthropic|openrouter>` and `--model <model-id>`
 
 ### Running 24/7 with pm2
 
+All pm2 commands log stdout+stderr to `log.txt` in the project root via `--output`/`--error`/`--merge-logs`.
+
 ```bash
-npm run build && pm2 start dist/index.js --name warden  # Start
+npm run build && pm2 start dist/index.js --name warden --output /Users/jie/Codes/warden/log.txt --error /Users/jie/Codes/warden/log.txt --merge-logs  # Start
 pm2 save && pm2 startup                                  # Persist across reboots
-npm run build && pm2 restart warden                      # Rebuild + restart
+npm run build && pm2 delete warden && pm2 start dist/index.js --name warden --output /Users/jie/Codes/warden/log.txt --error /Users/jie/Codes/warden/log.txt --merge-logs  # Rebuild + restart
 pm2 restart warden --update-env                          # Restart + reload .env
 pm2 delete warden && pm2 save --force                    # Stop + remove
 pm2 unstartup launchd                                    # Remove boot script
@@ -177,6 +179,7 @@ Wed + Sun (9am PT)
 | `seo-audit` | `skills/seo-audit.md` | On-page SEO checklist, keyword research workflow |
 | `aeo-audit` | `skills/aeo-audit.md` | Answer Engine Optimization for AI-generated answers (ChatGPT, Perplexity, Google AI Overviews) |
 | `publish` | `skills/publish.md` | wp-cli reference, page IDs (Home=37, About=1, Blog=38), site settings |
+| `notification` | `skills/notification.md` | Telegram formatting rules, routing setup, message length limits |
 
 ### Target Audience
 
@@ -197,14 +200,18 @@ All blog content targets **non-technical business professionals** at SMBs — th
 
 Site tagline: "AI automation guides for business owners and IT leaders"
 
+### Notifications
+
+All cron jobs MUST send results to Telegram. When creating a cron job, always include `--metadata '{"source":"telegram","chatId":7823756809}'`. Follow the `notification` skill for formatting rules: plain text only (no markdown **bold** or *italics*), use bullet points (•) and ALL CAPS headers, keep messages scannable. See `skills/notification.md` for full details.
+
 ### Managing Cron Jobs
 
 ```bash
 # List all cron jobs
 npx tsx src/cron-cli.ts list
 
-# Add a new cron job
-npx tsx src/cron-cli.ts add --name "job-name" --cron "0 8 * * *" --tz "America/Los_Angeles" --instruction "..."
+# Add a new cron job (ALWAYS include --metadata for Telegram delivery)
+npx tsx src/cron-cli.ts add --name "job-name" --cron "0 8 * * *" --tz "America/Los_Angeles" --metadata '{"source":"telegram","chatId":7823756809}' --instruction "..."
 
 # Disable/enable
 npx tsx src/cron-cli.ts update <id> --enabled false
@@ -222,7 +229,11 @@ The `landing/` directory contains a standalone Next.js app for the openclaws.blo
 cd landing
 npm run dev              # Local dev server (http://localhost:3000)
 npm run build            # Production build
-vercel --prod            # Deploy to Vercel (run from landing/)
+```
+
+**Deploy**: Always run from the `landing/` directory — Vercel needs the Root Directory to contain `package.json` with `next`:
+```bash
+cd /Users/jie/Codes/warden/landing && npx vercel --prod
 ```
 
 - **Stack**: Next.js 15, React 19, Tailwind CSS v4, TypeScript

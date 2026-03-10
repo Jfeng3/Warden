@@ -40,15 +40,39 @@ Best subreddits for our content:
 
 ### X / Twitter
 
-**Thread format for blog posts:**
-1. Hook tweet: Key insight or surprising stat from the post
-2. 3-5 tweets expanding on main points
-3. Final tweet: Link to full post + CTA
-4. Keep each tweet under 280 chars, use line breaks for readability
+**Voice & tone:**
+- Write like a business owner talking to another business owner over coffee
+- Simple English — no jargon, no buzzwords, no "leverage" or "synergize"
+- Short sentences. Punchy. Conversational.
+- Use concrete numbers and comparisons people can feel ("costs less per month than hiring a contractor for one day")
+- End with a take or opinion, not a generic CTA
 
-**Single tweet format:**
-- Lead with the insight, not the link
-- Use 1-2 relevant hashtags max (#AIAgents, #OpenSource, #DevTools)
+**Single tweet format (preferred):**
+- Lead with the insight or a surprising fact — never lead with the link
+- Use everyday analogies ("That's like running your accounting software on a personal phone")
+- One idea per tweet — don't cram multiple points
+- Skip hashtags unless highly relevant (1-2 max)
+- No emojis unless they add clarity
+- Under 280 chars, use line breaks for readability
+
+**Thread format for blog posts:**
+1. Hook tweet: One surprising stat or contrarian take from the post
+2. 3-5 tweets, each making ONE point in plain language
+3. Each tweet should stand alone — someone skimming should get value from any single tweet
+4. Final tweet: Link to full post, no "like and retweet" asks
+5. Keep each tweet under 280 chars
+
+**What works:**
+- "X costs less than Y" (concrete cost comparisons)
+- "Most businesses do X. Here's why that breaks." (challenge assumptions)
+- "The difference between X and Y? [one-line answer]" (simple contrasts)
+- Relatable problems → simple solutions
+
+**What doesn't work:**
+- Marketing speak ("unlock the power of", "game-changing", "revolutionary")
+- Vague claims without numbers
+- Threads that are just a blog post copy-pasted into tweets
+- Leading with "I'm excited to announce"
 
 ### Hacker News
 
@@ -83,15 +107,22 @@ Happy to answer any questions!
 
 ### Twitter Thread Draft
 ```
-1/ [Hook: surprising stat or key insight]
+1/ [Surprising stat or contrarian take. Make them stop scrolling.]
 
-2/ [Problem statement]
+2/ [The problem in plain English. Use an analogy if it helps.]
 
-3/ [Solution/approach]
+3/ [What most people get wrong about this.]
 
-4/ [Key result or benefit]
+4/ [The simple fix or shift in thinking. Use a concrete number.]
 
-5/ Full breakdown on the blog: [URL]
+5/ Full breakdown here: [URL]
+```
+
+### Twitter Single Tweet Draft
+```
+[One surprising fact or simple comparison.]
+
+[One sentence explaining why it matters to a business owner.]
 ```
 
 ### HN Submission Draft
