@@ -2,15 +2,15 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "OpenClaws — AI Content Marketing, Optimized for AI Citation",
+  title: "Warden — AI Content Assistant That Gets Your Brand Cited by AI Agents",
   description:
-    "Your AI content marketer that drafts AEO-optimized blog posts — structured so ChatGPT, Perplexity, and Google AI Overviews cite your brand as the answer.",
+    "An AI content assistant that drafts agent-optimized posts your team reviews — so AI agents cite your brand, not your competitors'. ~$200/post, 8+ drafts/month, 0 missed deadlines.",
   openGraph: {
-    title: "OpenClaws — AI Content Marketing, Optimized for AI Citation",
+    title: "Warden — AI Content Assistant That Gets Your Brand Cited by AI Agents",
     description:
-      "Your AI content marketer that drafts AEO-optimized posts, structured so AI models cite your brand as the answer.",
+      "AI agents cite your brand, not your competitors'. Agent-optimized drafts your team reviews — ~$200/post, 8+ per month.",
     url: "https://openclaws.blog",
-    siteName: "OpenClaws",
+    siteName: "Warden",
     type: "website",
   },
 };

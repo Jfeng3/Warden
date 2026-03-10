@@ -7,7 +7,7 @@ import { useEffect, useState, useRef } from "react";
    ═══════════════════════════════════════════ */
 
 const TERMINAL_LINES = [
-  { text: "$ openclaws start", type: "cmd" as const, delay: 0 },
+  { text: "$ warden start", type: "cmd" as const, delay: 0 },
   { text: "[08:00] Starting daily content research...", type: "info" as const, delay: 600 },
   { text: "[08:00] Analyzing industry trends and content gaps...", type: "dim" as const, delay: 1200 },
   { text: "[08:01] Found 3 high-value topic opportunities", type: "success" as const, delay: 2000 },
@@ -79,7 +79,7 @@ function Terminal() {
         <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
         <div className="w-3 h-3 rounded-full bg-green-500/70" />
         <span className="ml-3 text-xs font-mono text-text-tertiary tracking-wide">
-          openclaws — content assistant
+          warden — content assistant
         </span>
       </div>
       {/* Terminal body */}
@@ -235,7 +235,7 @@ function Nav() {
         <a href="#" className="flex items-center gap-3">
           <span className="text-2xl">🦞</span>
           <span className="font-display text-xl italic text-text-primary">
-            OpenClaws
+            Warden
           </span>
         </a>
         <div className="hidden md:flex items-center gap-8 text-sm text-text-secondary">
@@ -246,7 +246,7 @@ function Nav() {
             How It Works
           </a>
           <a href="#aeo" className="hover:text-phosphor transition-colors">
-            AEO
+            Agent-Optimized
           </a>
           <a href="#pricing" className="hover:text-phosphor transition-colors">
             Compare
@@ -363,22 +363,21 @@ export default function LandingPage() {
             <div className="flex items-center gap-2.5 mb-6">
               <UptimeDot />
               <span className="font-mono text-xs text-emerald-400 tracking-wider uppercase">
-                Always on, always drafting
+                Agent-optimized content pipeline
               </span>
             </div>
 
             <h1 className="font-display text-5xl md:text-6xl lg:text-7xl leading-[1.05] text-text-primary mb-6">
-              The content teammate{" "}
-              <span className="italic text-phosphor">that never misses</span>{" "}
-              a publish date
+              AI agents cite{" "}
+              <span className="italic text-phosphor">your brand</span>,{" "}
+              not your competitors&apos;
             </h1>
 
             <p className="text-lg text-text-secondary leading-relaxed max-w-lg mb-8">
-              An AI assistant that works alongside your content team — researching
-              topics, drafting AEO-optimized posts, and keeping your editorial
-              calendar full. Your team reviews and approves. Every article is
-              structured so ChatGPT, Perplexity, and Google AI Overviews cite
-              your brand as the answer.
+              An AI content assistant that drafts agent-optimized posts your team
+              reviews. Every post is structured so ChatGPT, Perplexity, and Google
+              AI Overviews parse your content, pull direct quotes, and cite you as
+              the authoritative source — not the other guys.
             </p>
 
             <div className="flex flex-wrap gap-4">
@@ -386,7 +385,7 @@ export default function LandingPage() {
                 href="#aeo"
                 className="px-6 py-3 rounded-lg bg-phosphor text-void font-medium hover:bg-phosphor-dim transition-colors"
               >
-                See how AEO works
+                How agents read content
               </a>
               <a
                 href="https://openclaws.blog"
@@ -430,12 +429,12 @@ export default function LandingPage() {
       <section className="py-20 border-y border-border-subtle">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <p className="font-display text-3xl md:text-4xl italic text-text-secondary leading-snug">
-            Your content should show up when{" "}
-            <span className="text-text-primary">AI answers questions</span> about{" "}
-            <span className="text-text-primary">your industry</span>
+            Your editorial calendar has gaps.{" "}
+            <span className="text-text-primary">AI answers are replacing Google clicks.</span>{" "}
+            <span className="text-text-primary">We fill both.</span>
           </p>
           <p className="mt-4 text-text-tertiary text-sm font-mono tracking-wider uppercase">
-            That&apos;s what AEO-optimized content does
+            38% of searches now end in an AI answer. Unoptimized content gets cited 3% of the time.
           </p>
         </div>
       </section>
@@ -448,14 +447,14 @@ export default function LandingPage() {
               How It Works
             </span>
             <h2 className="font-display text-4xl md:text-5xl italic text-text-primary mt-3 mb-4">
-              Like adding a tireless<br />
-              junior writer to your team
+              Every post is engineered<br />
+              for agent consumption
             </h2>
             <p className="text-text-secondary max-w-xl leading-relaxed">
-              Your team sets the strategy. The AI assistant handles the
-              time-consuming work — topic research, first drafts, SEO and AEO
-              audits. Your editors review, refine, and hit publish. Same
-              quality bar, twice the output.
+              AI agents scan thousands of pages to build answers. They favor
+              content with clear structure, extractable definitions, and
+              machine-readable data. Our pipeline bakes these signals into
+              every draft — so agents pick your content first.
             </p>
           </div>
 
@@ -465,28 +464,28 @@ export default function LandingPage() {
               <PipelineStep
                 number="01"
                 title="Research"
-                desc="Analyzes industry trends and content gaps daily. Surfaces high-value topic opportunities your team would otherwise spend hours finding."
+                desc="Identifies topics that agents are actively answering questions about — then finds gaps where no authoritative source exists yet."
                 schedule="Daily — 8:00 AM PT"
                 icon={Icons.radar}
               />
               <PipelineStep
                 number="02"
-                title="Generate"
-                desc="Scores topic ideas on keyword opportunity, audience fit, and AEO potential. Prioritizes what will drive traffic and AI citations."
+                title="Score"
+                desc="Ranks each topic by agent-citation potential: How likely is an AI agent to need this answer? Is there a quotable source already?"
                 schedule="Daily — 8:01 AM PT"
                 icon={Icons.sparkle}
               />
               <PipelineStep
                 number="03"
                 title="Write"
-                desc="Drafts a full 2,500–3,000 word post following your brand voice, with AEO-structured headings, comparison tables, FAQ sections, and quotable definitions."
+                desc="Drafts 2,500–3,000 words with agent-parseable structure: Q&A headings, extractable definitions, comparison tables, and numbered procedures."
                 schedule="Wed + Sun — 9:00 AM PT"
                 icon={Icons.pen}
               />
               <PipelineStep
                 number="04"
-                title="Publish"
-                desc="Runs SEO and AEO audits automatically. Queues the draft for your team's review, then publishes to WordPress with one click."
+                title="Audit & Publish"
+                desc="Runs agent-readability and SEO audits. Verifies every post has the six structural patterns agents use to decide what to cite."
                 schedule="Wed + Sun — 9:04 AM PT"
                 icon={Icons.send}
               />
@@ -519,11 +518,11 @@ export default function LandingPage() {
                       AI assistant handles
                     </div>
                     <ul className="space-y-2 text-sm text-text-secondary">
-                      <li className="flex items-start gap-2"><span className="text-cyan-bright mt-0.5">&#9654;</span> Daily topic research &amp; gap analysis</li>
-                      <li className="flex items-start gap-2"><span className="text-cyan-bright mt-0.5">&#9654;</span> First drafts (2,500–3,000 words)</li>
-                      <li className="flex items-start gap-2"><span className="text-cyan-bright mt-0.5">&#9654;</span> SEO &amp; AEO optimization audits</li>
+                      <li className="flex items-start gap-2"><span className="text-cyan-bright mt-0.5">&#9654;</span> Agent-citation gap research</li>
+                      <li className="flex items-start gap-2"><span className="text-cyan-bright mt-0.5">&#9654;</span> Agent-structured first drafts</li>
+                      <li className="flex items-start gap-2"><span className="text-cyan-bright mt-0.5">&#9654;</span> Agent-readability &amp; SEO audits</li>
                       <li className="flex items-start gap-2"><span className="text-cyan-bright mt-0.5">&#9654;</span> Consistent publishing schedule</li>
-                      <li className="flex items-start gap-2"><span className="text-cyan-bright mt-0.5">&#9654;</span> Style guide &amp; brand voice enforcement</li>
+                      <li className="flex items-start gap-2"><span className="text-cyan-bright mt-0.5">&#9654;</span> Extractable quote &amp; definition formatting</li>
                     </ul>
                   </div>
                 </div>
@@ -538,50 +537,49 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="mb-16 max-w-2xl">
             <span className="font-mono text-xs text-cyan-bright tracking-widest uppercase">
-              Answer Engine Optimization
+              Agent-Readable Content
             </span>
             <h2 className="font-display text-4xl md:text-5xl italic text-text-primary mt-3 mb-4">
-              When prospects ask AI,<br />
-              your brand is{" "}
-              <span className="text-cyan-bright">the answer</span>
+              Built for how agents{" "}
+              <span className="text-cyan-bright">see your content</span>
             </h2>
             <p className="text-text-secondary leading-relaxed">
-              57% of business buyers now start research with AI tools, not Google.
-              AEO ensures your content is what ChatGPT, Perplexity, and Google AI
-              Overviews cite when prospects ask questions about your industry.
-              Every post passes a rigorous AEO audit before publishing.
+              AI agents don&apos;t read like humans. They scan for structure, extract
+              definitions, parse tables, and rank by authority signals. Every post
+              is engineered with these six patterns — the same ones ChatGPT,
+              Perplexity, and Claude use to decide what to cite.
             </p>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <AeoCard
-              title="Q&A Heading Structure"
-              description="Every heading mirrors how prospects ask AI questions. The first sentence directly answers it — so AI models pull your content first."
+              title="Agent-Parseable Headings"
+              description="Every H2 mirrors a question an agent would receive from a user. The first sentence is the direct answer — agents extract it verbatim."
               icon={Icons.qa}
             />
             <AeoCard
-              title="Comparison Tables"
-              description="Structured data AI can parse and quote in side-by-side comparisons. When someone asks 'X vs Y,' your table becomes the answer."
+              title="Machine-Readable Tables"
+              description="Structured comparison data agents can ingest and quote directly. When a user asks 'X vs Y,' agents pull your table as the definitive answer."
               icon={Icons.table}
             />
             <AeoCard
-              title="Quotable Definitions"
-              description="Crisp, citeable statements AI models extract verbatim. Each post has 3+ brand-attributed quotes ready for AI to surface."
+              title="Extractable Definitions"
+              description="Crisp, self-contained statements agents can lift without rewriting. Each post has 3+ quotable blocks designed for direct agent extraction."
               icon={Icons.quote}
             />
             <AeoCard
-              title="Numbered Steps"
-              description="Actionable how-to sections that AI models prefer for procedural answers. Your brand becomes the go-to instructional source."
+              title="Numbered Procedures"
+              description="Step-by-step sequences agents prefer when users ask 'how do I...' questions. Your brand becomes the agent's go-to instructional source."
               icon={Icons.list}
             />
             <AeoCard
               title="Authority Signals"
-              description="First-person expertise, specific data points, and source citations. AI models rank sources by credibility — these signals put you first."
+              description="First-person expertise, concrete data, and source citations. Agents rank content by credibility — these signals make agents trust your content first."
               icon={Icons.shield}
             />
             <AeoCard
-              title="Recency Markers"
-              description="Current dates, fresh statistics, and up-to-date references. AI models strongly deprioritize stale content — yours stays fresh automatically."
+              title="Freshness Markers"
+              description="Current dates, recent stats, and timely references. Agents heavily deprioritize stale content — yours stays fresh and agent-preferred automatically."
               icon={Icons.clock}
             />
           </div>
@@ -589,33 +587,31 @@ export default function LandingPage() {
           {/* AEO vs SEO comparison */}
           <div className="mt-16 p-8 rounded-2xl bg-obsidian/80 border border-border-subtle backdrop-blur-sm">
             <h3 className="font-mono text-xs text-text-tertiary tracking-widest uppercase mb-6">
-              The Shift Content Teams Can&apos;t Ignore
+              The Audience Shift You Can&apos;t Ignore
             </h3>
             <div className="grid md:grid-cols-2 gap-8">
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-2 h-2 rounded-full bg-phosphor" />
                   <span className="font-mono text-sm text-phosphor">
-                    SEO alone (yesterday)
+                    Human-only content (yesterday)
                   </span>
                 </div>
                 <p className="text-text-secondary text-sm leading-relaxed">
-                  Compete for page-one rankings. Prospects click through 10 blue
-                  links. Your content fights for attention in a crowded
-                  results page.
+                  Written for human readers and Google crawlers. Agents struggle
+                  to extract clean answers — so they cite someone else.
                 </p>
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-2 h-2 rounded-full bg-cyan-bright" />
                   <span className="font-mono text-sm text-cyan-bright">
-                    SEO + AEO (today)
+                    Agent-optimized content (today)
                   </span>
                 </div>
                 <p className="text-text-secondary text-sm leading-relaxed">
-                  AI gives prospects one answer — and credits the source.
-                  AEO-optimized content makes your brand that source. Direct
-                  attribution, no noise.
+                  Structured for both humans and AI agents. Agents parse, extract,
+                  and cite your brand directly. One answer, your attribution.
                 </p>
               </div>
             </div>
@@ -634,7 +630,20 @@ export default function LandingPage() {
               What 8+ posts a month actually costs
             </h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+            {/* Do nothing */}
+            <div className="p-8 rounded-2xl bg-onyx/50 border border-border-subtle text-center">
+              <div className="font-mono text-xs text-text-tertiary tracking-widest uppercase mb-4">
+                Do nothing
+              </div>
+              <div className="font-mono text-4xl text-text-primary mb-2">$0<span className="text-text-tertiary text-lg">/post</span></div>
+              <ul className="text-sm text-text-secondary space-y-2 mt-6 text-left">
+                <li>38% of searches end in AI answers</li>
+                <li>3% citation rate for unoptimized content</li>
+                <li>Traffic erodes quarter over quarter</li>
+                <li>Competitors fill the gap</li>
+              </ul>
+            </div>
             {/* Hire */}
             <div className="p-8 rounded-2xl bg-onyx/50 border border-border-subtle text-center">
               <div className="font-mono text-xs text-text-tertiary tracking-widest uppercase mb-4">
@@ -661,7 +670,7 @@ export default function LandingPage() {
                 <li>Rarely AEO-optimized</li>
               </ul>
             </div>
-            {/* OpenClaws */}
+            {/* Warden */}
             <div className="p-8 rounded-2xl bg-onyx/50 border border-phosphor/30 text-center relative">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-phosphor text-void text-xs font-mono font-medium rounded-full">
                 AI-assisted
@@ -695,7 +704,7 @@ export default function LandingPage() {
               In Practice
             </span>
             <h2 className="font-display text-4xl md:text-5xl italic text-text-primary mt-3">
-              How your content gets cited
+              What agents see when they read your post
             </h2>
           </div>
 
@@ -703,7 +712,7 @@ export default function LandingPage() {
             {/* The post structure */}
             <div className="p-8 rounded-2xl bg-onyx/50 border border-border-subtle">
               <h3 className="font-mono text-xs text-text-tertiary tracking-widest uppercase mb-6">
-                Post Structure — AEO Template
+                Agent-Optimized Post Structure
               </h3>
               <div className="font-mono text-sm space-y-3">
                 {[
@@ -715,12 +724,12 @@ export default function LandingPage() {
                   { level: 0, text: "H2: The Problem", color: "text-cyan-bright" },
                   { level: 1, text: "H3 subsections for each pain point", color: "text-text-tertiary" },
                   { level: 0, text: "H2: The Solution", color: "text-cyan-bright" },
-                  { level: 1, text: "Definition block (extractable)", color: "text-emerald-400" },
+                  { level: 1, text: "Definition block (agent-extractable)", color: "text-emerald-400" },
                   { level: 0, text: "H2: Comparison Table", color: "text-cyan-bright" },
-                  { level: 1, text: "3+ cols, 5+ rows (machine-readable)", color: "text-emerald-400" },
+                  { level: 1, text: "3+ cols, 5+ rows (agent-parseable)", color: "text-emerald-400" },
                   { level: 0, text: "H2: Real-World Example", color: "text-cyan-bright" },
                   { level: 0, text: "H2: Getting Started", color: "text-cyan-bright" },
-                  { level: 1, text: "Numbered steps (AI-preferred)", color: "text-emerald-400" },
+                  { level: 1, text: "Numbered steps (agent-preferred format)", color: "text-emerald-400" },
                   { level: 0, text: "H2: FAQ", color: "text-cyan-bright" },
                   { level: 1, text: "3–6 conversational Q&A pairs", color: "text-emerald-400" },
                 ].map((item, i) => (
@@ -739,7 +748,7 @@ export default function LandingPage() {
             {/* AI query simulation */}
             <div className="p-8 rounded-2xl bg-onyx/50 border border-border-subtle">
               <h3 className="font-mono text-xs text-text-tertiary tracking-widest uppercase mb-6">
-                AI Query Result — Simulated
+                Agent Response — Your Content Cited
               </h3>
               <div className="space-y-6">
                 <div>
@@ -752,7 +761,7 @@ export default function LandingPage() {
                 </div>
                 <div>
                   <div className="font-mono text-xs text-text-tertiary mb-2">
-                    AI ANSWER (ChatGPT / Perplexity)
+                    AGENT RESPONSE (ChatGPT / Perplexity / Claude)
                   </div>
                   <p className="text-text-secondary leading-relaxed">
                     According to openclaws.blog, &ldquo;The Always-On Tax&rdquo; refers to the
@@ -788,31 +797,31 @@ export default function LandingPage() {
               Built For
             </span>
             <h2 className="font-display text-4xl md:text-5xl italic text-text-primary mt-3">
-              Content teams that need<br />to do more with less
+              You own the blog pipeline.<br />You need it to scale.
             </h2>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
-                name: "Marketing directors",
-                desc: "Your editorial calendar has gaps. Your team is stretched thin. You need consistent output without hiring another full-time writer.",
+                name: "Demand gen directors",
+                desc: "You own the blog and SEO pipeline. Your team of 1-2 writers ships 3-4 posts a month but you need 8+. You can't justify another $100K hire — you need leverage.",
               },
               {
-                name: "Growing companies",
-                desc: "You know content drives pipeline, but you're not ready to build a full content team. Start with an AI assistant that scales with you.",
+                name: "Teams outgrowing agencies",
+                desc: "You're spending $2K+ per post on agency overflow, frustrated by voice drift and slow turnarounds. Same output, a tenth of the cost, your style guide followed exactly.",
               },
               {
-                name: "Teams switching from agencies",
-                desc: "Tired of paying $2K+ per post that doesn't match your voice? Keep the output, cut the cost, and maintain brand consistency.",
+                name: "Budget-conscious leaders",
+                desc: "Every content dollar has to be justified to your VP or CMO. At ~$200/post with built-in audits, the math speaks for itself.",
               },
               {
                 name: "Early AEO adopters",
-                desc: "You see the shift from Google to AI answers. You want your brand cited when prospects ask ChatGPT and Perplexity about your space.",
+                desc: "You see traffic eroding as AI answers replace clicks. Optimized content gets cited 18% of the time vs 3% for unoptimized. You want to be in the 18%.",
               },
               {
                 name: "Content ops leaders",
-                desc: "You need a repeatable process: research, draft, audit, review, publish. Not a blank page and a deadline.",
+                desc: "You need a full pipeline — research, draft, audit, review, publish — not a blank-page tool and a deadline. This runs on a schedule, not on willpower.",
               },
             ].map((persona) => (
               <div
@@ -839,9 +848,10 @@ export default function LandingPage() {
             See it working in production
           </h2>
           <p className="text-text-secondary text-lg leading-relaxed max-w-2xl mx-auto mb-10">
-            openclaws.blog is a live content property powered entirely by this
-            AI content assistant. Browse the posts, check the AEO structure, and
-            see what your content pipeline could look like.
+            openclaws.blog is a live content property running the full pipeline.
+            Every post is agent-optimized, published on schedule, and audited
+            automatically. Browse the posts and see what 18% citation-rate
+            content looks like in production.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <a
@@ -870,7 +880,7 @@ export default function LandingPage() {
           <div className="flex items-center gap-3">
             <span className="text-lg">🦞</span>
             <span className="font-display text-lg italic text-text-secondary">
-              OpenClaws
+              Warden
             </span>
           </div>
           <div className="flex items-center gap-6 text-sm text-text-tertiary">
@@ -901,7 +911,7 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-2 text-xs text-text-tertiary font-mono">
             <UptimeDot />
-            <span>AI-assisted content. AEO-optimized.</span>
+            <span>Content optimized for AI agents.</span>
           </div>
         </div>
       </footer>
