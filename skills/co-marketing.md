@@ -153,7 +153,11 @@ Prioritize topics scoring 15+ out of 20. **Reject any topic scoring below 3 on c
 
 ## Reporting Format
 
-```
+**IMPORTANT**: Every daily scan MUST save its report as a markdown file in the `daily-scans/` folder at the project root. File name format: `MM-DD-scan.md` (e.g., `03-10-scan.md`). Use the Write tool to create the file.
+
+The file should contain the full scan report in this format:
+
+```markdown
 ## Daily Partner Scan — [Date]
 
 ### Changes Detected
@@ -165,6 +169,11 @@ Prioritize topics scoring 15+ out of 20. **Reject any topic scoring below 3 on c
 | Priority | Topic | Their trigger | Our angle | Co-marketing potential |
 |----------|-------|---------------|-----------|----------------------|
 | High/Med/Low | "Title idea" | What they published | How we'd write it differently | Could they cross-link? |
+
+### Meeting Prep (if weekly sync is upcoming)
+- Key observations about their strategy this week
+- Co-marketing opportunities to pitch
+- Questions to ask their team
 
 ### Action Items
 - [ ] Draft: [highest priority topic]
@@ -199,7 +208,7 @@ Set up cron jobs to automate monitoring:
 
 ```bash
 # Daily V2Cloud scan at 8am PT
-npx tsx src/cron-cli.ts add --name "daily-v2cloud-scan" --cron "0 8 * * *" --tz "America/Los_Angeles" --instruction "Use the co-marketing skill. Query the V2Cloud WordPress REST API for posts and pages modified in the last 24 hours (use today's date). For each change detected, classify it (new vs refresh), fetch the content, and generate 1-2 topic ideas for openclaws.blog. Report findings using the Daily Partner Scan format."
+npx tsx src/cron-cli.ts add --name "daily-v2cloud-scan" --cron "0 8 * * *" --tz "America/Los_Angeles" --instruction "Use the co-marketing skill. Query the V2Cloud WordPress REST API for posts and pages modified in the last 24 hours (use today's date). For each change detected, classify it (new vs refresh), fetch the content, and generate 1-2 topic ideas for openclaws.blog. Save the full report to daily-scans/MM-DD-scan.md (using today's date)."
 
 # Weekly broader competitor scan on Mondays at 9am PT
 npx tsx src/cron-cli.ts add --name "weekly-competitor-scan" --cron "0 9 * * MON" --tz "America/Los_Angeles" --instruction "Use the co-marketing skill. Check Cursor changelog, Aider blog, HN front page, and Reddit r/LocalLLaMA for notable content from the past week. Generate 2-3 topic ideas for openclaws.blog and report using the Daily Partner Scan format."
