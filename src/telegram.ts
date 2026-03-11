@@ -152,6 +152,70 @@ export function startTelegram(): void {
       return;
     }
 
+    // Handle /drafts command — list WordPress drafts
+    if (text === "/drafts" || text.startsWith("/drafts@")) {
+      try {
+        const wpSsh = process.env.WP_SSH;
+        if (!wpSsh) {
+          await ctx.reply("WP_SSH not configured.");
+          return;
+        }
+        const { execSync } = await import("child_process");
+        const output = execSync(
+          `wp post list --post_status=draft --fields=ID,post_title,post_date --ssh="${wpSsh}"`,
+          { encoding: "utf-8", timeout: 15000 }
+        ).trim();
+        await ctx.reply(output || "No drafts found.");
+      } catch (err) {
+        await ctx.reply("Failed to list drafts.").catch(() => {});
+      }
+      return;
+    }
+
+    // Handle /approve <post-id> command — publish a WordPress draft
+    if (text.startsWith("/approve ") || text.startsWith("/approve@")) {
+      const postId = text.replace(/^\/approve(@\S+)?\s*/, "").trim();
+      if (!postId || !/^\d+$/.test(postId)) {
+        await ctx.reply("Usage: /approve <wp-post-id>");
+        return;
+      }
+      try {
+        const wpSsh = process.env.WP_SSH;
+        if (!wpSsh) { await ctx.reply("WP_SSH not configured."); return; }
+        const { execSync } = await import("child_process");
+        execSync(
+          `wp post update ${postId} --post_status=publish --ssh="${wpSsh}"`,
+          { encoding: "utf-8", timeout: 15000 }
+        );
+        await ctx.reply(`Published post ${postId}.`);
+      } catch (err) {
+        await ctx.reply(`Failed to approve post ${postId}.`).catch(() => {});
+      }
+      return;
+    }
+
+    // Handle /reject <post-id> command — trash a WordPress draft
+    if (text.startsWith("/reject ") || text.startsWith("/reject@")) {
+      const postId = text.replace(/^\/reject(@\S+)?\s*/, "").trim();
+      if (!postId || !/^\d+$/.test(postId)) {
+        await ctx.reply("Usage: /reject <wp-post-id>");
+        return;
+      }
+      try {
+        const wpSsh = process.env.WP_SSH;
+        if (!wpSsh) { await ctx.reply("WP_SSH not configured."); return; }
+        const { execSync } = await import("child_process");
+        execSync(
+          `wp post update ${postId} --post_status=trash --ssh="${wpSsh}"`,
+          { encoding: "utf-8", timeout: 15000 }
+        );
+        await ctx.reply(`Rejected and trashed post ${postId}.`);
+      } catch (err) {
+        await ctx.reply(`Failed to reject post ${postId}.`).catch(() => {});
+      }
+      return;
+    }
+
     // Handle /skills command — list available skills
     if (text === "/skills" || text.startsWith("/skills@")) {
       const names = listSkillNames();

@@ -33,6 +33,7 @@ Add/Update options:
   --instruction <text>    Task instruction to run
   --tz <timezone>         IANA timezone (default: UTC)
   --metadata <json>       Task metadata JSON (e.g. '{"source":"telegram","chatId":123}')
+  --publish-mode <mode>   Publish mode: "auto" (default) or "draft"
   --delete-after-run      Delete job after it runs (one-shot)
   --enable                Enable the job
   --disable               Disable the job
@@ -55,12 +56,17 @@ async function cmdAdd(args: string[]): Promise<void> {
       tz: { type: "string" },
       metadata: { type: "string" },
       "delete-after-run": { type: "boolean", default: false },
+      "publish-mode": { type: "string" },
     },
     strict: true,
   });
 
   if (!values.name) { console.error("Error: --name is required"); process.exit(1); }
   if (!values.instruction) { console.error("Error: --instruction is required"); process.exit(1); }
+  if (values["publish-mode"] && values["publish-mode"] !== "auto" && values["publish-mode"] !== "draft") {
+    console.error('Error: --publish-mode must be "auto" or "draft"');
+    process.exit(1);
+  }
 
   const scheduleCount = [values.cron, values.at, values.every].filter(Boolean).length;
   if (scheduleCount !== 1) {
@@ -74,6 +80,10 @@ async function cmdAdd(args: string[]): Promise<void> {
     schedule_type: values.cron ? "cron" : values.at ? "at" : "every",
     delete_after_run: values["delete-after-run"],
   };
+
+  if (values["publish-mode"]) {
+    input.publish_mode = values["publish-mode"] as "auto" | "draft";
+  }
 
   if (values.cron) {
     if (!validateCronExpression(values.cron)) {
@@ -172,6 +182,7 @@ async function cmdUpdate(args: string[]): Promise<void> {
       tz: { type: "string" },
       metadata: { type: "string" },
       "delete-after-run": { type: "boolean" },
+      "publish-mode": { type: "string" },
       enable: { type: "boolean" },
       disable: { type: "boolean" },
     },
@@ -185,6 +196,13 @@ async function cmdUpdate(args: string[]): Promise<void> {
   if (values.disable) updates.enabled = false;
   if (values.tz) updates.cron_timezone = values.tz;
   if (values["delete-after-run"] !== undefined) updates.delete_after_run = values["delete-after-run"];
+  if (values["publish-mode"]) {
+    if (values["publish-mode"] !== "auto" && values["publish-mode"] !== "draft") {
+      console.error('Error: --publish-mode must be "auto" or "draft"');
+      process.exit(1);
+    }
+    updates.publish_mode = values["publish-mode"] as "auto" | "draft";
+  }
   try {
     updates.task_metadata = resolveTaskMetadata(values.metadata);
   } catch {

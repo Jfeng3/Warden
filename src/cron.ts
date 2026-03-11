@@ -20,9 +20,17 @@ async function fireDueJobs(): Promise<void> {
     for (const job of dueJobs) {
       try {
         // Create a task from the cron job
+        // Inject publish_mode into metadata so the agent knows whether to publish or draft
+        const metadata: Record<string, unknown> = {
+          ...(job.task_metadata ?? {}),
+          cron: true,
+        };
+        if (job.publish_mode === "draft") {
+          metadata.publish_mode = "draft";
+        }
         const task = await insertTask({
           instruction: job.instruction,
-          metadata: { ...(job.task_metadata ?? {}), cron: true },
+          metadata,
         });
         console.log(`[cron] Fired job "${job.name}" (${job.id}) → task ${task.id}`);
 

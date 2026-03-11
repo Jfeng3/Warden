@@ -42,6 +42,7 @@ export interface TaskInput {
 // ── Cron Jobs ─────────────────────────────────────────────
 
 export type ScheduleType = "cron" | "at" | "every";
+export type PublishMode = "auto" | "draft";
 
 export interface CronJob {
   id: string;
@@ -54,6 +55,7 @@ export interface CronJob {
   every_ms: number | null;
   instruction: string;
   task_metadata: Record<string, unknown> | null;
+  publish_mode: PublishMode;
   last_run_at: string | null;
   next_run_at: string | null;
   last_task_id: string | null;
@@ -72,6 +74,7 @@ export interface CronJobInput {
   every_ms?: number;
   instruction: string;
   task_metadata?: Record<string, unknown>;
+  publish_mode?: PublishMode;
   delete_after_run?: boolean;
   next_run_at?: string;
 }
@@ -86,6 +89,7 @@ export interface CronJobUpdate {
   every_ms?: number;
   instruction?: string;
   task_metadata?: Record<string, unknown>;
+  publish_mode?: PublishMode;
   delete_after_run?: boolean;
   next_run_at?: string;
 }

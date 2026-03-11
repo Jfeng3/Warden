@@ -112,6 +112,35 @@ wp option update blogname "OpenClaws" --ssh="$WP_SSH"
 
 **Note:** Some wp-cli commands (like `wp theme`, `wp plugin`) do NOT work on WordPress.com SSH. The following DO work: `wp post`, `wp option update`, `wp media`.
 
+## Draft-Review-Publish Workflow
+
+When a cron job has `publish_mode: "draft"`, the agent should create posts as drafts instead of publishing immediately. The `publish_mode` value is passed in the task's metadata.
+
+### How it works
+
+1. **Check metadata**: If `metadata.publish_mode === "draft"`, use `--post_status=draft` instead of `--post_status=publish`
+2. **Notify for review**: After creating the draft, send a Telegram message with the draft title and post ID
+3. **Telegram commands** for reviewers:
+   - `/drafts` — list all current WordPress drafts
+   - `/approve <post-id>` — publish a draft: sets status to `publish`
+   - `/reject <post-id>` — trash a draft: sets status to `trash`
+
+### Setting draft mode on a cron job
+
+```bash
+# Create a cron job in draft mode
+npx tsx src/cron-cli.ts add --name "blog-publish" --cron "0 9 * * WED,SUN" \
+  --tz "America/Los_Angeles" --publish-mode draft \
+  --metadata '{"source":"telegram","chatId":7823756809}' \
+  --instruction "Write and publish a blog post..."
+
+# Switch an existing cron job to draft mode
+npx tsx src/cron-cli.ts update <id> --publish-mode draft
+
+# Switch back to auto-publish
+npx tsx src/cron-cli.ts update <id> --publish-mode auto
+```
+
 ## Post Statuses
 
 `draft` (default), `publish` (live), `future` (scheduled, requires --post_date), `pending` (awaiting review), `private` (admin-only).
