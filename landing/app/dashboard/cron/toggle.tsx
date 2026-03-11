@@ -51,3 +51,24 @@ export function EnabledToggle({
     />
   );
 }
+
+export function TriggerButton({
+  jobId,
+  action,
+}: {
+  jobId: string;
+  action: (jobId: string) => Promise<void>;
+}) {
+  const [pending, startTransition] = useTransition();
+
+  return (
+    <button
+      disabled={pending}
+      onClick={() => startTransition(() => action(jobId))}
+      className={`rounded border border-cyan-bright/30 bg-cyan-bright/10 px-2 py-0.5 font-mono text-xs text-cyan-bright transition-colors hover:bg-cyan-bright/20 ${pending ? "opacity-50" : ""}`}
+      title="Run this job now"
+    >
+      {pending ? "..." : "run"}
+    </button>
+  );
+}

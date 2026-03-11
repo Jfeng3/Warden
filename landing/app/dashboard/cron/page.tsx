@@ -1,7 +1,7 @@
 import { createServerSupabase } from "../../lib/supabase";
 import type { CronJob } from "../../lib/types";
-import { PublishModeToggle, EnabledToggle } from "./toggle";
-import { togglePublishMode, toggleEnabled } from "./actions";
+import { PublishModeToggle, EnabledToggle, TriggerButton } from "./toggle";
+import { togglePublishMode, toggleEnabled, triggerNow } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -70,6 +70,7 @@ export default async function CronPage() {
                 <th className="px-4 py-3 w-20 text-center">Runs</th>
                 <th className="px-4 py-3 w-24">Last Run</th>
                 <th className="px-4 py-3 w-24 text-right">Next Run</th>
+                <th className="px-4 py-3 w-16 text-center"></th>
               </tr>
             </thead>
             <tbody>
@@ -117,6 +118,9 @@ export default async function CronPage() {
                     {job.enabled
                       ? formatNextRun(job.next_run_at)
                       : "disabled"}
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    <TriggerButton jobId={job.id} action={triggerNow} />
                   </td>
                 </tr>
               ))}

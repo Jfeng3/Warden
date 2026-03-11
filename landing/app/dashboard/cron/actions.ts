@@ -14,6 +14,30 @@ export async function togglePublishMode(jobId: string, currentMode: string) {
   revalidatePath("/dashboard/cron");
 }
 
+export async function triggerNow(jobId: string) {
+  const sb = createServerSupabase();
+  const { data: job, error: jobErr } = await sb
+    .from("warden_cron_jobs")
+    .select("instruction, task_metadata, publish_mode")
+    .eq("id", jobId)
+    .single();
+  if (jobErr || !job) throw jobErr ?? new Error("Job not found");
+
+  const metadata: Record<string, unknown> = {
+    ...(job.task_metadata ?? {}),
+    cron: true,
+  };
+  if (job.publish_mode === "draft") {
+    metadata.publish_mode = "draft";
+  }
+
+  const { error } = await sb
+    .from("warden_tasks")
+    .insert({ instruction: job.instruction, metadata });
+  if (error) throw error;
+  revalidatePath("/dashboard/cron");
+}
+
 export async function toggleEnabled(jobId: string, currentEnabled: boolean) {
   const sb = createServerSupabase();
   const { error } = await sb
