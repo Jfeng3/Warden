@@ -65,7 +65,7 @@ au youtube transcript "https://www.youtube.com/watch?v=VIDEO_ID"
    - Explainer: "What is [trending concept] and why it matters"
    - Opinion: "Why [trend] means [insight for developers]"
 4. **Validate** -- Is anyone searching for this? Check Reddit/HN comment volume as a proxy for interest
-5. **Add to calendar** -- Update `content/calendar.md` with the topic, target keywords, and angle
+5. **Add to calendar** -- Update `docs/content/calendar.md` with the topic, target keywords, and angle
 
 ## Competitor Content Monitoring
 

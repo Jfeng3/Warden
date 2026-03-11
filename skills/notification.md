@@ -89,7 +89,7 @@ Cron jobs need this in their `task_metadata` field. Without it, results log to s
 ### Message Length
 
 - Telegram has a 4096 character limit per message
-- If a summary exceeds this, truncate and end with "Full report in daily-scans/MM-DD-scan.md"
+- If a summary exceeds this, truncate and end with "Full report in docs/daily-scans/MM-DD-scan.md"
 - Prioritize actionable info over comprehensive coverage
 - On mobile, shorter is always better — cut ruthlessly
 

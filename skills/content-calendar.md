@@ -4,7 +4,7 @@ description: Editorial calendar management for openclaws.blog
 ---
 # Content Calendar
 
-Manage the editorial calendar for openclaws.blog. The calendar is a markdown file at `content/calendar.md` -- simple, version-controlled, and editable.
+Manage the editorial calendar for openclaws.blog. The calendar is a markdown file at `docs/content/calendar.md` -- simple, version-controlled, and editable.
 
 ## Calendar Format
 
@@ -40,7 +40,7 @@ Rotate between these content types for variety:
 
 ```bash
 # View the current calendar
-cat content/calendar.md
+cat docs/content/calendar.md
 
 # Add a new topic (edit the file directly)
 # Move topics through statuses as they progress
@@ -52,7 +52,7 @@ Use cron jobs for scheduled content tasks:
 
 ```bash
 # Weekly content planning session every Monday at 9am
-npx tsx src/cron-cli.ts add --name "weekly-content-plan" --cron "0 9 * * MON" --tz "America/Los_Angeles" --instruction "Review the content calendar at content/calendar.md. Check what's due this week, suggest 1-2 new topic ideas based on trending topics (use au news and au reddit), and update the calendar."
+npx tsx src/cron-cli.ts add --name "weekly-content-plan" --cron "0 9 * * MON" --tz "America/Los_Angeles" --instruction "Review the content calendar at docs/content/calendar.md. Check what's due this week, suggest 1-2 new topic ideas based on trending topics (use au news and au reddit), and update the calendar."
 
 # Bi-weekly competitive scan
 npx tsx src/cron-cli.ts add --name "competitive-scan" --cron "0 10 * * MON,THU" --tz "America/Los_Angeles" --instruction "Use the competitive-intel skill to scan competitor repos and Reddit for notable updates. Report findings via Telegram."

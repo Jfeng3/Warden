@@ -39,8 +39,9 @@ warden/
 ├── .gitignore
 ├── CLAUDE.md                 # This file
 ├── architecture.md           # Detailed system architecture docs
-├── plans/
-│   └── initial_plan.md       # Original project plan
+├── docs/
+│   ├── plans/
+│   │   └── initial_plan.md   # Original project plan
 ├── supabase/
 │   └── migrations/
 │       ├── 001_initial_schema.sql  # 3 tables: tasks, agent_steps, conversation_history
