@@ -118,6 +118,10 @@ A task is complete when ALL of the following are true:
 4. No secrets or credentials are hardcoded (use `.env`)
 5. Changes are committed with a descriptive message
 
+## Design Docs
+
+- **Always create feature design docs in `docs/plans/`** — before implementing a feature, write a design doc (e.g. `docs/plans/feature-name.md`) covering the problem, design, schema changes, files to modify, and implementation order. Get approval before coding.
+
 ## Do Not
 
 - **Do not delete or weaken existing test files** — baseline tests are protected by pre-commit hooks and `.claude/settings.json`
