@@ -1,5 +1,7 @@
 import { createServerSupabase } from "../../lib/supabase";
 import type { CronJob } from "../../lib/types";
+import { PublishModeToggle, EnabledToggle } from "./toggle";
+import { togglePublishMode, toggleEnabled } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -26,10 +28,6 @@ function formatNextRun(dateStr: string | null): string {
   if (hrs < 24) return `in ${hrs}h`;
   const days = Math.floor(hrs / 24);
   return `in ${days}d`;
-}
-
-function shortId(id: string): string {
-  return id.slice(0, 8);
 }
 
 export default async function CronPage() {
@@ -65,6 +63,7 @@ export default async function CronPage() {
                 <th className="px-4 py-3 w-32">Schedule</th>
                 <th className="px-4 py-3 w-28">Timezone</th>
                 <th className="px-4 py-3 w-20 text-center">Enabled</th>
+                <th className="px-4 py-3 w-20 text-center">Mode</th>
                 <th className="px-4 py-3 w-20 text-center">Runs</th>
                 <th className="px-4 py-3 w-24">Last Run</th>
                 <th className="px-4 py-3 w-24 text-right">Next Run</th>
@@ -92,8 +91,17 @@ export default async function CronPage() {
                     {job.cron_timezone}
                   </td>
                   <td className="px-4 py-3 text-center">
-                    <span
-                      className={`inline-block h-2 w-2 rounded-full ${job.enabled ? "bg-emerald-500" : "bg-text-tertiary"}`}
+                    <EnabledToggle
+                      jobId={job.id}
+                      enabled={job.enabled}
+                      action={toggleEnabled}
+                    />
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    <PublishModeToggle
+                      jobId={job.id}
+                      mode={job.publish_mode}
+                      action={togglePublishMode}
                     />
                   </td>
                   <td className="px-4 py-3 text-center font-mono text-xs text-text-secondary">
@@ -115,7 +123,7 @@ export default async function CronPage() {
       </div>
 
       {/* Legend */}
-      <div className="mt-4 flex items-center gap-4">
+      <div className="mt-4 flex items-center gap-6">
         <div className="flex items-center gap-1.5">
           <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
           <span className="font-mono text-xs text-text-tertiary">Enabled</span>
@@ -123,6 +131,14 @@ export default async function CronPage() {
         <div className="flex items-center gap-1.5">
           <span className="inline-block h-2 w-2 rounded-full bg-text-tertiary" />
           <span className="font-mono text-xs text-text-tertiary">Disabled</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="rounded-full border border-phosphor/40 bg-phosphor/15 px-2 py-0.5 font-mono text-xs text-phosphor">draft</span>
+          <span className="font-mono text-xs text-text-tertiary">Review before publish</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="rounded-full border border-border-subtle bg-onyx/50 px-2 py-0.5 font-mono text-xs text-text-tertiary">auto</span>
+          <span className="font-mono text-xs text-text-tertiary">Publish immediately</span>
         </div>
       </div>
     </>
