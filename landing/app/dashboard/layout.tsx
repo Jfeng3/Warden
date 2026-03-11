@@ -5,6 +5,7 @@ const NAV_ITEMS = [
   { href: "/dashboard/tasks", label: "Tasks", icon: "list" },
   { href: "/dashboard/cron", label: "Cron Jobs", icon: "clock" },
   { href: "/dashboard/scans", label: "Scans", icon: "search" },
+  { href: "/dashboard/seo", label: "SEO", icon: "chart" },
 ];
 
 const Icons: Record<string, React.ReactNode> = {
@@ -36,6 +37,12 @@ const Icons: Record<string, React.ReactNode> = {
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
       <circle cx="7" cy="7" r="5" />
       <line x1="11" y1="11" x2="15" y2="15" />
+    </svg>
+  ),
+  chart: (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <polyline points="1,12 5,6 9,9 15,2" />
+      <polyline points="11,2 15,2 15,6" />
     </svg>
   ),
 };

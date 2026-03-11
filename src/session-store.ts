@@ -4,6 +4,7 @@ import { resolveModel } from "./config.js";
 import { buildSystemPrompt } from "./prompt.js";
 import { skillTool } from "./skill-tool.js";
 import { wpTool } from "./wp-tool.js";
+import { gscTool } from "./gsc-tool.js";
 import type { Task } from "./data_model/index.js";
 import path from "node:path";
 import os from "node:os";
@@ -134,7 +135,7 @@ async function buildSession(
     sessionManager,
     resourceLoader,
     tools,
-    customTools: [skillTool as any, wpTool as any],
+    customTools: [skillTool as any, wpTool as any, gscTool as any],
   });
 
   return session;

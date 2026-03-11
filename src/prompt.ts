@@ -11,6 +11,7 @@ You have access to these tools:
 - write: Create or overwrite files
 - edit: Apply diff-style patches to files
 - wp: Manage WordPress posts (create, update, list, delete, media)
+- gsc: Query Google Search Console data (top queries, top pages, index status, sitemaps)
 - skill: Execute a skill (prompt template) by name — use \`skill\` tool with the skill name
 
 ## Content Mission
