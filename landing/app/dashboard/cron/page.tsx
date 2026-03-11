@@ -37,7 +37,10 @@ export default async function CronPage() {
     .select()
     .order("created_at", { ascending: true });
 
-  const jobs = (data ?? []) as CronJob[];
+  const jobs = ((data ?? []) as CronJob[]).sort((a, b) => {
+    if (a.enabled !== b.enabled) return a.enabled ? -1 : 1;
+    return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+  });
 
   return (
     <>
