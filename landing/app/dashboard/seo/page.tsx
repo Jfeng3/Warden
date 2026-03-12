@@ -256,8 +256,7 @@ function EmptyState({ hasCredentials, error }: { hasCredentials: boolean; error?
             Connect Google Search Console
           </h3>
           <p className="mt-2 max-w-md text-sm text-text-secondary">
-            Set <code className="rounded bg-graphite px-1.5 py-0.5 font-mono text-xs text-phosphor">GSC_KEY_PATH</code> or{" "}
-            <code className="rounded bg-graphite px-1.5 py-0.5 font-mono text-xs text-phosphor">GOOGLE_SERVICE_ACCOUNT_KEY</code>{" "}
+            Set <code className="rounded bg-graphite px-1.5 py-0.5 font-mono text-xs text-phosphor">GOOGLE_SERVICE_ACCOUNT_KEY</code>{" "}
             in your environment to enable SEO analytics.
           </p>
         </>

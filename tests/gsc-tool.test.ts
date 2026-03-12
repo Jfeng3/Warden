@@ -21,16 +21,13 @@ describe("gsc-tool", () => {
   });
 
   it("returns error when no credentials are set", async () => {
-    const savedKeyPath = process.env.GSC_KEY_PATH;
     const savedInlineKey = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
-    delete process.env.GSC_KEY_PATH;
     delete process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
 
     try {
       const result = await gscTool.execute("test-call", { action: "topQueries" });
       assert.ok(result.content[0].text.includes("No GSC credentials found"));
     } finally {
-      if (savedKeyPath) process.env.GSC_KEY_PATH = savedKeyPath;
       if (savedInlineKey) process.env.GOOGLE_SERVICE_ACCOUNT_KEY = savedInlineKey;
     }
   });
@@ -46,8 +43,8 @@ describe("gsc-tool", () => {
   });
 });
 
-// Live API tests — require GSC_KEY_PATH or GOOGLE_SERVICE_ACCOUNT_KEY in .env
-const hasCredentials = !!(process.env.GSC_KEY_PATH || process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
+// Live API tests — require GOOGLE_SERVICE_ACCOUNT_KEY in .env
+const hasCredentials = !!process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
 
 describe("gsc-tool live API", { skip: !hasCredentials && "No GSC credentials configured" }, () => {
   before(async () => {

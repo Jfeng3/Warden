@@ -19,7 +19,7 @@ Before the code works, you need to:
 3. **Enable the Search Console API** — in the project's API Library, search "Search Console API" and enable it
 4. **Create a service account** — IAM & Admin → Service Accounts → Create, download the JSON key file
 5. **Grant access** — in GSC, Settings → Users and permissions → Add the service account email as a user (read-only is fine)
-6. **Save the key file** — place it at `~/.warden/gsc-service-account.json` (or wherever, referenced by env var)
+6. **Set the env var** — paste the full JSON key into `GOOGLE_SERVICE_ACCOUNT_KEY` in `.env` (or Vercel env vars)
 
 ## Design
 
@@ -35,7 +35,7 @@ Before the code works, you need to:
 | File | Change |
 |------|--------|
 | `src/session-store.ts` | Register `gscTool` as a custom tool alongside `skillTool` and `wpTool` |
-| `.env.example` | Add `GSC_KEY_PATH` |
+| `.env.example` | Add `GOOGLE_SERVICE_ACCOUNT_KEY` |
 | `package.json` | Add `googleapis` dependency |
 
 ### No Schema Changes
@@ -76,14 +76,16 @@ const GscParams = Type.Object({
 import { google } from "googleapis";
 
 function getAuth() {
-  const keyPath = process.env.GSC_KEY_PATH;
-  if (!keyPath) throw new Error("GSC_KEY_PATH not set");
+  const inlineKey = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
+  if (!inlineKey) throw new Error("GOOGLE_SERVICE_ACCOUNT_KEY not set");
 
+  // Parse inline JSON, re-escaping newlines inside string values (dotenv issue)
+  const credentials = JSON.parse(cleaned);
   return new google.auth.GoogleAuth({
-    keyFile: keyPath,
+    credentials,
     scopes: [
       "https://www.googleapis.com/auth/webmasters.readonly",
-      "https://www.googleapis.com/auth/indexing",  // for URL inspection
+      "https://www.googleapis.com/auth/indexing",
     ],
   });
 }
@@ -146,7 +148,7 @@ Alternative: `google-auth-library` + raw `fetch` calls — smaller but more code
 2. Create `src/gsc-tool.ts` — tool definition with all 4 actions
 3. Create `skills/gsc.md` — skill for interpreting GSC data
 4. Modify `src/session-store.ts` — register `gscTool`
-5. Update `.env.example` — add `GSC_KEY_PATH`
+5. Update `.env.example` — add `GOOGLE_SERVICE_ACCOUNT_KEY`
 6. Build + test manually (`npm run build`)
 7. Add cron job via CLI
 8. Write test in `tests/`
@@ -154,8 +156,8 @@ Alternative: `google-auth-library` + raw `fetch` calls — smaller but more code
 ## Environment Variables
 
 ```bash
-# Google Search Console (optional — path to service account JSON key)
-GSC_KEY_PATH=~/.warden/gsc-service-account.json
+# Google Search Console (optional — inline service account JSON)
+GOOGLE_SERVICE_ACCOUNT_KEY={"type":"service_account","project_id":"...","private_key":"...","client_email":"..."}
 ```
 
 ## Open Questions

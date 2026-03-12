@@ -56,13 +56,12 @@ Platforms to query:
 - Claude (claude.ai)
 
 Queries to test:
-1. "What is OpenClaw?"
-2. "What is openclaws.blog?"
-3. "Best open source AI assistants"
-4. "Mac Mini for AI agents"
-5. "How to deploy AI agents for small business"
-6. "[Your brand] vs [competitor]"
-7. "Is [your product] worth it?"
+1. "What is openclaws.blog?"
+2. "Best open source AI assistants"
+3. "Mac Mini for AI agents"
+4. "How to deploy AI agents for small business"
+5. "[Your brand] vs [competitor]"
+6. "Is [your product] worth it?"
 ```
 
 ### Step 2: Score Each Response

@@ -1,7 +1,6 @@
 import { Type } from "@sinclair/typebox";
 import type { ToolDefinition } from "@mariozechner/pi-coding-agent";
 import { google } from "googleapis";
-import os from "node:os";
 
 const SITE_URL = "sc-domain:openclaws.blog";
 
@@ -27,39 +26,31 @@ const GSC_SCOPES = [
 ];
 
 function getAuth() {
-  // Option 1: inline JSON content in env var
   const inlineKey = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
-  if (inlineKey) {
-    // dotenv loads multi-line values with real newlines, which breaks JSON.parse
-    // when the private_key PEM has literal \n inside a JSON string.
-    // Fix: parse line-by-line, re-escaping newlines inside JSON string values.
-    let cleaned = "";
-    let inString = false;
-    for (let i = 0; i < inlineKey.length; i++) {
-      const ch = inlineKey[i];
-      if (ch === '"' && (i === 0 || inlineKey[i - 1] !== "\\")) {
-        inString = !inString;
-      }
-      if (ch === "\n" && inString) {
-        cleaned += "\\n";
-      } else {
-        cleaned += ch;
-      }
+  if (!inlineKey) {
+    throw new Error(
+      "No GSC credentials found. Set GOOGLE_SERVICE_ACCOUNT_KEY env var with the service account JSON."
+    );
+  }
+
+  // dotenv loads multi-line values with real newlines, which breaks JSON.parse
+  // when the private_key PEM has literal \n inside a JSON string.
+  // Fix: re-escape newlines that appear inside JSON string values.
+  let cleaned = "";
+  let inString = false;
+  for (let i = 0; i < inlineKey.length; i++) {
+    const ch = inlineKey[i];
+    if (ch === '"' && (i === 0 || inlineKey[i - 1] !== "\\")) {
+      inString = !inString;
     }
-    const credentials = JSON.parse(cleaned);
-    return new google.auth.GoogleAuth({ credentials, scopes: GSC_SCOPES });
+    if (ch === "\n" && inString) {
+      cleaned += "\\n";
+    } else {
+      cleaned += ch;
+    }
   }
-
-  // Option 2: file path to JSON key
-  const rawPath = process.env.GSC_KEY_PATH;
-  if (rawPath) {
-    const keyPath = rawPath.replace(/^~/, os.homedir());
-    return new google.auth.GoogleAuth({ keyFile: keyPath, scopes: GSC_SCOPES });
-  }
-
-  throw new Error(
-    "No GSC credentials found. Set either GOOGLE_SERVICE_ACCOUNT_KEY (inline JSON) or GSC_KEY_PATH (path to key file)."
-  );
+  const credentials = JSON.parse(cleaned);
+  return new google.auth.GoogleAuth({ credentials, scopes: GSC_SCOPES });
 }
 
 function formatDate(d: Date): string {

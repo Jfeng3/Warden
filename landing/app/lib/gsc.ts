@@ -1,5 +1,4 @@
 import { google } from "googleapis";
-import os from "node:os";
 
 const SITE_URL = "sc-domain:openclaws.blog";
 
@@ -9,34 +8,26 @@ const GSC_SCOPES = [
 ];
 
 function getAuth() {
-  // Option 1: inline JSON
   const inlineKey = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
-  if (inlineKey) {
-    let cleaned = "";
-    let inString = false;
-    for (let i = 0; i < inlineKey.length; i++) {
-      const ch = inlineKey[i];
-      if (ch === '"' && (i === 0 || inlineKey[i - 1] !== "\\")) {
-        inString = !inString;
-      }
-      if (ch === "\n" && inString) {
-        cleaned += "\\n";
-      } else {
-        cleaned += ch;
-      }
+  if (!inlineKey) return null;
+
+  // dotenv loads multi-line values with real newlines, which breaks JSON.parse
+  // when the private_key PEM has literal \n inside a JSON string.
+  let cleaned = "";
+  let inString = false;
+  for (let i = 0; i < inlineKey.length; i++) {
+    const ch = inlineKey[i];
+    if (ch === '"' && (i === 0 || inlineKey[i - 1] !== "\\")) {
+      inString = !inString;
     }
-    const credentials = JSON.parse(cleaned);
-    return new google.auth.GoogleAuth({ credentials, scopes: GSC_SCOPES });
+    if (ch === "\n" && inString) {
+      cleaned += "\\n";
+    } else {
+      cleaned += ch;
+    }
   }
-
-  // Option 2: file path
-  const rawPath = process.env.GSC_KEY_PATH;
-  if (rawPath) {
-    const keyPath = rawPath.replace(/^~/, os.homedir());
-    return new google.auth.GoogleAuth({ keyFile: keyPath, scopes: GSC_SCOPES });
-  }
-
-  return null;
+  const credentials = JSON.parse(cleaned);
+  return new google.auth.GoogleAuth({ credentials, scopes: GSC_SCOPES });
 }
 
 function formatDate(d: Date): string {
