@@ -1,8 +1,27 @@
 ---
 trigger: When sending notifications, task results, or messages to the user via Telegram or other channels
-description: Rules for how Warden should format and deliver notifications
+description: Rules for how Warden should format and deliver notifications via Telegram
 ---
 # Notification Rules
+
+## Sending Messages
+
+To send a Telegram message mid-task, write the message to a file and pipe it to the send script. This avoids shell escaping issues with quotes and HTML tags.
+
+**IMPORTANT**: Always use the file+pipe method below. Do NOT pass the message as a shell argument — it will break on quotes and HTML.
+
+Default chat ID: `7823756809`
+
+```bash
+cat > /tmp/tg-msg.html <<'MSG'
+📝 <b>Topic Selected:</b> AI Agent Security
+
+▸ Pillar: Agent Setup &amp; DevOps
+▸ Source: <a href="https://example.com">Article Title</a>
+▸ Angle: How SMBs can secure agents without breaking workflows
+MSG
+bash skills/notification/send.sh 7823756809 < /tmp/tg-msg.html
+```
 
 ## Telegram
 

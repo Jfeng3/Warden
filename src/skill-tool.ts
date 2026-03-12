@@ -29,15 +29,28 @@ function parseFrontmatter(raw: string): { meta: Record<string, string>; body: st
   return { meta, body: match[2] };
 }
 
-/** Load all .md files from skills/ directory */
+/** Load skills from skills/ directory (flat .md files and <dir>/SKILL.md subdirectories) */
 function loadSkills(): Map<string, SkillEntry> {
   const skills = new Map<string, SkillEntry>();
   if (!fs.existsSync(SKILLS_DIR)) return skills;
 
   for (const file of fs.readdirSync(SKILLS_DIR)) {
-    if (!file.endsWith(".md")) continue;
-    const name = file.replace(/\.md$/, "");
-    const raw = fs.readFileSync(path.join(SKILLS_DIR, file), "utf-8");
+    let name: string;
+    let raw: string;
+    const fullPath = path.join(SKILLS_DIR, file);
+
+    if (file.endsWith(".md")) {
+      name = file.replace(/\.md$/, "");
+      raw = fs.readFileSync(fullPath, "utf-8");
+    } else if (fs.statSync(fullPath).isDirectory()) {
+      const skillMd = path.join(fullPath, "SKILL.md");
+      if (!fs.existsSync(skillMd)) continue;
+      name = file;
+      raw = fs.readFileSync(skillMd, "utf-8");
+    } else {
+      continue;
+    }
+
     const { meta, body } = parseFrontmatter(raw);
 
     // Description: frontmatter > first heading > filename

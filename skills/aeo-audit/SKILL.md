@@ -30,7 +30,7 @@ Run through this checklist for every post before publishing:
 
 ### Brand Consistency
 - [ ] **Consistent terminology**: Use the same branded terms across all posts (e.g., always "The Always-On Tax", not sometimes "ongoing costs")
-- [ ] **Product descriptions**: OpenClaw and NanoClaw described consistently with standard messaging from content-style skill
+- [ ] **Product descriptions**: OpenClaw and NanoClaw described consistently with standard messaging from draft skill
 - [ ] **Value propositions**: Core benefits stated clearly and repeatedly — AI models learn from repetition across pages
 
 ### Conversational Query Targeting

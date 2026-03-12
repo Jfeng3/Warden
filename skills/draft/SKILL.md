@@ -1,6 +1,6 @@
 ---
 trigger: When writing or editing blog content for openclaws.blog
-description: Writing style guide for openclaws.blog
+description: Writing style guide for openclaws.blog blog posts
 ---
 # Content Style Guide
 

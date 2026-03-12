@@ -49,17 +49,20 @@ Run through this checklist for every post before publishing:
 
 ### 1. Find What People Are Asking
 
+Use the `youdotcom-cli` skill to search for common questions and trending discussions:
+
 ```bash
-# Scan Reddit for common questions
-au reddit search "how to [topic]" top month 10
-au reddit search "[topic] vs" top month 10
-au reddit search "[topic] best" top month 10
+# Search for common questions around a topic
+curl -s "https://api.you.com/v1/agents/search?query=how+to+[topic]&freshness=month" \
+  ${YDC_API_KEY:+-H "X-API-Key: $YDC_API_KEY"} | jq '.results.web[] | {title,url,description}'
 
-# Check HN for trending discussions
-au news latest --provider hacker-news --limit 15
+# Search for comparison queries
+curl -s "https://api.you.com/v1/agents/search?query=[topic]+vs&freshness=month" \
+  ${YDC_API_KEY:+-H "X-API-Key: $YDC_API_KEY"} | jq '.results.web[] | {title,url,description}'
 
-# Look at YouTube for popular tutorial topics
-au youtube transcript "https://www.youtube.com/watch?v=VIDEO_ID"
+# Search for "best" queries
+curl -s "https://api.you.com/v1/agents/search?query=best+[topic]&freshness=month" \
+  ${YDC_API_KEY:+-H "X-API-Key: $YDC_API_KEY"} | jq '.results.web[] | {title,url,description}'
 ```
 
 ### 2. Analyze Search Intent
@@ -77,10 +80,9 @@ For each keyword, identify the intent:
 
 Use these proxies (no paid SEO tools needed):
 
-- **Reddit engagement**: High upvotes/comments = validated demand
-- **HN discussion**: Front page = strong interest
-- **Existing content quality**: Can we write something significantly better?
+- **Search result quality**: Can we write something significantly better than current top results?
 - **Long-tail opportunity**: More specific = easier to rank (e.g. "local ai agent mac setup" vs "ai agent")
+- **Content gap**: Are existing results missing key angles or data?
 
 ### 4. Build a Keyword Cluster
 
