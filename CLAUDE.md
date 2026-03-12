@@ -164,14 +164,18 @@ Daily scan (8am PT)
   → Query V2Cloud REST API for posts/pages modified in last 24h
   → Classify: new content vs refresh
   → Generate 1-2 topic ideas with scoring (keyword overlap, content gap, co-marketing potential)
+  → Each topic idea MUST map to at least one pillar from the topic skill (skills/topic.md)
   → Report findings via task result
 
 Wed + Sun (9am PT)
   → Collect topic ideas from recent daily scans
-  → Pick best topic based on scoring criteria
+  → Pick best topic based on scoring criteria + topic pillar coverage
+  → Load topic skill (ensure post maps to a pillar)
   → Load content-style skill (audience rules, branded metaphors, structure template)
   → Load seo-audit skill (on-page SEO checklist)
-  → Write full blog post (2,000-3,000 words)
+  → Draft full blog post (2,000-3,000 words)
+  → Load seo-audit skill → audit draft → edit to fix SEO issues
+  → Load aeo-audit skill → audit draft → edit to fix AEO issues
   → Publish to WordPress via wp-cli: wp post create --post_status=publish --ssh="$WP_SSH"
 ```
 
@@ -179,6 +183,7 @@ Wed + Sun (9am PT)
 
 | Skill | File | Purpose |
 |-------|------|---------|
+| `topic` | `skills/topic.md` | Four topic pillars: AI discovery/AEO, agent skills, agent setup/DevOps, hosting. Every post must map to at least one. |
 | `content-style` | `skills/content-style.md` | Writing style, structure template, **target audience rules**, branded metaphor patterns, jargon blacklist |
 | `co-marketing` | `skills/co-marketing.md` | V2Cloud partner monitoring, complementary topic generation, REST API + sitemap + Wayback scanning |
 | `seo-audit` | `skills/seo-audit.md` | On-page SEO checklist, keyword research workflow |
