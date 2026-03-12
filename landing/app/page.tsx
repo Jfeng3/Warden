@@ -99,6 +99,93 @@ function Terminal() {
 }
 
 /* ═══════════════════════════════════════════
+   Waitlist Form (Hero CTA)
+   ═══════════════════════════════════════════ */
+
+function WaitlistForm() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setStatus("loading");
+    setErrorMsg("");
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) {
+        setStatus("error");
+        setErrorMsg(data.error || "Something went wrong");
+        return;
+      }
+      setStatus("success");
+    } catch {
+      setStatus("error");
+      setErrorMsg("Something went wrong");
+    }
+  }
+
+  if (status === "success") {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-2 text-emerald-400 font-mono text-sm">
+          <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path d="M20 6L9 17l-5-5" />
+          </svg>
+          You&apos;re on the list — we&apos;ll be in touch.
+        </div>
+        <a
+          href="https://openclaws.blog"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block px-6 py-3 rounded-lg border border-border-visible text-text-secondary hover:text-text-primary hover:border-text-tertiary transition-colors"
+        >
+          Read sample posts &rarr;
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <form onSubmit={handleSubmit} className="flex flex-wrap gap-3">
+        <input
+          type="email"
+          required
+          placeholder="you@company.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="px-4 py-3 rounded-lg bg-onyx/80 border border-border-visible text-text-primary placeholder:text-text-tertiary font-mono text-sm focus:outline-none focus:border-phosphor/50 transition-colors w-64"
+        />
+        <button
+          type="submit"
+          disabled={status === "loading"}
+          className="px-6 py-3 rounded-lg bg-phosphor text-void font-medium hover:bg-phosphor-dim transition-colors disabled:opacity-60"
+        >
+          {status === "loading" ? "Joining..." : "Join the waitlist"}
+        </button>
+      </form>
+      {status === "error" && (
+        <p className="text-red-400 text-sm font-mono">{errorMsg}</p>
+      )}
+      <a
+        href="https://openclaws.blog"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-block px-6 py-3 rounded-lg border border-border-visible text-text-secondary hover:text-text-primary hover:border-text-tertiary transition-colors"
+      >
+        Read sample posts &rarr;
+      </a>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════
    Pipeline Step Component
    ═══════════════════════════════════════════ */
 
@@ -380,22 +467,7 @@ export default function LandingPage() {
               approves — the pipeline handles the rest.
             </p>
 
-            <div className="flex flex-wrap gap-4">
-              <a
-                href="#aeo"
-                className="px-6 py-3 rounded-lg bg-phosphor text-void font-medium hover:bg-phosphor-dim transition-colors"
-              >
-                How agents read content
-              </a>
-              <a
-                href="https://openclaws.blog"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-6 py-3 rounded-lg border border-border-visible text-text-secondary hover:text-text-primary hover:border-text-tertiary transition-colors"
-              >
-                Read sample posts &rarr;
-              </a>
-            </div>
+            <WaitlistForm />
           </div>
 
           {/* Right — terminal */}
