@@ -96,7 +96,7 @@ Our audience matches V2Cloud.com's readers: **non-technical business professiona
 - **Voice**: Active voice. "An AI agent processes your data" not "Your data is processed by an AI agent."
 - **Bold**: Use bold for key terms on first mention, critical statements, and section emphasis.
 - **Sentence length**: Mix short punchy statements with longer explanatory ones.
-- **Word count**: Target 2,000-3,000 words. No section should exceed ~600 words.
+- **Word count**: Target 1,200-1,500 words. No section should exceed ~400 words.
 
 ## Formatting Rules
 

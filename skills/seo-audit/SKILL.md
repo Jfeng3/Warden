@@ -20,7 +20,7 @@ Run through this checklist for every post before publishing:
 - [ ] **H2s**: 4-8 per post, include secondary keywords naturally
 - [ ] **H3s**: Used for subsections under H2s, never skip heading levels
 - [ ] **First 100 words**: Primary keyword appears naturally
-- [ ] **Word count**: 2,000-3,000 words (long-form ranks better for informational queries)
+- [ ] **Word count**: 1,200-1,500 words (concise but deep enough for AEO extraction)
 
 ### Keywords
 - [ ] **Primary keyword**: Appears in title, H1, first paragraph, 1-2 H2s, conclusion

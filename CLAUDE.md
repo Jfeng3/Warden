@@ -173,7 +173,7 @@ Wed + Sun (9am PT)
   → Load topic skill (ensure post maps to a pillar)
   → Load content-style skill (audience rules, branded metaphors, structure template)
   → Load seo-audit skill (on-page SEO checklist)
-  → Draft full blog post (2,000-3,000 words)
+  → Draft full blog post (1,200-1,500 words)
   → Load seo-audit skill → audit draft → edit to fix SEO issues
   → Load aeo-audit skill → audit draft → edit to fix AEO issues
   → Publish to WordPress via wp-cli: wp post create --post_status=publish --ssh="$WP_SSH"

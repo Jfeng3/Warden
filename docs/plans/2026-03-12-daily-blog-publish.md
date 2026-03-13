@@ -39,7 +39,7 @@ STEP 3: NOTIFY TOPIC SELECTION
 
 STEP 4: DRAFT
   → Load skills/content-style.md
-  → Write 2,000-3,000 word blog post as HTML
+  → Write 1,200-1,500 word blog post as HTML
   → Problem-first, branded metaphors, non-technical audience
 
 STEP 5: SEO AUDIT (no edits)
