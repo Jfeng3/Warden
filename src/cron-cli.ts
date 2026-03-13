@@ -7,11 +7,11 @@ import {
   listCronJobs,
   updateCronJob,
   deleteCronJob,
-  insertTask,
 } from "./data_model/index.js";
 import type { CronJobInput, CronJobUpdate } from "./data_model/index.js";
 import { computeNextRun, parseInterval, validateCronExpression } from "./cron-utils.js";
 import { resolveTaskMetadata } from "./resolve-metadata.js";
+import { createCronTask } from "./cron-task.js";
 import type { CronJob } from "./data_model/index.js";
 
 function usage(): never {
@@ -253,10 +253,7 @@ async function cmdRun(args: string[]): Promise<void> {
   const job = await getCronJob(id);
   if (!job) { console.error(`Job ${id} not found`); process.exit(1); }
 
-  const task = await insertTask({
-    instruction: job.instruction,
-    metadata: job.task_metadata ?? undefined,
-  });
+  const task = await createCronTask(job);
   console.log(`Triggered cron job "${job.name}" → task ${task.id}`);
 }
 

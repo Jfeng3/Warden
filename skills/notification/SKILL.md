@@ -12,6 +12,8 @@ To send a Telegram message mid-task, write the message to a file and pipe it to 
 
 Default chat ID: `7823756809`
 
+### How to send (copy-paste this pattern):
+
 ```bash
 cat > /tmp/tg-msg.html <<'MSG'
 📝 <b>Topic Selected:</b> AI Agent Security
@@ -22,6 +24,13 @@ cat > /tmp/tg-msg.html <<'MSG'
 MSG
 bash skills/notification/send.sh 7823756809 < /tmp/tg-msg.html
 ```
+
+**Step by step:**
+1. Write your HTML message to `/tmp/tg-msg.html` using a heredoc (`cat > /tmp/tg-msg.html <<'MSG' ... MSG`)
+2. Pipe it to `bash skills/notification/send.sh 7823756809 < /tmp/tg-msg.html`
+3. The script returns JSON with `"ok":true` on success
+
+**Do NOT** skip this — every topic selection and draft completion MUST send a Telegram notification using the exact pattern above.
 
 ## Telegram
 

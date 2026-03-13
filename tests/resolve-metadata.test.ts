@@ -74,8 +74,8 @@ describe("metadata inheritance e2e", () => {
     assert.ok(task, "Fired task should exist in DB");
     assert.deepEqual(
       task!.metadata,
-      TELEGRAM_METADATA,
-      "Fired task should have metadata inherited from cron job"
+      { ...TELEGRAM_METADATA, cron: true },
+      "Fired task should have metadata inherited from cron job with cron: true"
     );
   });
 
