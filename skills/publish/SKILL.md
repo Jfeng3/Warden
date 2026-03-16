@@ -105,8 +105,8 @@ wp(command='post list --post_type=page --fields=ID,post_title,post_status')
 `wp option update` works over SSH for WordPress.com:
 
 ```
-wp(command='option update blogdescription "AI content automation for one-person companies"')
-wp(command='option update blogname "OpenClaws"')
+wp(command='option update blogdescription "The agent guide for solo business owners"')
+wp(command='option update blogname "Solo Agent Stack"')
 ```
 
 **Note:** Some wp-cli commands (like `wp theme`, `wp plugin`) do NOT work on WordPress.com SSH. The following DO work: `wp post`, `wp option update`, `wp media`.

@@ -208,7 +208,7 @@ All blog content targets **solo operators and one-person companies** — people 
 | 1 | About | Blog mission, what we cover, our tools |
 | 38 | Blog | Blog listing page |
 
-Site tagline: "AI content automation for one-person companies"
+Site tagline: "The agent guide for solo business owners"
 
 ### Notifications
 

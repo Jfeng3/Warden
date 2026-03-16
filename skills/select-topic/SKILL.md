@@ -4,23 +4,23 @@ description: Topic pillars and selection criteria for openclaws.blog blog posts
 ---
 # Topic Pillars
 
-openclaws.blog covers four core topic areas. Every blog post should map to at least one pillar.
+openclaws.blog ("The Solo Agent Stack") covers four core topic areas. Every blog post should map to at least one pillar. All topics must be framed as problems a one-person business owner would actually Google.
 
-## 1. Getting Discovered by AI Agents
+## 1. What AI Content Actually Costs
 
-How businesses can get their brand, products, and content surfaced by AI agents (ChatGPT, Perplexity, Google AI Overviews). Covers Answer Engine Optimization (AEO), structured data, citation strategies, and visibility in AI-generated answers.
+Real pricing, DIY vs agency vs AI pipeline, cost-per-post math, hosting bills, when automation pays for itself. Help solo operators make informed spending decisions with actual numbers.
 
-## 2. Agent Skills
+## 2. Getting Traffic Without a Team
 
-What AI agents can actually do for content marketing — capabilities, use cases, and real-world applications. Covers automated blog publishing, SEO/AEO auditing, content repurposing (blog → social → newsletter), editorial calendar automation, co-marketing content workflows, topic research and gap analysis, draft-review-publish pipelines, and performance tracking. Focuses on the content skills that help SMBs publish consistently without hiring a full content team.
+SEO for solos, publishing cadence on autopilot, content repurposing (blog → social → newsletter), what actually moves the needle when you're the only person. Practical tactics, not theory.
 
-## 3. Agent Infrastructure
+## 3. Getting Cited by AI
 
-How to get AI agents running, keep them running, and where they live. Covers choosing platforms, configuration, deployment, monitoring, reliability, hosting options (cloud VMs, local machines, hybrid setups), infrastructure decisions, cost trade-offs, performance, and the operational side of running agents 24/7 for business workflows. Natural overlap with V2Cloud co-marketing content.
+How ChatGPT, Perplexity, and Google AI Overviews choose who to cite. Structured content, earned media distribution, citation monitoring, Answer Engine Optimization (AEO). The goal: when someone asks an AI about your niche, your name comes up.
 
-## 4. Agent Economics
+## 4. Delegating Content Work to AI
 
-The business and financial side of AI agents. Covers ROI analysis, total cost of ownership, build vs buy decisions, pricing models, staffing impact, productivity gains, and when automation pays for itself. Helps decision-makers justify AI agent investments with real numbers and frameworks.
+Setting up draft-review-publish pipelines, editorial calendar automation, AI writing quality control, human review workflows. How to stop writing everything yourself and still publish consistently.
 
 ## Topic Notification Template
 

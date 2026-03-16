@@ -65,12 +65,12 @@ H2: Frequently Asked Questions
 
 ## Target Audience
 
-Our audience is **solo operators and one-person companies** — freelancers, consultants, agency-of-one founders, and micro-SaaS builders who run their entire business alone.
+Our audience is **one-person business owners** who run everything alone and need AI agents to handle content marketing so they can focus on their actual business.
 
-- **Primary personas**: Solo consultants, freelance professionals, one-person agency owners, indie SaaS founders
+- **Primary personas**: Solo consultants, freelancers, agency-of-one founders, indie SaaS builders
 - **Technical level**: Low-to-moderate. They can follow instructions but don't have time to learn DevOps. They want systems that work after a one-time setup.
-- **Their questions**: "How do I keep publishing without spending my whole week writing?" not "How do I configure a CI/CD pipeline?"
-- **Industries**: Consulting, marketing, design, professional services, e-commerce, SaaS
+- **Their 4 concerns**: (1) What does this cost me? (2) How do I get traffic? (3) How do I show up in AI answers? (4) How do I stop writing everything myself?
+- **Topic test**: Every post must answer a question a solo business owner would actually type into Google
 
 ### Audience Rules
 
