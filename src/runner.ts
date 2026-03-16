@@ -137,7 +137,10 @@ async function pollAndRun(provider: string, modelId: string) {
     if (!claimed) return; // Another runner got it
     claimedTaskId = task.id;
 
-    const session = await getSessionForTask(task, provider, modelId);
+    // Per-task model override via metadata (e.g. metadata.provider / metadata.model)
+    const taskProvider = (task.metadata?.provider as string) || provider;
+    const taskModel = (task.metadata?.model as string) || modelId;
+    const session = await getSessionForTask(task, taskProvider, taskModel);
     await executeTask(task, session);
   } catch (err) {
     console.error(`[runner] Poll error:`, err);
