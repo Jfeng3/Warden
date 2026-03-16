@@ -1,0 +1,1 @@
+Use the co-marketing skill. Query the V2Cloud WordPress REST API for posts and pages modified in the last 24 hours (use today's date). For each change detected, classify it (new vs refresh), fetch the content, and generate 1-2 topic ideas for openclaws.blog. Save the full report to docs/daily-scans/MM-DD-scan.md (using today's date).
