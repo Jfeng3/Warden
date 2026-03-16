@@ -102,7 +102,15 @@ async function executeTask(task: Task, session: AgentSession) {
     const result = ctx.assistantText || "(no output)";
     await completeTask(task.id, result);
     console.log(`[runner] Task ${task.id} completed\n${result}`);
-    await notifyTaskComplete({ ...task, status: "done", result });
+    if (result === "(no output)") {
+      await notifyTaskComplete({
+        ...task,
+        status: "failed",
+        error: `Task completed but produced no output. The agent may have run out of context or hit connection errors. Task ID: ${task.id}`,
+      });
+    } else {
+      await notifyTaskComplete({ ...task, status: "done", result });
+    }
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error(`[runner] Task ${task.id} failed:`, msg);
