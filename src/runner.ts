@@ -14,28 +14,30 @@ import { getSessionForTask, deriveSessionKey, buildFreshSession } from "./sessio
 import { WorkflowState, createStateTools } from "./workflow-state.js";
 import type { Task } from "./data_model/index.js";
 
+export interface ParsedInstruction {
+  preamble: string;
+  steps: { index: number; text: string }[];
+}
+
 /**
  * Parse instruction text into ordered steps by STEP N: markers.
- * Instructions without markers are returned as a single step.
+ * Returns preamble separately so it can be injected into every step.
+ * Instructions without markers are returned as a single step with no preamble.
  */
-export function parseSteps(instruction: string): { index: number; text: string }[] {
+export function parseSteps(instruction: string): ParsedInstruction {
   const stepPattern = /^STEP\s+(\d+):/gm;
   const matches = [...instruction.matchAll(stepPattern)];
-  if (matches.length < 2) return [{ index: 0, text: instruction }];
+  if (matches.length < 2) return { preamble: "", steps: [{ index: 0, text: instruction }] };
 
-  // Capture any preamble before the first STEP marker
   const preamble = instruction.slice(0, matches[0].index!).trim();
 
-  return matches.map((m, i) => {
+  const steps = matches.map((m, i) => {
     const start = m.index!;
     const end = matches[i + 1]?.index ?? instruction.length;
-    let text = instruction.slice(start, end).trim();
-    // Prepend preamble to first step so global context isn't lost
-    if (i === 0 && preamble) {
-      text = preamble + "\n\n" + text;
-    }
-    return { index: parseInt(m[1]), text };
+    return { index: parseInt(m[1]), text: instruction.slice(start, end).trim() };
   });
+
+  return { preamble, steps };
 }
 
 let running = false;
@@ -115,7 +117,7 @@ async function executeTask(task: Task, session: AgentSession, provider: string, 
   }
 
   try {
-    const steps = parseSteps(task.instruction);
+    const { preamble, steps } = parseSteps(task.instruction);
     const isMultiStep = steps.length > 1;
     let result: string;
 
@@ -131,11 +133,11 @@ async function executeTask(task: Task, session: AgentSession, provider: string, 
       taskContext.delete(session);
     } else {
       // === MULTI-STEP: fresh session per step with workflow state ===
-      const lastStepIndex = steps[steps.length - 1].index;
-      console.log(`[runner] [task ${task.id}] Parsed ${steps.length} steps (workflow mode)`);
+      const totalSteps = steps.length;
+      console.log(`[runner] [task ${task.id}] Parsed ${totalSteps} steps (workflow mode)`);
 
       const workflowState = new WorkflowState();
-      // Seed initial state from task metadata (set by cron-task from state.json)
+      // Seed initial state from task metadata (set by cron-task from state.ts)
       const initialState = (task.metadata?.initialState as Record<string, unknown>) ?? {};
       for (const [k, v] of Object.entries(initialState)) {
         workflowState.set(k, v);
@@ -143,9 +145,10 @@ async function executeTask(task: Task, session: AgentSession, provider: string, 
       const stateTools = createStateTools(workflowState);
       const stepResults: { index: number; output: string }[] = [];
 
-      for (const step of steps) {
+      for (let si = 0; si < steps.length; si++) {
+        const step = steps[si];
         const stateKeys = Object.keys(workflowState.getAll());
-        console.log(`[runner] [task ${task.id}] Starting step ${step.index}/${lastStepIndex} (state keys: ${stateKeys.join(", ") || "none"})`);
+        console.log(`[runner] [task ${task.id}] Starting step ${step.index} [${si + 1}/${totalSteps}] (state keys: ${stateKeys.join(", ") || "none"})`);
 
         // Fresh session with state tools injected
         const stepSession = await buildFreshSession(provider, modelId, stateTools);
@@ -153,11 +156,32 @@ async function executeTask(task: Task, session: AgentSession, provider: string, 
         taskContext.set(stepSession, { taskId: task.id, assistantText: "", logger: stepLogger });
         attachSubscriber(stepSession);
 
-        // Prepend state context to instruction
-        const statePrefix = workflowState.toContext();
-        const stepInstruction = statePrefix ? `${statePrefix}\n\n${step.text}` : step.text;
+        // Build full context: preamble + progress + state + step instruction
+        const contextParts: string[] = [];
 
-        await stepSession.prompt(stepInstruction);
+        // Workflow preamble — always present so every step knows the big picture
+        if (preamble) contextParts.push(preamble);
+
+        // Step progress — what's done, what's current, what's ahead
+        const progressLines: string[] = [];
+        for (let j = 0; j < steps.length; j++) {
+          const s = steps[j];
+          const titleMatch = s.text.match(/^STEP\s+\d+:\s*(.+)/);
+          const title = titleMatch ? titleMatch[1].split("\n")[0] : `Step ${s.index}`;
+          if (j < si) progressLines.push(`  [done] Step ${s.index}: ${title}`);
+          else if (j === si) progressLines.push(`  [current] Step ${s.index}: ${title}`);
+          else progressLines.push(`  [ ] Step ${s.index}: ${title}`);
+        }
+        contextParts.push(`## Workflow Progress (step ${si + 1} of ${totalSteps})\n\n${progressLines.join("\n")}`);
+
+        // Workflow state from prior steps
+        const stateContext = workflowState.toContext();
+        if (stateContext) contextParts.push(stateContext);
+
+        // The actual step instruction
+        contextParts.push(step.text);
+
+        await stepSession.prompt(contextParts.join("\n\n"));
 
         const ctx = taskContext.get(stepSession)!;
         stepResults.push({ index: step.index, output: ctx.assistantText });
