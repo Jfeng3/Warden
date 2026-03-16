@@ -1,22 +1,23 @@
 # Customer Segmentation
 
-## Primary Persona: Demand Gen Director at B2B SaaS (50-500 employees)
+## Primary Persona: Solo Operator / One-Person Company
 
-Owns blog + SEO pipeline. Team of 1-2 writers plus freelancers producing 3-4 posts/month, needs 8+. Measured on organic traffic and inbound leads. Reports to VP Marketing or CMO.
+Runs an entire business alone — consulting, freelancing, agency-of-one, or micro-SaaS. Wears every hat: marketing, sales, ops, finance, delivery. Needs to publish content consistently but can't justify hiring a writer or content agency. Measured on revenue, client pipeline, and personal bandwidth.
 
 **Pain points:**
-- **Capacity gap** — Can't justify a $100K hire, but freelancers ($500-$2K/post) bring timezone gaps, voice drift, and management overhead
-- **AEO blind spot** — Blog is SEO-optimized but not structured for AI-generated answers (ChatGPT, Perplexity). Competitors with better-structured content get cited instead
-- **New category pressure** — Needs thought leadership content for emerging product lines before competitors claim the space
-- **Budget justification** — Bootstrapped or budget-constrained. Every content dollar must show ROI
+- **Time poverty** — Every hour spent writing a blog post is an hour not spent on billable work or product development
+- **Inconsistent publishing** — Knows content marketing works but can't maintain a cadence alone. Posts happen in bursts then go silent for weeks
+- **AEO blind spot** — Has no idea how AI agents (ChatGPT, Perplexity) choose which brands to cite. Competitors with better-structured content get surfaced instead
+- **Can't afford agencies** — $2K/post agencies are out of reach. Freelancers ($500/post) still require briefing, editing, and back-and-forth that eats into the day
+- **Voice consistency** — When they do outsource, the content doesn't sound like them. Their audience notices
 
 **What they'd buy:**
-- 4-6 overflow posts/month matching their voice (~$200/post vs $2K agency)
-- AEO audit of existing posts to improve AI citation rates
-- Reliable publishing cadence without freelancer coordination
+- An always-on content pipeline that drafts, audits, and publishes 4-8 posts/month without daily involvement
+- AEO optimization so AI agents cite their brand when prospects ask buying questions
+- A system they set up once and monitor weekly — not another tool that demands daily attention
 
-## Secondary Persona: Content Marketing Director at SMB SaaS (Generic)
+## Secondary Persona: Small Team Lead (2-5 people)
 
-- **Industries**: SaaS, fintech, healthtech, edtech, cybersecurity
-- **Budget**: $5K-$20K/month on outsourced content
-- **Trigger**: Traffic declining as AI answers replace Google clicks
+- **Industries**: Consulting, marketing agencies, SaaS startups, professional services, e-commerce
+- **Budget**: $500-$2K/month on content (currently DIY or sporadic freelancers)
+- **Trigger**: Realizing their competitors show up in AI-generated answers and they don't

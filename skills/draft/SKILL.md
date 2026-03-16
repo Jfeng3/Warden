@@ -65,12 +65,12 @@ H2: Frequently Asked Questions
 
 ## Target Audience
 
-Our audience matches V2Cloud.com's readers: **non-technical business professionals** at small-to-medium businesses.
+Our audience is **solo operators and one-person companies** — freelancers, consultants, agency-of-one founders, and micro-SaaS builders who run their entire business alone.
 
-- **Primary personas**: IT managers, business owners, SMB decision-makers, marketing leaders
-- **Technical level**: Low-to-moderate. Assume readers understand business concepts but NOT developer tools.
-- **Their questions**: "Should my team adopt this?" not "How do I deploy this?"
-- **Industries**: Healthcare, education, finance, marketing agencies, engineering firms
+- **Primary personas**: Solo consultants, freelance professionals, one-person agency owners, indie SaaS founders
+- **Technical level**: Low-to-moderate. They can follow instructions but don't have time to learn DevOps. They want systems that work after a one-time setup.
+- **Their questions**: "How do I keep publishing without spending my whole week writing?" not "How do I configure a CI/CD pipeline?"
+- **Industries**: Consulting, marketing, design, professional services, e-commerce, SaaS
 
 ### Audience Rules
 
@@ -88,7 +88,7 @@ Our audience matches V2Cloud.com's readers: **non-technical business professiona
   - Bold on first use, then reference naturally throughout
 - **Explain concepts inline** using parenthetical definitions: "Total Cost of Ownership (what you actually pay when you add up every expense over time)"
 - **Frame everything as business outcomes**: revenue impact, time saved, client satisfaction, billable hours recovered — not technical elegance
-- **Case study personas** should be business roles: agency owners, marketing VPs, operations managers — not developers or engineers
+- **Case study personas** should be solo operators: freelance consultants, one-person agency owners, indie founders, solo marketers — not corporate managers or developers
 
 ## Writing Style
 
@@ -102,7 +102,24 @@ Our audience matches V2Cloud.com's readers: **non-technical business professiona
 
 - **Headings**: H1 for title, H2 for major sections, H3 for subsections. Never skip levels.
 - **Lists**: Bulleted for features/benefits, numbered for steps/sequences.
-- **Tables**: At least one comparison table per post.
+- **Tables**: At least one comparison table per post. Use this exact inline style:
+  ```html
+  <table style="width:100%; border-collapse:collapse; font-size:15px; margin:1.5em 0;">
+    <thead>
+      <tr style="background:#2563eb; color:#fff;">
+        <th style="padding:12px 16px; text-align:left; font-weight:700;">Column</th>
+        <!-- repeat for each column -->
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom:1px solid #e5e7eb;">
+        <td style="padding:12px 16px;">Cell</td>
+        <!-- repeat for each cell -->
+      </tr>
+      <!-- last row omits border-bottom -->
+    </tbody>
+  </table>
+  ```
 - **Bold patterns**: Key terms, concept names, critical economic arguments.
 - **No emojis** in body text.
 

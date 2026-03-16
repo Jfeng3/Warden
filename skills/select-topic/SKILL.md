@@ -12,7 +12,7 @@ How businesses can get their brand, products, and content surfaced by AI agents 
 
 ## 2. Agent Skills
 
-What AI agents can actually do — capabilities, use cases, and real-world applications for business. Covers content automation, data analysis, customer support, scheduling, monitoring, and multi-step workflows that agents handle end-to-end.
+What AI agents can actually do for content marketing — capabilities, use cases, and real-world applications. Covers automated blog publishing, SEO/AEO auditing, content repurposing (blog → social → newsletter), editorial calendar automation, co-marketing content workflows, topic research and gap analysis, draft-review-publish pipelines, and performance tracking. Focuses on the content skills that help SMBs publish consistently without hiring a full content team.
 
 ## 3. Agent Infrastructure
 

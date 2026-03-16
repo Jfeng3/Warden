@@ -105,7 +105,7 @@ wp(command='post list --post_type=page --fields=ID,post_title,post_status')
 `wp option update` works over SSH for WordPress.com:
 
 ```
-wp(command='option update blogdescription "AI automation guides for business owners and IT leaders"')
+wp(command='option update blogdescription "AI content automation for one-person companies"')
 wp(command='option update blogname "OpenClaws"')
 ```
 

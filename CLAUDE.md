@@ -141,7 +141,7 @@ See `.env.example` for the full list: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `ANTH
 
 ## Automated Content Workflow
 
-Warden runs an automated content marketing pipeline for **openclaws.blog**, targeting non-technical business professionals (matching V2Cloud.com's audience: IT managers, business owners, SMB decision-makers).
+Warden runs an automated content marketing pipeline for **openclaws.blog**, targeting **solo operators and one-person companies** — freelancers, consultants, agency-of-one founders, and micro-SaaS builders who run their entire business alone.
 
 ### V2Cloud Partnership
 
@@ -193,12 +193,12 @@ Wed + Sun (9am PT)
 
 ### Target Audience
 
-All blog content targets **non-technical business professionals** at SMBs — the same audience as V2Cloud.com. Key rules enforced by `content-style` skill:
+All blog content targets **solo operators and one-person companies** — people who run their entire business alone and need content marketing that doesn't eat their week. Key rules enforced by `content-style` skill:
 
 - No unexplained developer jargon (SSH, Docker, pm2, API keys, etc.)
 - Branded metaphors repeated as anchors ("The Always-On Tax", "The Deployment Desert", etc.)
-- Business outcomes over technical details (revenue, time saved, billable hours)
-- Case study personas are business roles (agency owners, marketing VPs), not developers
+- Time savings and solo-operator outcomes over technical details (hours reclaimed, consistent publishing, AI visibility)
+- Case study personas are solo operators (freelance consultants, one-person agency owners, indie founders), not corporate managers
 
 ### WordPress Site Structure
 
@@ -208,7 +208,7 @@ All blog content targets **non-technical business professionals** at SMBs — th
 | 1 | About | Blog mission, what we cover, our tools |
 | 38 | Blog | Blog listing page |
 
-Site tagline: "AI automation guides for business owners and IT leaders"
+Site tagline: "AI content automation for one-person companies"
 
 ### Notifications
 
