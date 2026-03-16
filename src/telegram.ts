@@ -118,9 +118,8 @@ export function startTelegram(): void {
             const schedule = j.schedule_type === "cron" ? j.cron_expression
               : j.schedule_type === "every" ? `every ${j.every_ms}ms`
               : j.at_time ?? "?";
-            const instr = j.instruction.length > 50 ? j.instruction.slice(0, 47) + "..." : j.instruction;
             const next = j.next_run_at ? new Date(j.next_run_at).toLocaleString() : "—";
-            return `${j.id.slice(0, 8)}  ${j.name}  [${schedule}]  next: ${next}  ${instr}`;
+            return `${j.id.slice(0, 8)}  ${j.name}  [${schedule}]  next: ${next}`;
           });
           await ctx.reply(lines.join("\n"));
         }

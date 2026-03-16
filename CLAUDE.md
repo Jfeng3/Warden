@@ -221,7 +221,8 @@ All cron jobs MUST send results to Telegram. When creating a cron job, always in
 npx tsx src/cron-cli.ts list
 
 # Add a new cron job (ALWAYS include --metadata for Telegram delivery)
-npx tsx src/cron-cli.ts add --name "job-name" --cron "0 8 * * *" --tz "America/Los_Angeles" --metadata '{"source":"telegram","chatId":7823756809}' --instruction "..."
+# Instructions live in cron-jobs/<job-name>.md — no --instruction flag needed
+npx tsx src/cron-cli.ts add --name "job-name" --cron "0 8 * * *" --tz "America/Los_Angeles" --metadata '{"source":"telegram","chatId":7823756809}'
 
 # Disable/enable
 npx tsx src/cron-cli.ts update <id> --enabled false

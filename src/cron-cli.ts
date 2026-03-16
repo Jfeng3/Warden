@@ -30,7 +30,6 @@ Add/Update options:
   --cron <expression>     Cron expression (e.g. "0 9 * * *")
   --at <ISO datetime>     One-shot time (e.g. "2025-01-15T09:00:00Z")
   --every <interval>      Repeat interval (e.g. "30s", "5m", "2h", "1d")
-  --instruction <text>    Task instruction to run
   --tz <timezone>         IANA timezone (default: UTC)
   --metadata <json>       Task metadata JSON (e.g. '{"source":"telegram","chatId":123}')
   --publish-mode <mode>   Publish mode: "auto" (default) or "draft"
@@ -52,7 +51,7 @@ async function cmdAdd(args: string[]): Promise<void> {
       cron: { type: "string" },
       at: { type: "string" },
       every: { type: "string" },
-      instruction: { type: "string" },
+      instruction: { type: "string" }, // accepted but ignored — instructions live in cron-jobs/<name>.md
       tz: { type: "string" },
       metadata: { type: "string" },
       "delete-after-run": { type: "boolean", default: false },
@@ -62,7 +61,6 @@ async function cmdAdd(args: string[]): Promise<void> {
   });
 
   if (!values.name) { console.error("Error: --name is required"); process.exit(1); }
-  if (!values.instruction) { console.error("Error: --instruction is required"); process.exit(1); }
   if (values["publish-mode"] && values["publish-mode"] !== "auto" && values["publish-mode"] !== "draft") {
     console.error('Error: --publish-mode must be "auto" or "draft"');
     process.exit(1);
@@ -76,7 +74,6 @@ async function cmdAdd(args: string[]): Promise<void> {
 
   const input: CronJobInput = {
     name: values.name,
-    instruction: values.instruction,
     schedule_type: values.cron ? "cron" : values.at ? "at" : "every",
     delete_after_run: values["delete-after-run"],
   };
@@ -178,7 +175,7 @@ async function cmdUpdate(args: string[]): Promise<void> {
       cron: { type: "string" },
       at: { type: "string" },
       every: { type: "string" },
-      instruction: { type: "string" },
+      instruction: { type: "string" }, // accepted but ignored — instructions live in cron-jobs/<name>.md
       tz: { type: "string" },
       metadata: { type: "string" },
       "delete-after-run": { type: "boolean" },
@@ -191,7 +188,6 @@ async function cmdUpdate(args: string[]): Promise<void> {
 
   const updates: CronJobUpdate = {};
   if (values.name) updates.name = values.name;
-  if (values.instruction) updates.instruction = values.instruction;
   if (values.enable) updates.enabled = true;
   if (values.disable) updates.enabled = false;
   if (values.tz) updates.cron_timezone = values.tz;

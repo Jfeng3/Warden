@@ -1,0 +1,1 @@
+Reply with exactly: Your scheduled reminder has arrived.

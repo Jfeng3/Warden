@@ -6,19 +6,19 @@ import path from "node:path";
 const CRON_JOBS_DIR = path.join(process.cwd(), "cron-jobs");
 
 /**
- * Resolve the instruction for a cron job.
- * Looks for a file at cron-jobs/<job-name>.md first, falls back to DB instruction.
+ * Resolve the instruction for a cron job from cron-jobs/<job-name>.md.
  */
 function resolveInstruction(job: CronJob): string {
   const filePath = path.join(CRON_JOBS_DIR, `${job.name}.md`);
-  if (existsSync(filePath)) {
-    const content = readFileSync(filePath, "utf-8").trim();
-    if (content) {
-      console.log(`[cron-task] Loaded instruction from ${filePath}`);
-      return content;
-    }
+  if (!existsSync(filePath)) {
+    throw new Error(`Instruction file not found: ${filePath}`);
   }
-  return job.instruction;
+  const content = readFileSync(filePath, "utf-8").trim();
+  if (!content) {
+    throw new Error(`Instruction file is empty: ${filePath}`);
+  }
+  console.log(`[cron-task] Loaded instruction from ${filePath}`);
+  return content;
 }
 
 /**

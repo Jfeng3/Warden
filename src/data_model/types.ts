@@ -53,7 +53,6 @@ export interface CronJob {
   cron_timezone: string;
   at_time: string | null;
   every_ms: number | null;
-  instruction: string;
   task_metadata: Record<string, unknown> | null;
   publish_mode: PublishMode;
   last_run_at: string | null;
@@ -72,7 +71,6 @@ export interface CronJobInput {
   cron_timezone?: string;
   at_time?: string;
   every_ms?: number;
-  instruction: string;
   task_metadata?: Record<string, unknown>;
   publish_mode?: PublishMode;
   delete_after_run?: boolean;
@@ -87,7 +85,6 @@ export interface CronJobUpdate {
   cron_timezone?: string;
   at_time?: string;
   every_ms?: number;
-  instruction?: string;
   task_metadata?: Record<string, unknown>;
   publish_mode?: PublishMode;
   delete_after_run?: boolean;
