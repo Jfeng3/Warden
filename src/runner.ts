@@ -10,8 +10,33 @@ import {
 import { createEventLogger } from "./logger.js";
 import { reprompt } from "./repl.js";
 import { notifyTaskComplete } from "./telegram.js";
-import { getSessionForTask, deriveSessionKey } from "./session-store.js";
+import { getSessionForTask, deriveSessionKey, buildFreshSession } from "./session-store.js";
+import { WorkflowState, createStateTools } from "./workflow-state.js";
 import type { Task } from "./data_model/index.js";
+
+/**
+ * Parse instruction text into ordered steps by STEP N: markers.
+ * Instructions without markers are returned as a single step.
+ */
+export function parseSteps(instruction: string): { index: number; text: string }[] {
+  const stepPattern = /^STEP\s+(\d+):/gm;
+  const matches = [...instruction.matchAll(stepPattern)];
+  if (matches.length < 2) return [{ index: 0, text: instruction }];
+
+  // Capture any preamble before the first STEP marker
+  const preamble = instruction.slice(0, matches[0].index!).trim();
+
+  return matches.map((m, i) => {
+    const start = m.index!;
+    const end = matches[i + 1]?.index ?? instruction.length;
+    let text = instruction.slice(start, end).trim();
+    // Prepend preamble to first step so global context isn't lost
+    if (i === 0 && preamble) {
+      text = preamble + "\n\n" + text;
+    }
+    return { index: parseInt(m[1]), text };
+  });
+}
 
 let running = false;
 let pollInterval: ReturnType<typeof setInterval> | null = null;
@@ -76,7 +101,7 @@ function attachSubscriber(session: AgentSession): void {
   });
 }
 
-async function executeTask(task: Task, session: AgentSession) {
+async function executeTask(task: Task, session: AgentSession, provider: string, modelId: string) {
   console.log(`[runner] Executing task ${task.id}: "${task.instruction.slice(0, 60)}"`);
 
   const key = deriveSessionKey(task.metadata);
@@ -84,22 +109,69 @@ async function executeTask(task: Task, session: AgentSession) {
     console.log(`[runner] Session: ${key} (persistent)`);
   }
 
-  // Set per-task context for the subscriber
-  const logger = createEventLogger(task.id);
-  taskContext.set(session, { taskId: task.id, assistantText: "", logger });
-
-  // Attach subscriber (idempotent for cached sessions)
-  attachSubscriber(session);
-
   // Expose current task's metadata so cron-cli can auto-inherit it
   if (task.metadata) {
     process.env.WARDEN_TASK_METADATA = JSON.stringify(task.metadata);
   }
 
   try {
-    await session.prompt(task.instruction);
-    const ctx = taskContext.get(session)!;
-    const result = ctx.assistantText || "(no output)";
+    const steps = parseSteps(task.instruction);
+    const isMultiStep = steps.length > 1;
+    let result: string;
+
+    if (!isMultiStep) {
+      // === SINGLE-STEP: unchanged behavior ===
+      const logger = createEventLogger(task.id);
+      taskContext.set(session, { taskId: task.id, assistantText: "", logger });
+      attachSubscriber(session);
+
+      await session.prompt(steps[0].text);
+      const ctx = taskContext.get(session)!;
+      result = ctx.assistantText || "(no output)";
+      taskContext.delete(session);
+    } else {
+      // === MULTI-STEP: fresh session per step with workflow state ===
+      const lastStepIndex = steps[steps.length - 1].index;
+      console.log(`[runner] [task ${task.id}] Parsed ${steps.length} steps (workflow mode)`);
+
+      const workflowState = new WorkflowState();
+      // Seed initial state from task metadata (set by cron-task from state.json)
+      const initialState = (task.metadata?.initialState as Record<string, unknown>) ?? {};
+      for (const [k, v] of Object.entries(initialState)) {
+        workflowState.set(k, v);
+      }
+      const stateTools = createStateTools(workflowState);
+      const stepResults: { index: number; output: string }[] = [];
+
+      for (const step of steps) {
+        const stateKeys = Object.keys(workflowState.getAll());
+        console.log(`[runner] [task ${task.id}] Starting step ${step.index}/${lastStepIndex} (state keys: ${stateKeys.join(", ") || "none"})`);
+
+        // Fresh session with state tools injected
+        const stepSession = await buildFreshSession(provider, modelId, stateTools);
+        const stepLogger = createEventLogger(task.id);
+        taskContext.set(stepSession, { taskId: task.id, assistantText: "", logger: stepLogger });
+        attachSubscriber(stepSession);
+
+        // Prepend state context to instruction
+        const statePrefix = workflowState.toContext();
+        const stepInstruction = statePrefix ? `${statePrefix}\n\n${step.text}` : step.text;
+
+        await stepSession.prompt(stepInstruction);
+
+        const ctx = taskContext.get(stepSession)!;
+        stepResults.push({ index: step.index, output: ctx.assistantText });
+
+        // Cleanup
+        taskContext.delete(stepSession);
+        stepSession.dispose();
+
+        console.log(`[runner] [task ${task.id}] Step ${step.index} done`);
+      }
+
+      result = stepResults.map((s) => `--- STEP ${s.index} ---\n${s.output || "(no output)"}`).join("\n\n");
+    }
+
     await completeTask(task.id, result);
     console.log(`[runner] Task ${task.id} completed\n${result}`);
     if (result === "(no output)") {
@@ -117,7 +189,6 @@ async function executeTask(task: Task, session: AgentSession) {
     await failTask(task.id, msg);
     await notifyTaskComplete({ ...task, status: "failed", error: msg });
   } finally {
-    taskContext.delete(session);
     delete process.env.WARDEN_TASK_METADATA;
     reprompt();
   }
@@ -141,7 +212,7 @@ async function pollAndRun(provider: string, modelId: string) {
     const taskProvider = (task.metadata?.provider as string) || provider;
     const taskModel = (task.metadata?.model as string) || modelId;
     const session = await getSessionForTask(task, taskProvider, taskModel);
-    await executeTask(task, session);
+    await executeTask(task, session, taskProvider, taskModel);
   } catch (err) {
     console.error(`[runner] Poll error:`, err);
     // If we claimed a task but session creation failed, mark it failed

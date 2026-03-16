@@ -1,0 +1,1 @@
+You are writing a daily blog post for openclaws.blog. Follow these steps in order.

@@ -1,0 +1,1 @@
+Load skills/aeo-audit. Run through the pre-publish AEO checklist against the draft file (get draft_path from workflow state). Produce a numbered list of all issues found. Use set_state to save the list as aeo_issues.

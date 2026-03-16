@@ -1,0 +1,1 @@
+From all findings, pick the single most compelling topic. Choose based on: relevance to our audience (solo operators and one-person companies), timeliness, co-marketing fit with V2Cloud, and content gap opportunity. Use You.com Research endpoint for deeper research on the chosen topic. Use set_state to save topic_slug (URL-friendly) and topic_pillar.

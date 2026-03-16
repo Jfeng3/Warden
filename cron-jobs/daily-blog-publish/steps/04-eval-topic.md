@@ -1,0 +1,1 @@
+Load skills/eval. Review your chosen topic against the eval rules. If it violates any hard rule, go back to STEP 2 and pick a different topic.

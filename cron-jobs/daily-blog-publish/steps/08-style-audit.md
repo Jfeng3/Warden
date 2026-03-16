@@ -1,0 +1,1 @@
+Load skills/style-audit. Audit the draft file (get draft_path from workflow state) for visual consistency. Check every table against the brand table style (blue header, border dividers, cell padding). Fix any tables that don't match. Use set_state to save the list as style_issues.

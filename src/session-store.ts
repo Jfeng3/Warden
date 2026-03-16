@@ -98,10 +98,23 @@ export function getCachedSession(key: string): AgentSession | undefined {
   return sessionCache.get(key);
 }
 
+/**
+ * Build a fresh in-memory session with optional additional custom tools.
+ * Used by the runner for per-step execution in multi-step workflows.
+ */
+export async function buildFreshSession(
+  provider: string,
+  modelId: string,
+  extraTools?: any[]
+): Promise<AgentSession> {
+  return buildSession(SessionManager.inMemory(), provider, modelId, extraTools);
+}
+
 async function buildSession(
   sessionManager: SessionManager,
   provider: string,
-  modelId: string
+  modelId: string,
+  extraTools?: any[]
 ): Promise<AgentSession> {
   const model = resolveModel(provider, modelId);
 
@@ -135,7 +148,7 @@ async function buildSession(
     sessionManager,
     resourceLoader,
     tools,
-    customTools: [skillTool as any, wpTool as any, gscTool as any],
+    customTools: [skillTool as any, wpTool as any, gscTool as any, ...(extraTools ?? [])],
   });
 
   return session;

@@ -1,0 +1,1 @@
+Only reach this step if eval_score >= 70 (get from workflow state). Load skills/publish. Get publish_path from workflow state. Publish the file as a draft (respect publish_mode in metadata). Assign the english category. Use set_state to save the WordPress post ID as wp_post_id.

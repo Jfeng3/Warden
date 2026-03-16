@@ -1,0 +1,1 @@
+Load the skill at skills/youdotcom-cli (You.com web search). Load skills/select-topic for the 4 topic pillars. For EACH pillar, search for concrete news from today or yesterday using You.com search with freshness=day. Collect 2-3 findings per pillar.

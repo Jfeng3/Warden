@@ -1,0 +1,1 @@
+Load skills/seo-audit. Run through the full on-page SEO checklist against the draft file (get draft_path from workflow state). Produce a numbered list of all issues found. Use set_state to save the list as seo_issues.
