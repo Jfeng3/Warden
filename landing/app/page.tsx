@@ -3,26 +3,27 @@
 import { useEffect, useState, useRef } from "react";
 
 /* ═══════════════════════════════════════════
-   Terminal Simulation Component
+   Terminal — cueos-inspired CLI showcase
    ═══════════════════════════════════════════ */
 
-const TERMINAL_LINES = [
-  { text: "$ warden start", type: "cmd" as const, delay: 0 },
-  { text: "[08:00] Starting daily content research...", type: "info" as const, delay: 600 },
-  { text: "[08:00] Analyzing industry trends and content gaps...", type: "dim" as const, delay: 1200 },
-  { text: "[08:01] Found 3 high-value topic opportunities", type: "success" as const, delay: 2000 },
-  { text: "[08:01] Scored and ranked by AEO potential", type: "success" as const, delay: 2600 },
-  { text: "[08:01] Top pick: \"Why Your Automation Dies When You Close Your Laptop\"", type: "highlight" as const, delay: 3200 },
-  { text: "[08:01] Audience fit: 5/5 | Content gap: 5/5 | AEO score: 5/5", type: "dim" as const, delay: 3800 },
-  { text: "", type: "info" as const, delay: 4400 },
-  { text: "[09:00] Starting scheduled draft...", type: "info" as const, delay: 4800 },
-  { text: "[09:00] Loading brand voice + style guide...", type: "dim" as const, delay: 5400 },
-  { text: "[09:01] Drafting post... (2,847 words)", type: "info" as const, delay: 6200 },
-  { text: "[09:03] AEO audit: ✓ Q&A headings ✓ FAQ section ✓ quotable definitions", type: "cyan" as const, delay: 7000 },
-  { text: "[09:03] SEO audit: ✓ meta description ✓ internal links ✓ keyword density", type: "cyan" as const, delay: 7600 },
-  { text: "[09:04] Draft queued for team review", type: "cmd" as const, delay: 8200 },
-  { text: "[09:04] ✓ Draft ready — awaiting editor approval", type: "success" as const, delay: 8800 },
-  { text: "[09:04] ✓ Team notified via Slack", type: "success" as const, delay: 9400 },
+const PIPELINE_COMMANDS = [
+  { text: "warden start", type: "cmd" as const, delay: 0 },
+  { text: "", type: "blank" as const, delay: 400 },
+  { text: "▸ research  Scanning content gaps for AI-agent queries...", type: "step" as const, delay: 600 },
+  { text: "  Found 3 topics with zero authoritative sources", type: "result" as const, delay: 1400 },
+  { text: "  Top: \"Why Your Automation Dies When You Close Your Laptop\"", type: "highlight" as const, delay: 2200 },
+  { text: "", type: "blank" as const, delay: 2800 },
+  { text: "▸ score     AEO potential: 5/5 | Content gap: 5/5", type: "step" as const, delay: 3200 },
+  { text: "  Audience fit: solo operators, agency-of-one founders", type: "result" as const, delay: 3800 },
+  { text: "", type: "blank" as const, delay: 4200 },
+  { text: "▸ draft     Loading brand voice + style guide...", type: "step" as const, delay: 4600 },
+  { text: "  Drafting 2,847 words with 6 AEO structural patterns", type: "result" as const, delay: 5400 },
+  { text: "", type: "blank" as const, delay: 5800 },
+  { text: "▸ audit     ✓ Q&A headings  ✓ FAQ section  ✓ quotable defs", type: "check" as const, delay: 6200 },
+  { text: "            ✓ comparison table  ✓ numbered steps  ✓ freshness", type: "check" as const, delay: 6800 },
+  { text: "", type: "blank" as const, delay: 7200 },
+  { text: "▸ publish   Draft queued for review", type: "step" as const, delay: 7600 },
+  { text: "  ✓ Ready — awaiting editor approval", type: "success" as const, delay: 8200 },
 ];
 
 function Terminal() {
@@ -31,22 +32,10 @@ function Terminal() {
 
   useEffect(() => {
     const timers: NodeJS.Timeout[] = [];
-    TERMINAL_LINES.forEach((line, i) => {
-      timers.push(
-        setTimeout(() => {
-          setVisibleLines(i + 1);
-          if (containerRef.current) {
-            containerRef.current.scrollTop = containerRef.current.scrollHeight;
-          }
-        }, line.delay)
-      );
-    });
 
-    // Loop after completion
-    const loopTimer = setTimeout(() => {
+    function runSequence() {
       setVisibleLines(0);
-      // Restart
-      TERMINAL_LINES.forEach((line, i) => {
+      PIPELINE_COMMANDS.forEach((line, i) => {
         timers.push(
           setTimeout(() => {
             setVisibleLines(i + 1);
@@ -56,50 +45,61 @@ function Terminal() {
           }, line.delay)
         );
       });
-    }, 13000);
-    timers.push(loopTimer);
+    }
 
-    return () => timers.forEach(clearTimeout);
+    runSequence();
+    const loop = setInterval(runSequence, 12000);
+    timers.push(loop as unknown as NodeJS.Timeout);
+    return () => {
+      timers.forEach(clearTimeout);
+      clearInterval(loop);
+    };
   }, []);
 
-  const colorMap = {
-    cmd: "text-phosphor font-medium",
-    info: "text-text-secondary",
-    dim: "text-text-tertiary",
-    success: "text-emerald-400",
-    highlight: "text-phosphor font-medium",
-    cyan: "text-cyan-bright",
+  const colorMap: Record<string, string> = {
+    cmd: "cmd-prompt font-medium text-accent-bright",
+    blank: "",
+    step: "text-text-secondary",
+    result: "text-text-tertiary",
+    highlight: "text-accent-bright font-medium",
+    check: "text-mint",
+    success: "text-mint font-medium",
   };
 
   return (
-    <div className="rounded-xl border border-border-visible bg-obsidian/80 backdrop-blur-sm overflow-hidden shadow-2xl shadow-black/50">
-      {/* Title bar */}
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-border-visible bg-onyx/60">
-        <div className="w-3 h-3 rounded-full bg-red-500/70" />
-        <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
-        <div className="w-3 h-3 rounded-full bg-green-500/70" />
-        <span className="ml-3 text-xs font-mono text-text-tertiary tracking-wide">
-          warden — content assistant
+    <div className="rounded-2xl border border-border-visible bg-deep/90 backdrop-blur-sm overflow-hidden">
+      <div className="flex items-center gap-2 px-5 py-3.5 border-b border-border-visible bg-surface/60">
+        <div className="flex gap-1.5">
+          <div className="w-2.5 h-2.5 rounded-full bg-text-ghost" />
+          <div className="w-2.5 h-2.5 rounded-full bg-text-ghost" />
+          <div className="w-2.5 h-2.5 rounded-full bg-text-ghost" />
+        </div>
+        <span className="ml-3 text-[11px] font-mono text-text-tertiary tracking-widest uppercase">
+          warden
         </span>
       </div>
-      {/* Terminal body */}
       <div
         ref={containerRef}
-        className="p-5 font-mono text-sm leading-relaxed h-[340px] overflow-y-auto"
+        className="p-5 font-mono text-[13px] leading-relaxed h-[360px] overflow-y-auto"
       >
-        {TERMINAL_LINES.slice(0, visibleLines).map((line, i) => (
-          <div key={i} className={`${colorMap[line.type]} ${line.text === "" ? "h-4" : ""}`}>
+        {PIPELINE_COMMANDS.slice(0, visibleLines).map((line, i) => (
+          <div
+            key={i}
+            className={`${colorMap[line.type]} ${line.type === "blank" ? "h-3" : ""} animate-slide-in`}
+          >
             {line.text}
           </div>
         ))}
-        <span className="inline-block w-2.5 h-5 bg-phosphor cursor-blink ml-0.5 align-middle" />
+        {visibleLines > 0 && (
+          <span className="inline-block w-2 h-4 bg-accent cursor-blink mt-1" />
+        )}
       </div>
     </div>
   );
 }
 
 /* ═══════════════════════════════════════════
-   Waitlist Form (Hero CTA)
+   Waitlist Form
    ═══════════════════════════════════════════ */
 
 function WaitlistForm() {
@@ -132,152 +132,141 @@ function WaitlistForm() {
 
   if (status === "success") {
     return (
-      <div className="space-y-4">
-        <div className="flex items-center gap-2 text-emerald-400 font-mono text-sm">
+      <div className="space-y-4 animate-fade-in-up">
+        <div className="flex items-center gap-2 text-mint font-mono text-sm">
           <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
             <path d="M20 6L9 17l-5-5" />
           </svg>
-          You&apos;re on the list — we&apos;ll be in touch.
+          You&apos;re on the list.
         </div>
         <a
           href="https://openclaws.blog"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-block px-6 py-3 rounded-lg border border-border-visible text-text-secondary hover:text-text-primary hover:border-text-tertiary transition-colors"
+          className="inline-flex items-center gap-2 text-sm text-accent-bright hover:text-accent transition-colors"
         >
-          Read sample posts &rarr;
+          Read sample posts
+          <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7" /></svg>
         </a>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <form onSubmit={handleSubmit} className="flex flex-wrap gap-3">
+    <div className="space-y-3">
+      <form onSubmit={handleSubmit} className="flex gap-2">
         <input
           type="email"
           required
           placeholder="you@company.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="px-4 py-3 rounded-lg bg-onyx/80 border border-border-visible text-text-primary placeholder:text-text-tertiary font-mono text-sm focus:outline-none focus:border-phosphor/50 transition-colors w-64"
+          className="px-4 py-3 rounded-xl bg-surface border border-border-visible text-text-primary placeholder:text-text-ghost font-mono text-sm focus:outline-none focus:border-accent/40 transition-colors w-64"
         />
         <button
           type="submit"
           disabled={status === "loading"}
-          className="px-6 py-3 rounded-lg bg-phosphor text-void font-medium hover:bg-phosphor-dim transition-colors disabled:opacity-60"
+          className="px-6 py-3 rounded-xl bg-accent text-white font-semibold text-sm hover:bg-accent-dim transition-colors disabled:opacity-60"
         >
-          {status === "loading" ? "Joining..." : "Join the waitlist"}
+          {status === "loading" ? "..." : "Join waitlist"}
         </button>
       </form>
       {status === "error" && (
-        <p className="text-red-400 text-sm font-mono">{errorMsg}</p>
+        <p className="text-red-400 text-xs font-mono">{errorMsg}</p>
       )}
-      <a
-        href="https://openclaws.blog"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-block px-6 py-3 rounded-lg border border-border-visible text-text-secondary hover:text-text-primary hover:border-text-tertiary transition-colors"
-      >
-        Read sample posts &rarr;
-      </a>
     </div>
   );
 }
 
 /* ═══════════════════════════════════════════
-   Pipeline Step Component
+   Utility Card (cueos-style feature block)
    ═══════════════════════════════════════════ */
 
-function PipelineStep({
-  number,
-  title,
-  desc,
-  schedule,
-  icon,
-}: {
-  number: string;
-  title: string;
-  desc: string;
-  schedule: string;
-  icon: React.ReactNode;
-}) {
-  return (
-    <div className="group relative flex gap-6 items-start">
-      {/* Number orb */}
-      <div className="relative z-10 flex-shrink-0 w-14 h-14 rounded-full bg-graphite border border-border-visible flex items-center justify-center group-hover:border-phosphor/40 group-hover:bg-onyx transition-all duration-500">
-        <span className="text-phosphor font-mono text-lg font-medium">{number}</span>
-      </div>
-      <div className="pt-1">
-        <div className="flex items-center gap-3 mb-1.5">
-          <span className="text-text-tertiary">{icon}</span>
-          <h3 className="font-display text-2xl text-text-primary italic">
-            {title}
-          </h3>
-        </div>
-        <p className="text-text-secondary leading-relaxed max-w-md">
-          {desc}
-        </p>
-        <span className="inline-block mt-2 font-mono text-xs text-phosphor-dim tracking-wider uppercase">
-          {schedule}
-        </span>
-      </div>
-    </div>
-  );
-}
-
-/* ═══════════════════════════════════════════
-   AEO Feature Card
-   ═══════════════════════════════════════════ */
-
-function AeoCard({
+function UtilityCard({
+  label,
   title,
   description,
-  icon,
+  accent = "accent",
 }: {
+  label: string;
   title: string;
   description: string;
-  icon: React.ReactNode;
+  accent?: "accent" | "mint" | "warm";
+}) {
+  const accentColors = {
+    accent: "text-accent-bright border-accent/20 hover:border-accent/40",
+    mint: "text-mint border-mint-dim/20 hover:border-mint-dim/40",
+    warm: "text-warm border-warm-dim/20 hover:border-warm-dim/40",
+  };
+  const labelColors = {
+    accent: "text-accent-bright",
+    mint: "text-mint",
+    warm: "text-warm",
+  };
+
+  return (
+    <div className={`group p-6 rounded-2xl bg-surface/50 border ${accentColors[accent]} transition-all duration-300`}>
+      <div className={`font-mono text-[11px] tracking-widest uppercase mb-3 ${labelColors[accent]}`}>
+        {label}
+      </div>
+      <h3 className="font-display text-lg font-semibold text-text-primary mb-2 leading-snug">
+        {title}
+      </h3>
+      <p className="text-text-secondary text-sm leading-relaxed">
+        {description}
+      </p>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════
+   Pipeline Step (command-style)
+   ═══════════════════════════════════════════ */
+
+function PipelineCmd({
+  command,
+  description,
+  schedule,
+  index,
+}: {
+  command: string;
+  description: string;
+  schedule: string;
+  index: number;
 }) {
   return (
-    <div className="group relative p-6 rounded-xl bg-onyx/60 border border-border-subtle hover:border-cyan-dim/30 transition-all duration-500 hover:bg-onyx/90">
-      {/* Glow on hover */}
-      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-cyan-glow to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-      <div className="relative z-10">
-        <div className="text-cyan-bright mb-4">{icon}</div>
-        <h3 className="font-display text-xl italic text-text-primary mb-2">
-          {title}
-        </h3>
-        <p className="text-text-secondary text-sm leading-relaxed">
-          {description}
-        </p>
+    <div className={`animate-fade-in-up delay-${index * 100 + 100}`}>
+      <div className="flex items-start gap-4 group">
+        <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center font-mono text-sm text-accent-bright font-medium group-hover:bg-accent/20 transition-colors">
+          {String(index + 1).padStart(2, "0")}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="font-mono text-sm text-accent-bright mb-1">
+            warden {command}
+          </div>
+          <p className="text-text-secondary text-sm leading-relaxed mb-1">
+            {description}
+          </p>
+          <span className="font-mono text-[11px] text-text-ghost tracking-wider">
+            {schedule}
+          </span>
+        </div>
       </div>
     </div>
   );
 }
 
 /* ═══════════════════════════════════════════
-   Stat Counter
+   Stat
    ═══════════════════════════════════════════ */
 
-function Stat({
-  value,
-  label,
-  suffix,
-}: {
-  value: string;
-  label: string;
-  suffix?: string;
-}) {
+function Stat({ value, label }: { value: string; label: string }) {
   return (
     <div className="text-center">
-      <div className="font-mono text-4xl md:text-5xl font-light text-phosphor tracking-tight">
+      <div className="stat-value font-display text-4xl md:text-5xl font-bold tracking-tight">
         {value}
-        {suffix && (
-          <span className="text-phosphor-dim text-2xl ml-1">{suffix}</span>
-        )}
       </div>
-      <div className="mt-2 text-text-tertiary text-sm tracking-wide uppercase font-mono">
+      <div className="mt-2 text-text-tertiary text-xs tracking-wider uppercase font-mono">
         {label}
       </div>
     </div>
@@ -285,14 +274,14 @@ function Stat({
 }
 
 /* ═══════════════════════════════════════════
-   Uptime Indicator
+   Uptime Dot
    ═══════════════════════════════════════════ */
 
 function UptimeDot() {
   return (
-    <span className="relative flex h-2.5 w-2.5">
-      <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 glow-pulse" />
-      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400" />
+    <span className="relative flex h-2 w-2">
+      <span className="absolute inline-flex h-full w-full rounded-full bg-mint opacity-75 glow-pulse" />
+      <span className="relative inline-flex rounded-full h-2 w-2 bg-mint" />
     </span>
   );
 }
@@ -312,126 +301,47 @@ function Nav() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-void/80 backdrop-blur-xl border-b border-border-subtle"
+          ? "bg-abyss/80 backdrop-blur-xl border-b border-border-subtle"
           : "bg-transparent"
       }`}
     >
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        <a href="#" className="flex items-center gap-3">
-          <span className="text-2xl">🦞</span>
-          <span className="font-display text-xl italic text-text-primary">
-            Warden
+      <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+        <a href="#" className="flex items-center gap-2.5">
+          <span className="font-display text-lg font-bold tracking-tight text-text-primary">
+            warden
+          </span>
+          <span className="font-mono text-[10px] text-accent-bright border border-accent/30 rounded-md px-1.5 py-0.5 tracking-wider">
+            AI
           </span>
         </a>
-        <div className="hidden md:flex items-center gap-8 text-sm text-text-secondary">
-          <a
-            href="#pipeline"
-            className="hover:text-phosphor transition-colors"
-          >
-            How It Works
+        <div className="hidden md:flex items-center gap-7 text-[13px] text-text-secondary">
+          <a href="#pipeline" className="hover:text-text-primary transition-colors">
+            Pipeline
           </a>
-          <a href="#aeo" className="hover:text-phosphor transition-colors">
-            Agent-Optimized
+          <a href="#aeo" className="hover:text-text-primary transition-colors">
+            AEO
           </a>
-          <a href="#pricing" className="hover:text-phosphor transition-colors">
+          <a href="#compare" className="hover:text-text-primary transition-colors">
             Compare
+          </a>
+          <a href="#who" className="hover:text-text-primary transition-colors">
+            Use Cases
           </a>
           <a
             href="https://openclaws.blog"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-4 py-1.5 rounded-full border border-phosphor/30 text-phosphor hover:bg-phosphor/10 transition-all"
+            className="px-4 py-1.5 rounded-lg bg-accent/10 text-accent-bright border border-accent/20 hover:bg-accent/20 transition-colors text-[13px]"
           >
-            Read the blog &rarr;
+            Live examples
           </a>
         </div>
       </div>
     </nav>
   );
 }
-
-/* ═══════════════════════════════════════════
-   SVG Icons (inline, no deps)
-   ═══════════════════════════════════════════ */
-
-const Icons = {
-  radar: (
-    <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="10" />
-      <circle cx="12" cy="12" r="6" />
-      <circle cx="12" cy="12" r="2" />
-      <line x1="12" y1="2" x2="12" y2="12" />
-    </svg>
-  ),
-  sparkle: (
-    <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-      <path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z" />
-    </svg>
-  ),
-  pen: (
-    <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-      <path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
-    </svg>
-  ),
-  send: (
-    <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-      <line x1="22" y1="2" x2="11" y2="13" />
-      <polygon points="22 2 15 22 11 13 2 9 22 2" />
-    </svg>
-  ),
-  qa: (
-    <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-      <rect x="3" y="3" width="18" height="18" rx="3" />
-      <path d="M9 9h6M9 13h4M9 17h5" />
-    </svg>
-  ),
-  table: (
-    <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-      <rect x="3" y="3" width="18" height="18" rx="2" />
-      <line x1="3" y1="9" x2="21" y2="9" />
-      <line x1="3" y1="15" x2="21" y2="15" />
-      <line x1="9" y1="3" x2="9" y2="21" />
-      <line x1="15" y1="3" x2="15" y2="21" />
-    </svg>
-  ),
-  quote: (
-    <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-      <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V21z" />
-      <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" />
-    </svg>
-  ),
-  list: (
-    <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-      <line x1="8" y1="6" x2="21" y2="6" />
-      <line x1="8" y1="12" x2="21" y2="12" />
-      <line x1="8" y1="18" x2="21" y2="18" />
-      <circle cx="4" cy="6" r="1" fill="currentColor" />
-      <circle cx="4" cy="12" r="1" fill="currentColor" />
-      <circle cx="4" cy="18" r="1" fill="currentColor" />
-    </svg>
-  ),
-  shield: (
-    <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-      <path d="M9 12l2 2 4-4" />
-    </svg>
-  ),
-  clock: (
-    <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="10" />
-      <polyline points="12 6 12 12 16 14" />
-    </svg>
-  ),
-  globe: (
-    <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="10" />
-      <line x1="2" y1="12" x2="22" y2="12" />
-      <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
-    </svg>
-  ),
-};
 
 /* ═══════════════════════════════════════════
    Main Page
@@ -443,340 +353,314 @@ export default function LandingPage() {
       <Nav />
 
       {/* ── HERO ── */}
-      <section className="hero-gradient relative min-h-screen flex items-center pt-16">
-        <div className="max-w-6xl mx-auto px-6 w-full grid lg:grid-cols-2 gap-12 lg:gap-16 items-center py-20">
-          {/* Left — copy */}
+      <section className="hero-gradient relative min-h-screen flex items-center pt-14">
+        <div className="max-w-6xl mx-auto px-6 w-full grid lg:grid-cols-[1.1fr_1fr] gap-16 items-center py-24">
+          {/* Copy */}
           <div className="animate-fade-in-up">
-            <div className="flex items-center gap-2.5 mb-6">
+            <div className="flex items-center gap-2.5 mb-8">
               <UptimeDot />
-              <span className="font-mono text-xs text-emerald-400 tracking-wider uppercase">
-                Agent-optimized content pipeline
+              <span className="font-mono text-[11px] text-mint tracking-widest uppercase">
+                Content pipeline running
               </span>
             </div>
 
-            <h1 className="font-display text-5xl md:text-6xl lg:text-7xl leading-[1.05] text-text-primary mb-6">
-              More posts, zero new hires —{" "}
-              <span className="italic text-phosphor">every one built for AI agents to read</span>
+            <h1 className="font-display text-[3.2rem] md:text-[4rem] lg:text-[4.5rem] font-bold leading-[1.05] tracking-tight text-text-primary mb-6">
+              One pipeline.
+              <br />
+              <span className="text-accent-bright">Every post built for AI agents.</span>
             </h1>
 
-            <p className="text-lg text-text-secondary leading-relaxed max-w-lg mb-8">
-              An AI content assistant that finds high-value topics, writes
-              publish-ready posts following your style guide, and structures
-              every piece so ChatGPT, Perplexity, and Google AI Overviews
-              can parse, quote, and cite your brand. Your team reviews and
-              approves — the pipeline handles the rest.
+            <p className="text-[17px] text-text-secondary leading-relaxed max-w-lg mb-10">
+              An AI content assistant that finds high-value topics, drafts posts
+              following your style guide, and structures every piece so ChatGPT,
+              Perplexity, and Google AI Overviews cite your brand. Your team
+              reviews — the pipeline handles the rest.
             </p>
 
             <WaitlistForm />
+
+            <div className="mt-8 flex items-center gap-6 text-text-ghost text-[13px] font-mono">
+              <span>~$200/post</span>
+              <span className="text-border-strong">|</span>
+              <span>8+ drafts/mo</span>
+              <span className="text-border-strong">|</span>
+              <span>0 missed deadlines</span>
+            </div>
           </div>
 
-          {/* Right — terminal */}
-          <div className="animate-fade-in-up delay-300">
+          {/* Terminal */}
+          <div className="animate-fade-in-up delay-200">
             <Terminal />
           </div>
         </div>
-
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-text-tertiary animate-fade-in-up delay-800">
-          <span className="text-xs font-mono tracking-widest uppercase">
-            Scroll
-          </span>
-          <svg
-            width="16"
-            height="24"
-            viewBox="0 0 16 24"
-            fill="none"
-            className="animate-bounce"
-          >
-            <path
-              d="M8 4v12m0 0l-4-4m4 4l4-4"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            />
-          </svg>
-        </div>
       </section>
 
-      {/* ── TAGLINE DIVIDER ── */}
-      <section className="py-20 border-y border-border-subtle">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <p className="font-display text-3xl md:text-4xl italic text-text-secondary leading-snug">
-            Your editorial calendar has gaps.{" "}
-            <span className="text-text-primary">AI answers are replacing Google clicks.</span>{" "}
-            <span className="text-text-primary">We fill both.</span>
-          </p>
-          <p className="mt-4 text-text-tertiary text-sm font-mono tracking-wider uppercase">
-            38% of searches now end in an AI answer. Unoptimized content gets cited 3% of the time.
-          </p>
+      {/* ── PROOF BAR ── */}
+      <div className="hr-gradient" />
+      <section className="py-16">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <Stat value="38%" label="Searches end in AI answers" />
+            <Stat value="18%" label="Citation rate (AEO-optimized)" />
+            <Stat value="3%" label="Citation rate (unoptimized)" />
+            <Stat value="6x" label="More citations with AEO" />
+          </div>
         </div>
       </section>
+      <div className="hr-gradient" />
 
       {/* ── PIPELINE ── */}
-      <section id="pipeline" className="py-28 relative">
+      <section id="pipeline" className="py-28">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="mb-16">
-            <span className="font-mono text-xs text-phosphor tracking-widest uppercase">
-              How It Works
-            </span>
-            <h2 className="font-display text-4xl md:text-5xl italic text-text-primary mt-3 mb-4">
-              Every post is engineered<br />
-              for agent consumption
-            </h2>
-            <p className="text-text-secondary max-w-xl leading-relaxed">
-              AI agents scan thousands of pages to build answers. They favor
-              content with clear structure, extractable definitions, and
-              machine-readable data. Our pipeline bakes these signals into
-              every draft — so agents pick your content first.
-            </p>
-          </div>
+          <div className="grid lg:grid-cols-[1fr_1.2fr] gap-16 items-start">
+            {/* Left: section intro */}
+            <div>
+              <span className="font-mono text-[11px] text-accent-bright tracking-widest uppercase">
+                How It Works
+              </span>
+              <h2 className="font-display text-3xl md:text-4xl font-bold text-text-primary mt-3 mb-5 leading-tight">
+                Four commands. Full content pipeline.
+              </h2>
+              <p className="text-text-secondary leading-relaxed mb-10">
+                Grouped by what they do, not how they work. Every step runs
+                on a schedule — research daily, drafts twice a week.
+                Your team stays in control of strategy and approval.
+              </p>
 
-          <div className="grid md:grid-cols-[1fr_auto_1fr] gap-8 md:gap-0">
-            {/* Steps */}
-            <div className="flex flex-col gap-16">
-              <PipelineStep
-                number="01"
-                title="Research"
-                desc="Identifies topics that agents are actively answering questions about — then finds gaps where no authoritative source exists yet."
-                schedule="Daily — 8:00 AM PT"
-                icon={Icons.radar}
-              />
-              <PipelineStep
-                number="02"
-                title="Score"
-                desc="Ranks each topic by agent-citation potential: How likely is an AI agent to need this answer? Is there a quotable source already?"
-                schedule="Daily — 8:01 AM PT"
-                icon={Icons.sparkle}
-              />
-              <PipelineStep
-                number="03"
-                title="Write"
-                desc="Drafts 2,500–3,000 words with agent-parseable structure: Q&A headings, extractable definitions, comparison tables, and numbered procedures."
-                schedule="Wed + Sun — 9:00 AM PT"
-                icon={Icons.pen}
-              />
-              <PipelineStep
-                number="04"
-                title="Audit & Publish"
-                desc="Runs agent-readability and SEO audits. Verifies every post has the six structural patterns agents use to decide what to cite."
-                schedule="Wed + Sun — 9:04 AM PT"
-                icon={Icons.send}
-              />
-            </div>
-
-            {/* Connector line — desktop only */}
-            <div className="hidden md:flex justify-center">
-              <div className="pipeline-line w-px h-full" />
-            </div>
-
-            {/* Right side — what your team keeps vs what AI handles */}
-            <div className="flex items-center">
-              <div className="w-full p-8 rounded-2xl bg-onyx/50 border border-border-subtle">
-                <h3 className="font-mono text-xs text-text-tertiary tracking-widest uppercase mb-6">
-                  Your team + AI assistant
-                </h3>
-                <div className="space-y-5">
+              {/* What your team does */}
+              <div className="p-5 rounded-2xl bg-surface/40 border border-border-subtle">
+                <div className="font-mono text-[11px] text-text-ghost tracking-widest uppercase mb-4">
+                  Division of labor
+                </div>
+                <div className="space-y-3 text-sm">
                   <div>
-                    <div className="font-mono text-xs text-phosphor tracking-wider uppercase mb-3">
-                      Your team handles
+                    <div className="font-mono text-[11px] text-accent-bright tracking-wider uppercase mb-2">
+                      Your team
                     </div>
-                    <ul className="space-y-2 text-sm text-text-secondary">
-                      <li className="flex items-start gap-2"><span className="text-phosphor mt-0.5">&#9654;</span> Content strategy &amp; brand direction</li>
-                      <li className="flex items-start gap-2"><span className="text-phosphor mt-0.5">&#9654;</span> Editorial review &amp; approval</li>
-                      <li className="flex items-start gap-2"><span className="text-phosphor mt-0.5">&#9654;</span> Final tone and voice adjustments</li>
+                    <ul className="space-y-1.5 text-text-secondary">
+                      <li className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-accent-bright" /> Content strategy & direction</li>
+                      <li className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-accent-bright" /> Review & approve drafts</li>
+                      <li className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-accent-bright" /> Final voice adjustments</li>
                     </ul>
                   </div>
-                  <div className="border-t border-border-subtle pt-5">
-                    <div className="font-mono text-xs text-cyan-bright tracking-wider uppercase mb-3">
-                      AI assistant handles
+                  <div className="border-t border-border-subtle pt-3">
+                    <div className="font-mono text-[11px] text-mint tracking-wider uppercase mb-2">
+                      AI assistant
                     </div>
-                    <ul className="space-y-2 text-sm text-text-secondary">
-                      <li className="flex items-start gap-2"><span className="text-cyan-bright mt-0.5">&#9654;</span> Agent-citation gap research</li>
-                      <li className="flex items-start gap-2"><span className="text-cyan-bright mt-0.5">&#9654;</span> Agent-structured first drafts</li>
-                      <li className="flex items-start gap-2"><span className="text-cyan-bright mt-0.5">&#9654;</span> Agent-readability &amp; SEO audits</li>
-                      <li className="flex items-start gap-2"><span className="text-cyan-bright mt-0.5">&#9654;</span> Consistent publishing schedule</li>
-                      <li className="flex items-start gap-2"><span className="text-cyan-bright mt-0.5">&#9654;</span> Extractable quote &amp; definition formatting</li>
+                    <ul className="space-y-1.5 text-text-secondary">
+                      <li className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-mint" /> Content gap research</li>
+                      <li className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-mint" /> Agent-structured first drafts</li>
+                      <li className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-mint" /> SEO + AEO audits</li>
+                      <li className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-mint" /> Scheduled publishing</li>
                     </ul>
                   </div>
                 </div>
               </div>
             </div>
+
+            {/* Right: command steps */}
+            <div className="space-y-8">
+              <PipelineCmd
+                command="research"
+                description="Identifies topics AI agents are actively answering questions about — then finds gaps where no authoritative source exists yet."
+                schedule="Daily — 8:00 AM PT"
+                index={0}
+              />
+              <PipelineCmd
+                command="score"
+                description="Ranks each topic by agent-citation potential. How likely is an AI agent to need this answer? Is there a quotable source already?"
+                schedule="Daily — 8:01 AM PT"
+                index={1}
+              />
+              <PipelineCmd
+                command="draft"
+                description="Writes 2,500-3,000 words with agent-parseable structure: Q&A headings, extractable definitions, comparison tables, numbered procedures."
+                schedule="Wed + Sun — 9:00 AM PT"
+                index={2}
+              />
+              <PipelineCmd
+                command="audit --publish"
+                description="Runs agent-readability and SEO audits. Verifies all six structural patterns agents use to decide what to cite. Queues for review."
+                schedule="Wed + Sun — 9:04 AM PT"
+                index={3}
+              />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ── AEO ── */}
-      <section id="aeo" className="py-28 relative grid-pattern">
+      {/* ── AEO FEATURES ── */}
+      <section id="aeo" className="py-28 dot-grid relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-abyss via-transparent to-abyss" />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <div className="mb-16 max-w-2xl">
-            <span className="font-mono text-xs text-cyan-bright tracking-widest uppercase">
-              Agent-Readable Content
+          <div className="max-w-2xl mb-14">
+            <span className="font-mono text-[11px] text-mint tracking-widest uppercase">
+              AEO — Agent Engine Optimization
             </span>
-            <h2 className="font-display text-4xl md:text-5xl italic text-text-primary mt-3 mb-4">
-              Built for how agents{" "}
-              <span className="text-cyan-bright">see your content</span>
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-text-primary mt-3 mb-5 leading-tight">
+              Six structural patterns agents use{" "}
+              <span className="text-mint">to decide what to cite</span>
             </h2>
             <p className="text-text-secondary leading-relaxed">
               AI agents don&apos;t read like humans. They scan for structure, extract
-              definitions, parse tables, and rank by authority signals. Every post
-              is engineered with these six patterns — the same ones ChatGPT,
-              Perplexity, and Claude use to decide what to cite.
+              definitions, parse tables, and rank by authority. Every post is
+              engineered with these patterns — the same ones ChatGPT, Perplexity,
+              and Claude use to choose sources.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            <AeoCard
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <UtilityCard
+              label="Pattern 01"
               title="Agent-Parseable Headings"
-              description="Every H2 mirrors a question an agent would receive from a user. The first sentence is the direct answer — agents extract it verbatim."
-              icon={Icons.qa}
+              description="Every H2 mirrors a question an agent would receive. The first sentence is the direct answer — agents extract it verbatim."
+              accent="mint"
             />
-            <AeoCard
+            <UtilityCard
+              label="Pattern 02"
               title="Machine-Readable Tables"
-              description="Structured comparison data agents can ingest and quote directly. When a user asks 'X vs Y,' agents pull your table as the definitive answer."
-              icon={Icons.table}
+              description="Structured comparison data agents ingest and quote directly. When a user asks 'X vs Y,' agents pull your table as the answer."
+              accent="mint"
             />
-            <AeoCard
+            <UtilityCard
+              label="Pattern 03"
               title="Extractable Definitions"
-              description="Crisp, self-contained statements agents can lift without rewriting. Each post has 3+ quotable blocks designed for direct agent extraction."
-              icon={Icons.quote}
+              description="Crisp, self-contained statements agents can lift without rewriting. Each post has 3+ quotable blocks designed for extraction."
+              accent="mint"
             />
-            <AeoCard
+            <UtilityCard
+              label="Pattern 04"
               title="Numbered Procedures"
-              description="Step-by-step sequences agents prefer when users ask 'how do I...' questions. Your brand becomes the agent's go-to instructional source."
-              icon={Icons.list}
+              description="Step-by-step sequences agents prefer for 'how do I...' queries. Your brand becomes the agent's go-to instructional source."
+              accent="mint"
             />
-            <AeoCard
+            <UtilityCard
+              label="Pattern 05"
               title="Authority Signals"
-              description="First-person expertise, concrete data, and source citations. Agents rank content by credibility — these signals make agents trust your content first."
-              icon={Icons.shield}
+              description="First-person expertise, concrete data, source citations. Agents rank by credibility — these signals earn trust first."
+              accent="mint"
             />
-            <AeoCard
+            <UtilityCard
+              label="Pattern 06"
               title="Freshness Markers"
-              description="Current dates, recent stats, and timely references. Agents heavily deprioritize stale content — yours stays fresh and agent-preferred automatically."
-              icon={Icons.clock}
+              description="Current dates, recent stats, timely references. Agents deprioritize stale content — yours stays fresh automatically."
+              accent="mint"
             />
           </div>
 
-          {/* AEO vs SEO comparison */}
-          <div className="mt-16 p-8 rounded-2xl bg-obsidian/80 border border-border-subtle backdrop-blur-sm">
-            <h3 className="font-mono text-xs text-text-tertiary tracking-widest uppercase mb-6">
-              The Audience Shift You Can&apos;t Ignore
-            </h3>
-            <div className="grid md:grid-cols-2 gap-8">
-              <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-2 h-2 rounded-full bg-phosphor" />
-                  <span className="font-mono text-sm text-phosphor">
-                    Human-only content (yesterday)
-                  </span>
-                </div>
-                <p className="text-text-secondary text-sm leading-relaxed">
-                  Written for human readers and Google crawlers. Agents struggle
-                  to extract clean answers — so they cite someone else.
-                </p>
+          {/* Before / After comparison */}
+          <div className="mt-12 grid md:grid-cols-2 gap-4">
+            <div className="p-6 rounded-2xl bg-surface/40 border border-border-subtle">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-2 h-2 rounded-full bg-text-ghost" />
+                <span className="font-mono text-[11px] text-text-tertiary tracking-widest uppercase">
+                  Without AEO
+                </span>
               </div>
-              <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-2 h-2 rounded-full bg-cyan-bright" />
-                  <span className="font-mono text-sm text-cyan-bright">
-                    Agent-optimized content (today)
-                  </span>
-                </div>
-                <p className="text-text-secondary text-sm leading-relaxed">
-                  Structured for both humans and AI agents. Agents parse, extract,
-                  and cite your brand directly. One answer, your attribution.
-                </p>
+              <p className="text-text-secondary text-sm leading-relaxed">
+                Written for human readers and Google crawlers. Agents struggle
+                to extract clean answers — they cite someone else. 3% citation rate.
+              </p>
+            </div>
+            <div className="p-6 rounded-2xl bg-surface/40 border border-mint-dim/20">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-2 h-2 rounded-full bg-mint" />
+                <span className="font-mono text-[11px] text-mint tracking-widest uppercase">
+                  With AEO
+                </span>
               </div>
+              <p className="text-text-secondary text-sm leading-relaxed">
+                Structured for both humans and AI agents. Agents parse, extract,
+                and cite your brand directly. 18% citation rate — 6x improvement.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── STATS ── */}
-      <section id="pricing" className="py-28 border-y border-border-subtle">
+      {/* ── COMPARE ── */}
+      <section id="compare" className="py-28">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <span className="font-mono text-xs text-text-tertiary tracking-widest uppercase">
+          <div className="text-center mb-14">
+            <span className="font-mono text-[11px] text-text-tertiary tracking-widest uppercase">
               The math
             </span>
-            <h2 className="font-display text-4xl md:text-5xl italic text-text-primary mt-3">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-text-primary mt-3">
               What 8+ posts a month actually costs
             </h2>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-5 mb-16">
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-3 mb-16">
             {/* Do nothing */}
-            <div className="p-6 rounded-2xl bg-onyx/50 border border-border-subtle text-center">
-              <div className="font-mono text-xs text-text-tertiary tracking-widest uppercase mb-4">
-                Do nothing
-              </div>
-              <div className="font-mono text-3xl text-text-primary mb-2">$0<span className="text-text-tertiary text-lg">/post</span></div>
-              <ul className="text-sm text-text-secondary space-y-2 mt-6 text-left">
-                <li>38% of searches end in AI answers</li>
-                <li>3% citation rate for unoptimized content</li>
-                <li>Traffic erodes quarter over quarter</li>
-                <li>Competitors fill the gap</li>
-              </ul>
-            </div>
-            {/* Freelancers */}
-            <div className="p-6 rounded-2xl bg-onyx/50 border border-border-subtle text-center">
-              <div className="font-mono text-xs text-text-tertiary tracking-widest uppercase mb-4">
-                Freelance writers
-              </div>
-              <div className="font-mono text-3xl text-text-primary mb-2">$500<span className="text-text-tertiary text-lg">+/post</span></div>
-              <ul className="text-sm text-text-secondary space-y-2 mt-6 text-left">
-                <li>Timezone gaps, availability varies</li>
-                <li>Voice drifts across writers</li>
-                <li>You manage briefs &amp; feedback</li>
-                <li>No AEO structure</li>
-              </ul>
-            </div>
-            {/* Hire */}
-            <div className="p-6 rounded-2xl bg-onyx/50 border border-border-subtle text-center">
-              <div className="font-mono text-xs text-text-tertiary tracking-widest uppercase mb-4">
-                Hire a content marketer
-              </div>
-              <div className="font-mono text-3xl text-text-primary mb-2">$100K<span className="text-text-tertiary text-lg">+/yr</span></div>
-              <ul className="text-sm text-text-secondary space-y-2 mt-6 text-left">
-                <li>3–6 month ramp-up</li>
-                <li>PTO, benefits, management</li>
-                <li>4–6 posts/month capacity</li>
-                <li>No built-in AEO expertise</li>
-              </ul>
-            </div>
-            {/* Agency */}
-            <div className="p-6 rounded-2xl bg-onyx/50 border border-border-subtle text-center">
-              <div className="font-mono text-xs text-text-tertiary tracking-widest uppercase mb-4">
-                Outsource to agency
-              </div>
-              <div className="font-mono text-3xl text-text-primary mb-2">$2K<span className="text-text-tertiary text-lg">+/post</span></div>
-              <ul className="text-sm text-text-secondary space-y-2 mt-6 text-left">
-                <li>$16K+/month for 8 posts</li>
-                <li>Brand voice drift over time</li>
-                <li>Account manager overhead</li>
-                <li>Rarely AEO-optimized</li>
-              </ul>
-            </div>
-            {/* Warden */}
-            <div className="p-6 rounded-2xl bg-onyx/50 border border-phosphor/30 text-center relative">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-phosphor text-void text-xs font-mono font-medium rounded-full">
+            <CompareCard
+              label="Do nothing"
+              price="$0"
+              unit="/post"
+              items={[
+                "38% of searches end in AI answers",
+                "3% citation rate",
+                "Traffic erodes quarterly",
+                "Competitors fill the gap",
+              ]}
+            />
+            <CompareCard
+              label="Freelancers"
+              price="$500"
+              unit="+/post"
+              items={[
+                "Availability varies",
+                "Voice drifts across writers",
+                "You manage briefs & feedback",
+                "No AEO structure",
+              ]}
+            />
+            <CompareCard
+              label="Hire"
+              price="$100K"
+              unit="+/yr"
+              items={[
+                "3-6 month ramp-up",
+                "PTO, benefits, management",
+                "4-6 posts/month capacity",
+                "No built-in AEO expertise",
+              ]}
+            />
+            <CompareCard
+              label="Agency"
+              price="$2K"
+              unit="+/post"
+              items={[
+                "$16K+/month for 8 posts",
+                "Brand voice drift",
+                "Account manager overhead",
+                "Rarely AEO-optimized",
+              ]}
+            />
+            {/* Warden — highlighted */}
+            <div className="relative p-5 rounded-2xl bg-surface/60 border border-accent/30 text-center">
+              <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-accent text-white text-[10px] font-mono font-semibold rounded-full tracking-wider uppercase">
                 AI-assisted
               </div>
-              <div className="font-mono text-xs text-phosphor tracking-widest uppercase mb-4">
+              <div className="font-mono text-[11px] text-accent-bright tracking-widest uppercase mb-3 mt-1">
                 AI content assistant
               </div>
-              <div className="font-mono text-3xl text-phosphor mb-2">~$200<span className="text-phosphor-dim text-lg">/post</span></div>
-              <ul className="text-sm text-text-secondary space-y-2 mt-6 text-left">
-                <li className="text-text-primary">8+ drafts/month, on schedule</li>
-                <li className="text-text-primary">Built-in AEO + SEO audits</li>
-                <li className="text-text-primary">Follows your style guide exactly</li>
-                <li className="text-text-primary">Your team reviews &amp; approves</li>
+              <div className="font-mono text-2xl text-accent-bright mb-1">
+                ~$200<span className="text-accent-dim text-sm">/post</span>
+              </div>
+              <ul className="text-sm text-text-primary space-y-1.5 mt-4 text-left">
+                <li className="flex items-start gap-1.5"><span className="text-mint mt-0.5 text-xs">&#10003;</span> 8+ drafts/month, on schedule</li>
+                <li className="flex items-start gap-1.5"><span className="text-mint mt-0.5 text-xs">&#10003;</span> Built-in AEO + SEO audits</li>
+                <li className="flex items-start gap-1.5"><span className="text-mint mt-0.5 text-xs">&#10003;</span> Follows your style guide</li>
+                <li className="flex items-start gap-1.5"><span className="text-mint mt-0.5 text-xs">&#10003;</span> Your team reviews & approves</li>
               </ul>
             </div>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
-            <Stat value="8" label="Drafts / Month" suffix="+" />
-            <Stat value="6" label="AEO Checks / Post" />
-            <Stat value="~90" label="Hours Saved / Month" suffix="" />
-            <Stat value="0" label="Missed Deadlines" />
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <Stat value="8+" label="Drafts / month" />
+            <Stat value="6" label="AEO checks / post" />
+            <Stat value="~90h" label="Saved / month" />
+            <Stat value="0" label="Missed deadlines" />
           </div>
         </div>
       </section>
@@ -784,44 +668,43 @@ export default function LandingPage() {
       {/* ── HOW AEO WORKS (example) ── */}
       <section className="py-28">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="mb-16">
-            <span className="font-mono text-xs text-phosphor tracking-widest uppercase">
-              In Practice
+          <div className="mb-14">
+            <span className="font-mono text-[11px] text-accent-bright tracking-widest uppercase">
+              In practice
             </span>
-            <h2 className="font-display text-4xl md:text-5xl italic text-text-primary mt-3">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-text-primary mt-3">
               What agents see when they read your post
             </h2>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* The post structure */}
-            <div className="p-8 rounded-2xl bg-onyx/50 border border-border-subtle">
-              <h3 className="font-mono text-xs text-text-tertiary tracking-widest uppercase mb-6">
-                Agent-Optimized Post Structure
-              </h3>
-              <div className="font-mono text-sm space-y-3">
+          <div className="grid lg:grid-cols-2 gap-4">
+            {/* Post structure */}
+            <div className="p-6 rounded-2xl bg-surface/40 border border-border-subtle">
+              <div className="font-mono text-[11px] text-text-ghost tracking-widest uppercase mb-5">
+                Agent-optimized structure
+              </div>
+              <div className="font-mono text-[13px] space-y-2">
                 {[
-                  { level: 0, text: "H1: Benefit-driven title", color: "text-phosphor" },
-                  { level: 1, text: "Opening hook (stat or problem)", color: "text-text-secondary" },
-                  { level: 0, text: "H2: Key Takeaways", color: "text-cyan-bright" },
-                  { level: 1, text: "3–5 bullet summary", color: "text-text-secondary" },
-                  { level: 0, text: "H2: Why This Matters", color: "text-cyan-bright" },
-                  { level: 0, text: "H2: The Problem", color: "text-cyan-bright" },
-                  { level: 1, text: "H3 subsections for each pain point", color: "text-text-tertiary" },
-                  { level: 0, text: "H2: The Solution", color: "text-cyan-bright" },
-                  { level: 1, text: "Definition block (agent-extractable)", color: "text-emerald-400" },
-                  { level: 0, text: "H2: Comparison Table", color: "text-cyan-bright" },
-                  { level: 1, text: "3+ cols, 5+ rows (agent-parseable)", color: "text-emerald-400" },
-                  { level: 0, text: "H2: Real-World Example", color: "text-cyan-bright" },
-                  { level: 0, text: "H2: Getting Started", color: "text-cyan-bright" },
-                  { level: 1, text: "Numbered steps (agent-preferred format)", color: "text-emerald-400" },
-                  { level: 0, text: "H2: FAQ", color: "text-cyan-bright" },
-                  { level: 1, text: "3–6 conversational Q&A pairs", color: "text-emerald-400" },
+                  { level: 0, text: "H1: Benefit-driven title", color: "text-accent-bright" },
+                  { level: 1, text: "Opening hook (stat or problem)", color: "text-text-tertiary" },
+                  { level: 0, text: "H2: Key Takeaways", color: "text-mint" },
+                  { level: 1, text: "3-5 bullet summary", color: "text-text-tertiary" },
+                  { level: 0, text: "H2: Why This Matters", color: "text-mint" },
+                  { level: 0, text: "H2: The Problem", color: "text-mint" },
+                  { level: 1, text: "H3 subsections per pain point", color: "text-text-ghost" },
+                  { level: 0, text: "H2: The Solution", color: "text-mint" },
+                  { level: 1, text: "Definition block (extractable)", color: "text-warm" },
+                  { level: 0, text: "H2: Comparison Table", color: "text-mint" },
+                  { level: 1, text: "3+ cols, 5+ rows (parseable)", color: "text-warm" },
+                  { level: 0, text: "H2: Getting Started", color: "text-mint" },
+                  { level: 1, text: "Numbered steps (preferred format)", color: "text-warm" },
+                  { level: 0, text: "H2: FAQ", color: "text-mint" },
+                  { level: 1, text: "3-6 conversational Q&A pairs", color: "text-warm" },
                 ].map((item, i) => (
                   <div
                     key={i}
-                    className={`${item.color}`}
-                    style={{ paddingLeft: `${item.level * 20}px` }}
+                    className={item.color}
+                    style={{ paddingLeft: `${item.level * 16}px` }}
                   >
                     {item.level > 0 ? "└ " : ""}
                     {item.text}
@@ -830,40 +713,40 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* AI query simulation */}
-            <div className="p-8 rounded-2xl bg-onyx/50 border border-border-subtle">
-              <h3 className="font-mono text-xs text-text-tertiary tracking-widest uppercase mb-6">
-                Agent Response — Your Content Cited
-              </h3>
-              <div className="space-y-6">
+            {/* Agent response simulation */}
+            <div className="p-6 rounded-2xl bg-surface/40 border border-border-subtle">
+              <div className="font-mono text-[11px] text-text-ghost tracking-widest uppercase mb-5">
+                Agent response — your content cited
+              </div>
+              <div className="space-y-5">
                 <div>
-                  <div className="font-mono text-xs text-text-tertiary mb-2">
+                  <div className="font-mono text-[11px] text-text-ghost mb-1.5">
                     USER QUERY
                   </div>
-                  <p className="text-text-primary italic">
+                  <p className="text-text-primary">
                     &ldquo;What are the hidden costs of running AI agents 24/7?&rdquo;
                   </p>
                 </div>
                 <div>
-                  <div className="font-mono text-xs text-text-tertiary mb-2">
-                    AGENT RESPONSE (ChatGPT / Perplexity / Claude)
+                  <div className="font-mono text-[11px] text-text-ghost mb-1.5">
+                    AGENT RESPONSE
                   </div>
                   <p className="text-text-secondary leading-relaxed">
                     According to openclaws.blog, &ldquo;The Always-On Tax&rdquo; refers to the
                     hidden, recurring costs of keeping AI agents running
-                    continuously — including token costs of $200K–$600K per agent
+                    continuously — including token costs of $200K-$600K per agent
                     per year, infrastructure overhead, and the management burden
                     of maintaining always-active automation.
                   </p>
                 </div>
                 <div className="pt-4 border-t border-border-subtle">
-                  <div className="font-mono text-xs text-cyan-bright mb-2">
-                    YOUR BRAND CITED AS THE SOURCE
+                  <div className="font-mono text-[11px] text-mint mb-2 tracking-wider uppercase">
+                    Your brand cited as the source
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-cyan-bright">openclaws.blog</span>
-                    <span className="text-text-tertiary">—</span>
-                    <span className="text-text-secondary text-sm">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-mint font-mono">openclaws.blog</span>
+                    <span className="text-text-ghost">—</span>
+                    <span className="text-text-tertiary">
                       Definition extracted verbatim, brand attributed
                     </span>
                   </div>
@@ -875,79 +758,78 @@ export default function LandingPage() {
       </section>
 
       {/* ── WHO IT'S FOR ── */}
-      <section className="py-28 border-t border-border-subtle">
+      <section id="who" className="py-28">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="mb-16">
-            <span className="font-mono text-xs text-phosphor tracking-widest uppercase">
-              Built For
+          <div className="mb-14">
+            <span className="font-mono text-[11px] text-accent-bright tracking-widest uppercase">
+              Use cases
             </span>
-            <h2 className="font-display text-4xl md:text-5xl italic text-text-primary mt-3">
-              You own the blog pipeline.<br />You need it to scale.
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-text-primary mt-3">
+              Built for people who run on bandwidth, not headcount
             </h2>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                name: "Demand gen directors",
-                desc: "You own the blog and SEO pipeline. Your team of 1-2 writers plus a freelancer ships 3-4 posts a month — but you need 8+ to cover every vertical. You can't justify a $100K hire. You need overflow capacity that follows your style guide from day one.",
-              },
-              {
-                name: "Teams juggling freelancers",
-                desc: "Your contract writers are talented, but managing briefs, feedback loops, and timezone gaps eats your week. You need consistent output without the coordination tax — and AEO optimization your freelancers weren't trained on.",
-              },
-              {
-                name: "Teams outgrowing agencies",
-                desc: "You're spending $2K+ per post on agency overflow, frustrated by voice drift and slow turnarounds. Same output, a tenth of the cost, your style guide followed exactly.",
-              },
-              {
-                name: "Early AEO adopters",
-                desc: "You see traffic eroding as AI answers replace clicks. Optimized content gets cited 18% of the time vs 3% for unoptimized. Your competitors have massive content teams — you need a structural edge to get cited alongside them.",
-              },
-              {
-                name: "Bootstrapped teams punching up",
-                desc: "You're competing against companies with 10x your content budget. You can't outspend them — but you can out-structure them. AEO optimization is a leverage play that makes a 50-person company's content citeable alongside the enterprise giants.",
-              },
-              {
-                name: "Content ops leaders",
-                desc: "You need a full pipeline — research, draft, audit, review, publish — not a blank-page tool and a deadline. This runs on a schedule, not on willpower.",
-              },
-            ].map((persona) => (
-              <div
-                key={persona.name}
-                className="p-6 rounded-xl border border-border-subtle bg-onyx/30 hover:bg-onyx/60 transition-colors duration-300"
-              >
-                <h3 className="font-display text-xl italic text-phosphor mb-3">
-                  {persona.name}
-                </h3>
-                <p className="text-text-secondary text-sm leading-relaxed">
-                  {persona.desc}
-                </p>
-              </div>
-            ))}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <UtilityCard
+              label="Solo operators"
+              title="Every hour writing is an hour not billing"
+              description="You run the entire business alone — consulting, freelancing, micro-SaaS. You know content marketing works but can't maintain a cadence. Set it up once, monitor weekly."
+              accent="accent"
+            />
+            <UtilityCard
+              label="Small teams (2-5)"
+              title="More topics than writers"
+              description="Your 1-2 writers plus a freelancer ship 3-4 posts a month, but you need 8+ to cover every vertical. Overflow capacity that follows your style guide from day one."
+              accent="accent"
+            />
+            <UtilityCard
+              label="Bootstrapped companies"
+              title="Out-structure, don't out-spend"
+              description="Competing against companies with 10x your content budget. AEO optimization is a leverage play — makes your content citable alongside enterprise giants."
+              accent="accent"
+            />
+            <UtilityCard
+              label="Teams juggling freelancers"
+              title="Consistent output without the coordination tax"
+              description="Managing briefs, feedback loops, and timezone gaps eats your week. Same output, no back-and-forth, AEO optimization your freelancers weren't trained on."
+              accent="warm"
+            />
+            <UtilityCard
+              label="Early AEO adopters"
+              title="AI answers are replacing clicks"
+              description="Traffic is eroding as AI agents answer questions directly. Optimized content gets cited 18% of the time vs 3% for unoptimized. Structure is the new SEO."
+              accent="warm"
+            />
+            <UtilityCard
+              label="Content ops leaders"
+              title="A pipeline, not a blank page"
+              description="You need research → draft → audit → review → publish running on a schedule, not on willpower. This is a content system, not another writing tool."
+              accent="warm"
+            />
           </div>
         </div>
       </section>
 
-      {/* ── OPEN SOURCE CTA ── */}
+      {/* ── CTA ── */}
       <section className="py-28">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <span className="text-5xl mb-6 block">🦞</span>
-          <h2 className="font-display text-4xl md:text-5xl italic text-text-primary mb-6">
-            See it working in production
+        <div className="max-w-3xl mx-auto px-6 text-center">
+          <div className="font-display text-5xl font-bold mb-2 tracking-tight">
+            <span className="text-accent-bright">See it live.</span>
+          </div>
+          <h2 className="font-display text-3xl md:text-4xl font-bold text-text-primary mb-6">
+            Every post on openclaws.blog runs through this pipeline.
           </h2>
-          <p className="text-text-secondary text-lg leading-relaxed max-w-2xl mx-auto mb-10">
-            openclaws.blog is a live content property running the full pipeline.
-            Every post is agent-optimized, published on schedule, and audited
-            automatically. Browse the posts and see what 18% citation-rate
-            content looks like in production.
+          <p className="text-text-secondary text-lg leading-relaxed max-w-xl mx-auto mb-10">
+            Agent-optimized, published on schedule, audited automatically.
+            Browse the posts and see what 18% citation-rate content looks like
+            in production.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-3">
             <a
               href="https://openclaws.blog"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-8 py-3.5 rounded-lg bg-phosphor text-void font-medium hover:bg-phosphor-dim transition-colors text-lg"
+              className="px-7 py-3 rounded-xl bg-accent text-white font-semibold hover:bg-accent-dim transition-colors"
             >
               Browse live examples
             </a>
@@ -955,7 +837,7 @@ export default function LandingPage() {
               href="https://github.com/qwibitai/warden"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-8 py-3.5 rounded-lg border border-border-visible text-text-secondary hover:text-text-primary hover:border-text-tertiary transition-colors text-lg"
+              className="px-7 py-3 rounded-xl border border-border-visible text-text-secondary hover:text-text-primary hover:border-border-strong transition-colors"
             >
               View on GitHub
             </a>
@@ -964,46 +846,62 @@ export default function LandingPage() {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer className="py-12 border-t border-border-subtle">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-3">
-            <span className="text-lg">🦞</span>
-            <span className="font-display text-lg italic text-text-secondary">
-              Warden
+      <footer className="py-10 border-t border-border-subtle">
+        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="font-display text-sm font-bold text-text-secondary tracking-tight">
+              warden
             </span>
           </div>
-          <div className="flex items-center gap-6 text-sm text-text-tertiary">
-            <a
-              href="https://openclaws.blog"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-text-secondary transition-colors"
-            >
+          <div className="flex items-center gap-6 text-[13px] text-text-ghost">
+            <a href="https://openclaws.blog" target="_blank" rel="noopener noreferrer" className="hover:text-text-secondary transition-colors">
               Blog
             </a>
-            <a
-              href="https://github.com/qwibitai/warden"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-text-secondary transition-colors"
-            >
+            <a href="https://github.com/qwibitai/warden" target="_blank" rel="noopener noreferrer" className="hover:text-text-secondary transition-colors">
               GitHub
             </a>
-            <a
-              href="https://github.com/openclaw/openclaw"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-text-secondary transition-colors"
-            >
+            <a href="https://github.com/openclaw/openclaw" target="_blank" rel="noopener noreferrer" className="hover:text-text-secondary transition-colors">
               OpenClaw
             </a>
           </div>
-          <div className="flex items-center gap-2 text-xs text-text-tertiary font-mono">
+          <div className="flex items-center gap-2 text-[11px] text-text-ghost font-mono">
             <UptimeDot />
-            <span>Content optimized for AI agents.</span>
+            <span>Content optimized for AI agents</span>
           </div>
         </div>
       </footer>
     </>
+  );
+}
+
+/* ═══════════════════════════════════════════
+   Compare Card (pricing section)
+   ═══════════════════════════════════════════ */
+
+function CompareCard({
+  label,
+  price,
+  unit,
+  items,
+}: {
+  label: string;
+  price: string;
+  unit: string;
+  items: string[];
+}) {
+  return (
+    <div className="p-5 rounded-2xl bg-surface/40 border border-border-subtle text-center">
+      <div className="font-mono text-[11px] text-text-ghost tracking-widest uppercase mb-3">
+        {label}
+      </div>
+      <div className="font-mono text-2xl text-text-primary mb-1">
+        {price}<span className="text-text-ghost text-sm">{unit}</span>
+      </div>
+      <ul className="text-[13px] text-text-tertiary space-y-1.5 mt-4 text-left">
+        {items.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+    </div>
   );
 }
