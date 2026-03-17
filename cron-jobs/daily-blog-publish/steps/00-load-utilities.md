@@ -1,1 +1,0 @@
-Load skills/images for diagram rules. NEVER attempt SVG-to-PNG conversion — use inline SVG in HTML or skip images entirely. Never let a missing image block the workflow.
