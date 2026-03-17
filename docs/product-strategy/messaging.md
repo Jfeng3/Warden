@@ -4,6 +4,10 @@
 
 "An AI content assistant that drafts agent-optimized posts your team reviews — so AI agents cite your brand, not your competitors'."
 
+## Headline
+
+"More posts, zero new hires — every one built for AI agents to read"
+
 ## Core Narrative
 
 Your editorial calendar has gaps. AI answers are replacing Google clicks. Warden fills both.

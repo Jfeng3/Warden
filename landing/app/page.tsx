@@ -365,9 +365,8 @@ export default function LandingPage() {
             </div>
 
             <h1 className="font-display text-[3.2rem] md:text-[4rem] lg:text-[4.5rem] font-bold leading-[1.05] tracking-tight text-text-primary mb-6">
-              One pipeline.
-              <br />
-              <span className="text-accent-bright">Every post built for AI agents.</span>
+              More posts, zero new hires —{" "}
+              <span className="text-accent-bright">every one built for AI agents to read</span>
             </h1>
 
             <p className="text-[17px] text-text-secondary leading-relaxed max-w-lg mb-10">

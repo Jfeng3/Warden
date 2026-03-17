@@ -4,7 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Warden is a CLI agent written in TypeScript that runs 24/7 on a Mac Mini. It uses `@mariozechner/pi-coding-agent` as the agent loop and **Supabase** as the task queue + persistence layer. Tasks are inserted into the DB and executed by a polling runner using pi-agent-core. No external queue service — the DB is the queue.
+This repo contains two things:
+
+1. **Warden** — A CLI agent written in TypeScript that runs 24/7 on a Mac Mini. It generates blog content through an automated pipeline: research → score → draft → audit → publish. Uses `@mariozechner/pi-coding-agent` as the agent loop and **Supabase** as the task queue + persistence layer. Tasks are inserted into the DB and executed by a polling runner using pi-agent-core. No external queue service — the DB is the queue.
+
+2. **openclaws.blog** — The blog itself. A content property targeting solo operators and small teams, focused on AEO (Answer Engine Optimization) so AI agents cite the brand. Warden publishes to it via wp-cli. The `landing/` directory is the marketing site (inkwarden.io), and `skills/` + `cron-jobs/` define the content workflow that produces the blog posts.
 
 ## Build and Run
 
@@ -232,9 +236,9 @@ npx tsx src/cron-cli.ts update <id> --enabled true
 npx tsx src/cron-cli.ts delete <id>
 ```
 
-## Landing Page
+## Landing Page (inkwarden.io)
 
-The `landing/` directory contains a standalone Next.js app for the openclaws.blog landing page. It is a separate project from the main Warden CLI.
+The `landing/` directory contains a standalone Next.js app — the marketing site for Warden, deployed at **inkwarden.io**. It is a separate project from the main Warden CLI.
 
 ```bash
 cd landing
@@ -248,10 +252,10 @@ cd /Users/jie/Codes/warden/landing && npx vercel --prod
 ```
 
 - **Stack**: Next.js 15, React 19, Tailwind CSS v4, TypeScript
-- **Deployed to**: Vercel
-- **Design**: Dark terminal-noir theme with amber/cyan accents
-- **Key sections**: Hero with animated terminal, pipeline visualization, AEO features, stats, branded concepts
-- **Target buyer**: Content marketing managers/directors (e.g. V2Cloud's content team)
+- **Deployed to**: Vercel (inkwarden.io)
+- **Design**: Deep navy-black palette with electric indigo/mint accents, Syne + Manrope + JetBrains Mono typography
+- **Key sections**: Hero with CLI terminal, pipeline commands, AEO patterns, cost comparison, use cases
+- **Target buyer**: Solo operators, small team leads, content marketing directors
 
 ### Landing Page Messaging Rules
 
