@@ -17,6 +17,11 @@ After selecting a topic, send a Telegram notification using this format:
 📌 TOPIC SNAPSHOT
 ―――――――――――――
 ▸ <b>Pillar:</b> [Which pillar this maps to]
-▸ <b>Source:</b> <a href="[url]">[Source article title]</a>
+▸ <b>Sources (min 5):</b>
+  1. <a href="[url]">[Source article title]</a>
+  2. <a href="[url]">[Source article title]</a>
+  3. <a href="[url]">[Source article title]</a>
+  4. <a href="[url]">[Source article title]</a>
+  5. <a href="[url]">[Source article title]</a>
 ▸ <b>Angle:</b> [One-line summary of the angle you will take]
 ```
