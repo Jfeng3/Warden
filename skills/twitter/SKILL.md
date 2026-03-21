@@ -4,6 +4,10 @@ description: Rules for posting tweets to @JupiterAna93211 via X API v2
 ---
 # Twitter Posting
 
+## Content Source
+
+Every tweet promoting a blog post MUST be derived from the post's actual content — a specific stat, finding, comparison, or insight from the research. Read the published HTML before composing. Never write a generic promo tweet from the title alone.
+
 ## Sending a Tweet
 
 Use the tweet.sh script. Write the tweet text to a variable or pass it directly.
