@@ -1,3 +1,3 @@
 Load skills/eval. Get publish_path from workflow state. Score the final draft from 1 to 100 using all eval criteria. Use set_state to save the score as eval_score. This score determines the next step:
 - If score >= 70: proceed to STEP 11 (publish)
-- If score < 70: SKIP publishing. Go directly to STEP 12 and send a Telegram notification that includes: the score, which criteria failed or scored low, the draft title, and a one-line summary of what needs improvement. Do NOT publish to WordPress.
+- If score < 70: SKIP publishing. Go directly to STEP 13 and send a Telegram notification that includes: the score, which criteria failed or scored low, the draft title, and a one-line summary of what needs improvement. Do NOT publish to WordPress.

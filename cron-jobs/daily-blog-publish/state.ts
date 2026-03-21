@@ -27,6 +27,8 @@ export interface State {
   style_issues: string[];
   /** WordPress post ID after publishing */
   wp_post_id: number | null;
+  /** Tweet ID after posting to X/Twitter */
+  tweet_id: string | null;
 }
 
 export const defaults: Partial<State> = {
