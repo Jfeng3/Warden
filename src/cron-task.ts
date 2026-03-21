@@ -117,6 +117,7 @@ export async function createCronTask(job: CronJob): Promise<Task> {
   const metadata: Record<string, unknown> = {
     ...(job.task_metadata ?? {}),
     cron: true,
+    cronJobName: job.name,
   };
   if (job.publish_mode === "draft") {
     metadata.publish_mode = "draft";

@@ -13,6 +13,8 @@ import { notifyTaskComplete } from "./telegram.js";
 import { getSessionForTask, deriveSessionKey, buildFreshSession } from "./session-store.js";
 import { WorkflowState, createStateTools } from "./workflow-state.js";
 import type { Task } from "./data_model/index.js";
+import { createWriteStream, existsSync, mkdirSync, type WriteStream } from "node:fs";
+import path from "node:path";
 
 export interface ParsedInstruction {
   preamble: string;
@@ -40,6 +42,42 @@ export function parseSteps(instruction: string): ParsedInstruction {
   return { preamble, steps };
 }
 
+const CRON_JOBS_DIR = path.join(process.cwd(), "cron-jobs");
+
+/**
+ * Create a write stream to a job-specific log file if the job has a logs/ directory.
+ * Returns the stream and a tee() helper that writes to both console and the log file.
+ */
+function openJobLog(task: Task): { stream: WriteStream | null; tee: typeof console.log; close: () => void } {
+  const jobName = task.metadata?.cronJobName as string | undefined;
+  if (!jobName) return { stream: null, tee: console.log, close: () => {} };
+
+  const logsDir = path.join(CRON_JOBS_DIR, jobName, "logs");
+  if (!existsSync(logsDir)) return { stream: null, tee: console.log, close: () => {} };
+
+  // Create timestamped log file
+  const now = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const filename = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}.log`;
+  const logPath = path.join(logsDir, filename);
+
+  mkdirSync(logsDir, { recursive: true });
+  const stream = createWriteStream(logPath, { flags: "a" });
+  console.log(`[runner] Job log: ${logPath}`);
+
+  const tee = (...args: unknown[]) => {
+    const line = args.map((a) => (typeof a === "string" ? a : JSON.stringify(a))).join(" ");
+    console.log(line);
+    stream.write(line + "\n");
+  };
+
+  const close = () => {
+    stream.end();
+  };
+
+  return { stream, tee, close };
+}
+
 let running = false;
 let pollInterval: ReturnType<typeof setInterval> | null = null;
 let executing = false; // Guard against concurrent task execution
@@ -55,7 +93,7 @@ interface TaskCtx {
 }
 const taskContext = new WeakMap<AgentSession, TaskCtx>();
 
-function attachSubscriber(session: AgentSession): void {
+function attachSubscriber(session: AgentSession, log: typeof console.log = console.log): void {
   if (subscribedSessions.has(session)) return;
   subscribedSessions.add(session);
 
@@ -76,11 +114,11 @@ function attachSubscriber(session: AgentSession): void {
       }
     }
 
-    // Log tool calls to terminal
+    // Log tool calls to terminal (and job log if tee'd)
     if (event.type === "tool_execution_start") {
       const toolEvent = event as any;
       const argsStr = toolEvent.args ? JSON.stringify(toolEvent.args, null, 2) : "";
-      console.log(`[runner] [task ${ctx.taskId}] tool_start: ${toolEvent.toolName ?? "unknown"}\n${argsStr}`);
+      log(`[runner] [task ${ctx.taskId}] tool_start: ${toolEvent.toolName ?? "unknown"}\n${argsStr}`);
     }
     if (event.type === "tool_execution_end") {
       const toolEvent = event as any;
@@ -88,7 +126,7 @@ function attachSubscriber(session: AgentSession): void {
         ? toolEvent.result.slice(0, 2000)
         : JSON.stringify(toolEvent.result, null, 2)?.slice(0, 2000) ?? "";
       const prefix = toolEvent.isError ? "tool_error" : "tool_end";
-      console.log(`[runner] [task ${ctx.taskId}] ${prefix}: ${toolEvent.toolName ?? "unknown"}\n${resultStr}`);
+      log(`[runner] [task ${ctx.taskId}] ${prefix}: ${toolEvent.toolName ?? "unknown"}\n${resultStr}`);
     }
 
     // Save conversation history on turn_end
@@ -133,8 +171,9 @@ async function executeTask(task: Task, session: AgentSession, provider: string, 
       taskContext.delete(session);
     } else {
       // === MULTI-STEP: fresh session per step with workflow state ===
+      const { tee, close: closeJobLog } = openJobLog(task);
       const totalSteps = steps.length;
-      console.log(`[runner] [task ${task.id}] Parsed ${totalSteps} steps (workflow mode)`);
+      tee(`[runner] [task ${task.id}] Parsed ${totalSteps} steps (workflow mode)`);
 
       const workflowState = new WorkflowState();
       // Seed initial state from task metadata (set by cron-task from state.ts)
@@ -145,52 +184,56 @@ async function executeTask(task: Task, session: AgentSession, provider: string, 
       const stateTools = createStateTools(workflowState);
       const stepResults: { index: number; output: string }[] = [];
 
-      for (let si = 0; si < steps.length; si++) {
-        const step = steps[si];
-        const stateKeys = Object.keys(workflowState.getAll());
-        console.log(`[runner] [task ${task.id}] Starting step ${step.index} [${si + 1}/${totalSteps}] (state keys: ${stateKeys.join(", ") || "none"})`);
+      try {
+        for (let si = 0; si < steps.length; si++) {
+          const step = steps[si];
+          const stateKeys = Object.keys(workflowState.getAll());
+          tee(`[runner] [task ${task.id}] Starting step ${step.index} [${si + 1}/${totalSteps}] (state keys: ${stateKeys.join(", ") || "none"})`);
 
-        // Fresh session with state tools injected
-        const stepSession = await buildFreshSession(provider, modelId, stateTools);
-        const stepLogger = createEventLogger(task.id);
-        taskContext.set(stepSession, { taskId: task.id, assistantText: "", logger: stepLogger });
-        attachSubscriber(stepSession);
+          // Fresh session with state tools injected
+          const stepSession = await buildFreshSession(provider, modelId, stateTools);
+          const stepLogger = createEventLogger(task.id);
+          taskContext.set(stepSession, { taskId: task.id, assistantText: "", logger: stepLogger });
+          attachSubscriber(stepSession, tee);
 
-        // Build full context: preamble + progress + state + step instruction
-        const contextParts: string[] = [];
+          // Build full context: preamble + progress + state + step instruction
+          const contextParts: string[] = [];
 
-        // Workflow preamble — always present so every step knows the big picture
-        if (preamble) contextParts.push(preamble);
+          // Workflow preamble — always present so every step knows the big picture
+          if (preamble) contextParts.push(preamble);
 
-        // Step progress — what's done, what's current, what's ahead
-        const progressLines: string[] = [];
-        for (let j = 0; j < steps.length; j++) {
-          const s = steps[j];
-          const titleMatch = s.text.match(/^STEP\s+\d+:\s*(.+)/);
-          const title = titleMatch ? titleMatch[1].split("\n")[0] : `Step ${s.index}`;
-          if (j < si) progressLines.push(`  [done] Step ${s.index}: ${title}`);
-          else if (j === si) progressLines.push(`  [current] Step ${s.index}: ${title}`);
-          else progressLines.push(`  [ ] Step ${s.index}: ${title}`);
+          // Step progress — what's done, what's current, what's ahead
+          const progressLines: string[] = [];
+          for (let j = 0; j < steps.length; j++) {
+            const s = steps[j];
+            const titleMatch = s.text.match(/^STEP\s+\d+:\s*(.+)/);
+            const title = titleMatch ? titleMatch[1].split("\n")[0] : `Step ${s.index}`;
+            if (j < si) progressLines.push(`  [done] Step ${s.index}: ${title}`);
+            else if (j === si) progressLines.push(`  [current] Step ${s.index}: ${title}`);
+            else progressLines.push(`  [ ] Step ${s.index}: ${title}`);
+          }
+          contextParts.push(`## Workflow Progress (step ${si + 1} of ${totalSteps})\n\n${progressLines.join("\n")}`);
+
+          // Workflow state from prior steps
+          const stateContext = workflowState.toContext();
+          if (stateContext) contextParts.push(stateContext);
+
+          // The actual step instruction
+          contextParts.push(step.text);
+
+          await stepSession.prompt(contextParts.join("\n\n"));
+
+          const ctx = taskContext.get(stepSession)!;
+          stepResults.push({ index: step.index, output: ctx.assistantText });
+
+          // Cleanup
+          taskContext.delete(stepSession);
+          stepSession.dispose();
+
+          tee(`[runner] [task ${task.id}] Step ${step.index} done`);
         }
-        contextParts.push(`## Workflow Progress (step ${si + 1} of ${totalSteps})\n\n${progressLines.join("\n")}`);
-
-        // Workflow state from prior steps
-        const stateContext = workflowState.toContext();
-        if (stateContext) contextParts.push(stateContext);
-
-        // The actual step instruction
-        contextParts.push(step.text);
-
-        await stepSession.prompt(contextParts.join("\n\n"));
-
-        const ctx = taskContext.get(stepSession)!;
-        stepResults.push({ index: step.index, output: ctx.assistantText });
-
-        // Cleanup
-        taskContext.delete(stepSession);
-        stepSession.dispose();
-
-        console.log(`[runner] [task ${task.id}] Step ${step.index} done`);
+      } finally {
+        closeJobLog();
       }
 
       result = stepResults.map((s) => `--- STEP ${s.index} ---\n${s.output || "(no output)"}`).join("\n\n");
