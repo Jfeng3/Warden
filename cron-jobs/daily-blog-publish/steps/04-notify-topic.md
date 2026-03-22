@@ -33,6 +33,7 @@ cat > /tmp/tg-msg.html <<'MSG'
 ―――――――――――――
 
 ▸ <b>Primary:</b> [primary_keyword] (vol: [keyword_volume], KD: [keyword_difficulty])
+▸ <b>Competition:</b> [keyword_competition]
 ▸ <b>Opportunity:</b> [keyword_opportunity]
 ▸ <b>Secondary:</b> [comma-separated secondary_keywords]
 ▸ <b>Long-tail:</b> [comma-separated long_tail_keywords]
