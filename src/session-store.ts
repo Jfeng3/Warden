@@ -7,6 +7,7 @@ import { wpTool } from "./wp-tool.js";
 import { gscTool } from "./gsc-tool.js";
 import type { Task } from "./data_model/index.js";
 import path from "node:path";
+import fs from "node:fs";
 import os from "node:os";
 
 const SESSIONS_DIR = path.join(os.homedir(), ".warden", "sessions");
@@ -42,6 +43,21 @@ export function deriveSessionKey(metadata: Record<string, unknown> | null | unde
  */
 export function markNewSession(key: string): void {
   pendingResets.add(key);
+
+  // #15: Clear cached session immediately so /context sees the reset
+  const old = sessionCache.get(key);
+  sessionCache.delete(key);
+  old?.dispose();
+
+  // #14: Clear session files on disk so reset survives pm2 restart
+  const sessionDir = path.join(SESSIONS_DIR, key);
+  if (fs.existsSync(sessionDir)) {
+    for (const file of fs.readdirSync(sessionDir)) {
+      if (file.endsWith(".jsonl")) {
+        fs.unlinkSync(path.join(sessionDir, file));
+      }
+    }
+  }
 }
 
 /**
