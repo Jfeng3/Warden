@@ -71,10 +71,18 @@ Use --porcelain to return just the post ID.`,
         maxBuffer: 10 * 1024 * 1024,
         cwd: process.cwd(),
         input,
+        stdio: ["pipe", "pipe", "pipe"], // separate stderr so PHP warnings don't pollute output
       });
 
+      // Strip PHP deprecation/warning lines from wp-cli output
+      const clean = output
+        .split("\n")
+        .filter((line) => !line.match(/^(PHP )?(Deprecated|Warning|Notice):/))
+        .join("\n")
+        .trim();
+
       return {
-        content: [{ type: "text" as const, text: output || "(no output)" }],
+        content: [{ type: "text" as const, text: clean || "(no output)" }],
         details: undefined,
       };
     } catch (err: any) {
