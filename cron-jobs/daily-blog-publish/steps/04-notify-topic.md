@@ -4,7 +4,7 @@ IMPORTANT: Telegram only supports these HTML tags: <b>, <i>, <a href="">, <code>
 
 The notification MUST include:
 
-1. CANDIDATES EVALUATED — list all 3 candidate topics from candidate_topics (workflow state), showing each topic's title, pillar, and its best keyword volume/difficulty
+1. CANDIDATES EVALUATED — list all 4 candidate topics from candidate_topics (workflow state), showing each topic's title, pillar, and its best keyword volume/difficulty
 2. SELECTED TOPIC — the winning topic with a brief explanation of why it was chosen over the other two (e.g. higher volume, lower difficulty, better keyword opportunity)
 3. KEYWORD DATA — primary_keyword, keyword_volume, keyword_difficulty, keyword_opportunity, secondary_keywords, and long_tail_keywords from workflow state
 
@@ -24,6 +24,9 @@ cat > /tmp/tg-msg.html <<'MSG'
   Pillar: [pillar] | Vol: [volume] | KD: [difficulty]
 
 ▸ <b>[Topic 3 title]</b>
+  Pillar: [pillar] | Vol: [volume] | KD: [difficulty]
+
+▸ <b>[Topic 4 title]</b>
   Pillar: [pillar] | Vol: [volume] | KD: [difficulty]
 
 <b>Why this one:</b> [1-2 sentences on why the winner was chosen]

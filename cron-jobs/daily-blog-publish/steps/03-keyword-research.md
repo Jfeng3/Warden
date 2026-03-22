@@ -1,6 +1,6 @@
 Load the skill at skills/ahrefs and skills/youdotcom-cli. Get candidate_topics from workflow state.
 
-For EACH candidate topic, brainstorm 2-3 keyword phrases a solo operator or small marketing team would actually search for. Include variations like "how to [topic]", "[topic] for small business", "[topic] vs [alternative]".
+For EACH of the 4 candidate topics, brainstorm 2-3 keyword phrases a solo operator or small marketing team would actually search for. Include variations like "how to [topic]", "[topic] for small business", "[topic] vs [alternative]".
 
 Use Ahrefs overview endpoint to check volume and difficulty for each keyword phrase. For the top keyword per candidate, also call related-terms to find long-tail variations.
 
