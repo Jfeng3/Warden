@@ -56,7 +56,7 @@ Use --porcelain to return just the post ID.`,
       };
     }
 
-    const fullCommand = `wp ${params.command} --ssh="${wpSsh}"`;
+    const fullCommand = `php -d error_reporting=E_ALL&~E_DEPRECATED $(which wp) ${params.command} --ssh="${wpSsh}"`;
     const timeout = params.timeout ?? 30000;
 
     try {
