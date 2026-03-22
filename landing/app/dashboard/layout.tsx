@@ -53,14 +53,14 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen bg-void">
+    <div className="flex min-h-screen bg-white">
       {/* Sidebar */}
-      <aside className="fixed left-0 top-0 z-40 flex h-screen w-52 flex-col border-r border-border-visible bg-obsidian">
+      <aside className="fixed left-0 top-0 z-40 flex h-screen w-52 flex-col border-r border-border bg-surface">
         {/* Brand */}
-        <div className="flex items-center gap-2 border-b border-border-subtle px-5 py-5">
-          <div className="h-2 w-2 rounded-full bg-phosphor glow-pulse" />
-          <Link href="/" className="font-mono text-sm font-medium tracking-wider text-text-primary hover:text-phosphor transition-colors">
-            WARDEN
+        <div className="flex items-center gap-2 border-b border-border px-5 py-5">
+          <div className="h-2 w-2 rounded-full bg-green" />
+          <Link href="/" className="text-sm font-medium tracking-tight text-text-primary hover:text-text-secondary transition-colors">
+            warden
           </Link>
         </div>
 
@@ -70,19 +70,19 @@ export default function DashboardLayout({
             <Link
               key={item.href}
               href={item.href}
-              className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-text-secondary transition-colors hover:bg-onyx hover:text-text-primary [&.active]:bg-onyx [&.active]:text-phosphor"
+              className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-text-tertiary transition-colors hover:bg-raised hover:text-text-primary"
             >
-              <span className="text-text-tertiary">{Icons[item.icon]}</span>
+              <span className="text-text-ghost">{Icons[item.icon]}</span>
               {item.label}
             </Link>
           ))}
         </nav>
 
         {/* Footer */}
-        <div className="border-t border-border-subtle px-5 py-4">
+        <div className="border-t border-border px-5 py-4">
           <Link
             href="/"
-            className="font-mono text-xs text-text-tertiary hover:text-text-secondary transition-colors"
+            className="text-xs text-text-ghost hover:text-text-tertiary transition-colors"
           >
             &larr; Back to site
           </Link>

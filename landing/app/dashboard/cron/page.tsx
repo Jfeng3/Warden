@@ -45,15 +45,15 @@ export default async function CronPage() {
   return (
     <>
       <div className="mb-6">
-        <h1 className="font-display text-3xl italic text-text-primary">
+        <h1 className="text-2xl font-semibold text-text-primary">
           Cron Jobs
         </h1>
-        <p className="mt-1 text-sm text-text-secondary">
+        <p className="mt-1 text-sm text-text-tertiary">
           {jobs.length} scheduled jobs
         </p>
       </div>
 
-      <div className="rounded-lg border border-border-subtle bg-onyx/30">
+      <div className="rounded-xl border border-border">
         {jobs.length === 0 ? (
           <p className="px-5 py-12 text-center text-sm text-text-tertiary">
             No cron jobs configured
@@ -61,15 +61,15 @@ export default async function CronPage() {
         ) : (
           <table className="w-full">
             <thead>
-              <tr className="border-b border-border-subtle text-left font-mono text-xs uppercase tracking-wider text-text-tertiary">
-                <th className="px-4 py-3">Name</th>
-                <th className="px-4 py-3 w-32">Schedule</th>
-                <th className="px-4 py-3 w-28">Timezone</th>
-                <th className="px-4 py-3 w-20 text-center">Enabled</th>
-                <th className="px-4 py-3 w-20 text-center">Mode</th>
-                <th className="px-4 py-3 w-20 text-center">Runs</th>
-                <th className="px-4 py-3 w-24">Last Run</th>
-                <th className="px-4 py-3 w-24 text-right">Next Run</th>
+              <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-text-ghost">
+                <th className="px-4 py-3 font-medium">Name</th>
+                <th className="px-4 py-3 w-32 font-medium">Schedule</th>
+                <th className="px-4 py-3 w-28 font-medium">Timezone</th>
+                <th className="px-4 py-3 w-20 text-center font-medium">Enabled</th>
+                <th className="px-4 py-3 w-20 text-center font-medium">Mode</th>
+                <th className="px-4 py-3 w-20 text-center font-medium">Runs</th>
+                <th className="px-4 py-3 w-24 font-medium">Last Run</th>
+                <th className="px-4 py-3 w-24 text-right font-medium">Next Run</th>
                 <th className="px-4 py-3 w-16 text-center"></th>
               </tr>
             </thead>
@@ -77,21 +77,21 @@ export default async function CronPage() {
               {jobs.map((job) => (
                 <tr
                   key={job.id}
-                  className="border-b border-border-subtle/50 last:border-0 hover:bg-onyx/50 transition-colors"
+                  className="border-b border-border last:border-0 hover:bg-surface transition-colors"
                 >
                   <td className="px-4 py-3">
                     <p className="text-sm font-medium text-text-primary">
                       {job.name}
                     </p>
-                    <p className="mt-0.5 text-xs text-text-tertiary max-w-sm truncate">
+                    <p className="mt-0.5 text-xs text-text-ghost max-w-sm truncate">
                       {job.instruction.slice(0, 60)}
                       {job.instruction.length > 60 ? "..." : ""}
                     </p>
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs text-phosphor">
+                  <td className="px-4 py-3 font-mono text-xs text-text-secondary">
                     {job.cron_expression ?? job.schedule_type}
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs text-text-secondary">
+                  <td className="px-4 py-3 text-xs text-text-tertiary">
                     {job.cron_timezone}
                   </td>
                   <td className="px-4 py-3 text-center">
@@ -108,13 +108,13 @@ export default async function CronPage() {
                       action={togglePublishMode}
                     />
                   </td>
-                  <td className="px-4 py-3 text-center font-mono text-xs text-text-secondary">
+                  <td className="px-4 py-3 text-center font-mono text-xs text-text-tertiary">
                     {job.run_count}
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs text-text-tertiary">
+                  <td className="px-4 py-3 text-xs text-text-ghost">
                     {job.last_run_at ? timeAgo(job.last_run_at) : "never"}
                   </td>
-                  <td className="px-4 py-3 text-right font-mono text-xs text-text-secondary">
+                  <td className="px-4 py-3 text-right text-xs text-text-tertiary">
                     {job.enabled
                       ? formatNextRun(job.next_run_at)
                       : "disabled"}
@@ -132,20 +132,20 @@ export default async function CronPage() {
       {/* Legend */}
       <div className="mt-4 flex items-center gap-6">
         <div className="flex items-center gap-1.5">
-          <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
-          <span className="font-mono text-xs text-text-tertiary">Enabled</span>
+          <span className="inline-block h-2 w-2 rounded-full bg-green" />
+          <span className="text-xs text-text-ghost">Enabled</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="inline-block h-2 w-2 rounded-full bg-text-tertiary" />
-          <span className="font-mono text-xs text-text-tertiary">Disabled</span>
+          <span className="inline-block h-2 w-2 rounded-full bg-text-ghost" />
+          <span className="text-xs text-text-ghost">Disabled</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="rounded-full border border-phosphor/40 bg-phosphor/15 px-2 py-0.5 font-mono text-xs text-phosphor">draft</span>
-          <span className="font-mono text-xs text-text-tertiary">Review before publish</span>
+          <span className="rounded-full border border-text-primary bg-text-primary/5 px-2 py-0.5 text-xs text-text-primary">draft</span>
+          <span className="text-xs text-text-ghost">Review before publish</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="rounded-full border border-border-subtle bg-onyx/50 px-2 py-0.5 font-mono text-xs text-text-tertiary">auto</span>
-          <span className="font-mono text-xs text-text-tertiary">Publish immediately</span>
+          <span className="rounded-full border border-border px-2 py-0.5 text-xs text-text-ghost">auto</span>
+          <span className="text-xs text-text-ghost">Publish immediately</span>
         </div>
       </div>
     </>

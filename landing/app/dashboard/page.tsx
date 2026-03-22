@@ -6,14 +6,14 @@ export const dynamic = "force-dynamic";
 
 function StatusBadge({ status }: { status: string }) {
   const colors: Record<string, string> = {
-    pending: "bg-yellow-500/15 text-yellow-400 border-yellow-500/30",
-    running: "bg-cyan-bright/15 text-cyan-bright border-cyan-bright/30",
-    done: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
-    failed: "bg-red-500/15 text-red-400 border-red-500/30",
+    pending: "bg-amber-50 text-amber-600 border-amber-200",
+    running: "bg-blue-50 text-blue-600 border-blue-200",
+    done: "bg-emerald-50 text-emerald-600 border-emerald-200",
+    failed: "bg-red-50 text-red-600 border-red-200",
   };
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-2 py-0.5 font-mono text-xs ${colors[status] ?? "bg-onyx text-text-tertiary border-border-subtle"}`}
+      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs ${colors[status] ?? "bg-surface text-text-tertiary border-border"}`}
     >
       {status}
     </span>
@@ -30,15 +30,15 @@ function StatCard({
   sub?: string;
 }) {
   return (
-    <div className="rounded-lg border border-border-subtle bg-onyx/50 px-5 py-4">
-      <p className="font-mono text-xs uppercase tracking-widest text-text-tertiary">
+    <div className="rounded-xl border border-border px-5 py-4">
+      <p className="text-xs uppercase tracking-wide text-text-ghost">
         {label}
       </p>
-      <p className="mt-1 font-mono text-2xl font-medium text-text-primary">
+      <p className="mt-1 text-2xl font-semibold text-text-primary">
         {value}
       </p>
       {sub && (
-        <p className="mt-0.5 font-mono text-xs text-text-secondary">{sub}</p>
+        <p className="mt-0.5 text-xs text-text-tertiary">{sub}</p>
       )}
     </div>
   );
@@ -102,18 +102,18 @@ export default async function DashboardOverview() {
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="font-display text-3xl italic text-text-primary">
+          <h1 className="text-2xl font-semibold text-text-primary">
             Dashboard
           </h1>
-          <p className="mt-1 text-sm text-text-secondary">
+          <p className="mt-1 text-sm text-text-tertiary">
             System overview and recent activity
           </p>
         </div>
         <div className="flex items-center gap-2">
           <div
-            className={`h-2.5 w-2.5 rounded-full ${runningTask ? "bg-cyan-bright glow-pulse" : "bg-emerald-500"}`}
+            className={`h-2 w-2 rounded-full ${runningTask ? "bg-blue-500 glow-pulse" : "bg-green"}`}
           />
-          <span className="font-mono text-xs text-text-secondary">
+          <span className="text-xs text-text-tertiary">
             {runningTask ? "Processing task..." : "Idle"}
           </span>
         </div>
@@ -146,17 +146,17 @@ export default async function DashboardOverview() {
         {/* Recent tasks */}
         <div className="col-span-3">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-mono text-xs uppercase tracking-widest text-text-tertiary">
+            <h2 className="text-xs uppercase tracking-wide text-text-ghost">
               Recent Tasks
             </h2>
             <Link
               href="/dashboard/tasks"
-              className="font-mono text-xs text-phosphor hover:text-phosphor-dim transition-colors"
+              className="text-xs text-text-tertiary hover:text-text-primary transition-colors"
             >
               View all &rarr;
             </Link>
           </div>
-          <div className="rounded-lg border border-border-subtle bg-onyx/30">
+          <div className="rounded-xl border border-border">
             {recentTasks.length === 0 ? (
               <p className="px-5 py-8 text-center text-sm text-text-tertiary">
                 No tasks yet
@@ -164,30 +164,30 @@ export default async function DashboardOverview() {
             ) : (
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-border-subtle text-left font-mono text-xs uppercase tracking-wider text-text-tertiary">
-                    <th className="px-4 py-3">Instruction</th>
-                    <th className="px-4 py-3 w-24">Status</th>
-                    <th className="px-4 py-3 w-20">Duration</th>
-                    <th className="px-4 py-3 w-24 text-right">When</th>
+                  <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-text-ghost">
+                    <th className="px-4 py-3 font-medium">Instruction</th>
+                    <th className="px-4 py-3 w-24 font-medium">Status</th>
+                    <th className="px-4 py-3 w-20 font-medium">Duration</th>
+                    <th className="px-4 py-3 w-24 text-right font-medium">When</th>
                   </tr>
                 </thead>
                 <tbody>
                   {recentTasks.map((task) => (
                     <tr
                       key={task.id}
-                      className="border-b border-border-subtle/50 last:border-0 hover:bg-onyx/50 transition-colors"
+                      className="border-b border-border last:border-0 hover:bg-surface transition-colors"
                     >
-                      <td className="px-4 py-3 text-sm text-text-primary max-w-md truncate">
+                      <td className="px-4 py-3 text-sm text-text-secondary max-w-md truncate">
                         {task.instruction.slice(0, 80)}
                         {task.instruction.length > 80 ? "..." : ""}
                       </td>
                       <td className="px-4 py-3">
                         <StatusBadge status={task.status} />
                       </td>
-                      <td className="px-4 py-3 font-mono text-xs text-text-secondary">
+                      <td className="px-4 py-3 font-mono text-xs text-text-tertiary">
                         {duration(task.started_at, task.completed_at)}
                       </td>
-                      <td className="px-4 py-3 text-right font-mono text-xs text-text-tertiary">
+                      <td className="px-4 py-3 text-right text-xs text-text-ghost">
                         {timeAgo(task.created_at)}
                       </td>
                     </tr>
@@ -201,40 +201,40 @@ export default async function DashboardOverview() {
         {/* Upcoming cron jobs */}
         <div className="col-span-2">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-mono text-xs uppercase tracking-widest text-text-tertiary">
+            <h2 className="text-xs uppercase tracking-wide text-text-ghost">
               Upcoming Cron Jobs
             </h2>
             <Link
               href="/dashboard/cron"
-              className="font-mono text-xs text-phosphor hover:text-phosphor-dim transition-colors"
+              className="text-xs text-text-tertiary hover:text-text-primary transition-colors"
             >
               View all &rarr;
             </Link>
           </div>
           <div className="space-y-2">
             {cronJobs.length === 0 ? (
-              <div className="rounded-lg border border-border-subtle bg-onyx/30 px-5 py-8 text-center text-sm text-text-tertiary">
+              <div className="rounded-xl border border-border px-5 py-8 text-center text-sm text-text-tertiary">
                 No cron jobs enabled
               </div>
             ) : (
               cronJobs.map((job) => (
                 <div
                   key={job.id}
-                  className="rounded-lg border border-border-subtle bg-onyx/30 px-4 py-3 hover:border-border-visible transition-colors"
+                  className="rounded-xl border border-border px-4 py-3 hover:border-border-hover transition-colors"
                 >
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-medium text-text-primary">
                       {job.name}
                     </p>
-                    <span className="font-mono text-xs text-phosphor">
+                    <span className="font-mono text-xs text-text-tertiary">
                       {job.cron_expression ?? "—"}
                     </span>
                   </div>
                   <div className="mt-1 flex items-center justify-between">
-                    <span className="font-mono text-xs text-text-tertiary">
+                    <span className="text-xs text-text-ghost">
                       {job.cron_timezone}
                     </span>
-                    <span className="font-mono text-xs text-text-secondary">
+                    <span className="text-xs text-text-tertiary">
                       {job.next_run_at
                         ? `next: ${timeAgo(job.next_run_at)}`
                         : "not scheduled"}

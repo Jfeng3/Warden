@@ -13,14 +13,14 @@ const STATUS_FILTERS: (TaskStatus | "all")[] = [
 
 function StatusBadge({ status }: { status: string }) {
   const colors: Record<string, string> = {
-    pending: "bg-yellow-500/15 text-yellow-400 border-yellow-500/30",
-    running: "bg-cyan-bright/15 text-cyan-bright border-cyan-bright/30",
-    done: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
-    failed: "bg-red-500/15 text-red-400 border-red-500/30",
+    pending: "bg-amber-50 text-amber-600 border-amber-200",
+    running: "bg-blue-50 text-blue-600 border-blue-200",
+    done: "bg-emerald-50 text-emerald-600 border-emerald-200",
+    failed: "bg-red-50 text-red-600 border-red-200",
   };
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-2 py-0.5 font-mono text-xs ${colors[status] ?? "bg-onyx text-text-tertiary border-border-subtle"}`}
+      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs ${colors[status] ?? "bg-surface text-text-tertiary border-border"}`}
     >
       {status}
     </span>
@@ -81,10 +81,10 @@ export default async function TasksPage({
     <>
       {/* Header */}
       <div className="mb-6">
-        <h1 className="font-display text-3xl italic text-text-primary">
+        <h1 className="text-2xl font-semibold text-text-primary">
           Tasks
         </h1>
-        <p className="mt-1 text-sm text-text-secondary">
+        <p className="mt-1 text-sm text-text-tertiary">
           {count ?? 0} total tasks
         </p>
       </div>
@@ -95,10 +95,10 @@ export default async function TasksPage({
           <a
             key={s}
             href={`/dashboard/tasks${s === "all" ? "" : `?status=${s}`}`}
-            className={`rounded-md border px-3 py-1.5 font-mono text-xs transition-colors ${
+            className={`rounded-lg border px-3 py-1.5 text-xs transition-colors ${
               statusFilter === s
-                ? "border-phosphor/40 bg-phosphor/10 text-phosphor"
-                : "border-border-subtle bg-onyx/30 text-text-secondary hover:border-border-visible hover:text-text-primary"
+                ? "border-text-primary bg-text-primary text-white"
+                : "border-border text-text-tertiary hover:border-border-hover hover:text-text-primary"
             }`}
           >
             {s}
@@ -107,7 +107,7 @@ export default async function TasksPage({
       </div>
 
       {/* Table */}
-      <div className="rounded-lg border border-border-subtle bg-onyx/30">
+      <div className="rounded-xl border border-border">
         {tasks.length === 0 ? (
           <p className="px-5 py-12 text-center text-sm text-text-tertiary">
             No tasks found
@@ -115,30 +115,30 @@ export default async function TasksPage({
         ) : (
           <table className="w-full">
             <thead>
-              <tr className="border-b border-border-subtle text-left font-mono text-xs uppercase tracking-wider text-text-tertiary">
-                <th className="px-4 py-3 w-24">ID</th>
-                <th className="px-4 py-3">Instruction</th>
-                <th className="px-4 py-3 w-24">Status</th>
-                <th className="px-4 py-3 w-20">Duration</th>
-                <th className="px-4 py-3 w-24 text-right">Created</th>
+              <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-text-ghost">
+                <th className="px-4 py-3 w-24 font-medium">ID</th>
+                <th className="px-4 py-3 font-medium">Instruction</th>
+                <th className="px-4 py-3 w-24 font-medium">Status</th>
+                <th className="px-4 py-3 w-20 font-medium">Duration</th>
+                <th className="px-4 py-3 w-24 text-right font-medium">Created</th>
               </tr>
             </thead>
             <tbody>
               {tasks.map((task) => (
                 <tr
                   key={task.id}
-                  className="group border-b border-border-subtle/50 last:border-0 hover:bg-onyx/50 transition-colors"
+                  className="border-b border-border last:border-0 hover:bg-surface transition-colors"
                 >
-                  <td className="px-4 py-3 font-mono text-xs text-text-tertiary">
+                  <td className="px-4 py-3 font-mono text-xs text-text-ghost">
                     {shortId(task.id)}
                   </td>
                   <td className="px-4 py-3">
-                    <p className="text-sm text-text-primary max-w-lg truncate">
+                    <p className="text-sm text-text-secondary max-w-lg truncate">
                       {task.instruction.slice(0, 100)}
                       {task.instruction.length > 100 ? "..." : ""}
                     </p>
                     {task.status === "failed" && task.error && (
-                      <p className="mt-1 text-xs text-red-400 max-w-lg truncate">
+                      <p className="mt-1 text-xs text-red-500 max-w-lg truncate">
                         {task.error.slice(0, 120)}
                       </p>
                     )}
@@ -146,10 +146,10 @@ export default async function TasksPage({
                   <td className="px-4 py-3">
                     <StatusBadge status={task.status} />
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs text-text-secondary">
+                  <td className="px-4 py-3 font-mono text-xs text-text-tertiary">
                     {duration(task.started_at, task.completed_at)}
                   </td>
-                  <td className="px-4 py-3 text-right font-mono text-xs text-text-tertiary">
+                  <td className="px-4 py-3 text-right text-xs text-text-ghost">
                     {timeAgo(task.created_at)}
                   </td>
                 </tr>
@@ -165,18 +165,18 @@ export default async function TasksPage({
           {page > 1 && (
             <a
               href={`/dashboard/tasks?${statusFilter !== "all" ? `status=${statusFilter}&` : ""}page=${page - 1}`}
-              className="rounded-md border border-border-subtle bg-onyx/30 px-3 py-1.5 font-mono text-xs text-text-secondary hover:border-border-visible transition-colors"
+              className="rounded-lg border border-border px-3 py-1.5 text-xs text-text-tertiary hover:border-border-hover transition-colors"
             >
               &larr; Prev
             </a>
           )}
-          <span className="font-mono text-xs text-text-tertiary">
+          <span className="text-xs text-text-ghost">
             Page {page} of {totalPages}
           </span>
           {page < totalPages && (
             <a
               href={`/dashboard/tasks?${statusFilter !== "all" ? `status=${statusFilter}&` : ""}page=${page + 1}`}
-              className="rounded-md border border-border-subtle bg-onyx/30 px-3 py-1.5 font-mono text-xs text-text-secondary hover:border-border-visible transition-colors"
+              className="rounded-lg border border-border px-3 py-1.5 text-xs text-text-tertiary hover:border-border-hover transition-colors"
             >
               Next &rarr;
             </a>
