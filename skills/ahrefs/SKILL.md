@@ -43,7 +43,7 @@ Auth header: `Authorization: Bearer $AHREF_API_KEY`
 
 | Param | Required | Description |
 |-------|----------|-------------|
-| `keywords` | Yes | URL-encoded keyword. Comma-separated works for single-word keywords but multi-word phrases should be queried one at a time (commas are ambiguous). |
+| `keywords` | Yes | URL-encoded keyword (use `+` for spaces, e.g. `how+to+get+cited`). Do NOT use Python or other tools for URL encoding — just replace spaces with `+`. Comma-separated works for single-word keywords but multi-word phrases should be queried one at a time (commas are ambiguous). |
 | `country` | Yes | Country code (e.g. `us`, `gb`, `de`) |
 | `select` | Yes | Comma-separated column names to return |
 | `limit` | No | Max results (default varies, max 1000) |
@@ -61,11 +61,18 @@ curl -s "https://api.ahrefs.com/v3/keywords-explorer/overview?keywords=content+m
 curl -s "https://api.ahrefs.com/v3/keywords-explorer/overview?keywords=seo,aeo,content+marketing&country=us&select=keyword,volume,difficulty,cpc,traffic_potential" \
   -H "Authorization: Bearer $AHREF_API_KEY" | jq '.keywords[]'
 
-# Multi-word phrases: query each separately (commas in phrases are ambiguous)
+# Multi-word phrases: query each separately, use + for spaces
+# IMPORTANT: Just use + for spaces. Do NOT use Python or urllib for URL encoding.
 for kw in "ai+content+writer" "freelance+writer+cost" "aeo+optimization"; do
   curl -s "https://api.ahrefs.com/v3/keywords-explorer/overview?keywords=${kw}&country=us&select=keyword,volume,difficulty,cpc,traffic_potential" \
     -H "Authorization: Bearer $AHREF_API_KEY" | jq '.keywords[0] // empty'
 done
+
+# To convert a variable with spaces to + encoding:
+topic="how to get cited by chatgpt"
+kw="${topic// /+}"
+curl -s "https://api.ahrefs.com/v3/keywords-explorer/overview?keywords=${kw}&country=us&select=keyword,volume,difficulty" \
+  -H "Authorization: Bearer $AHREF_API_KEY" | jq '.keywords[0] // empty'
 ```
 
 Response:
