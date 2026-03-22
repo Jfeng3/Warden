@@ -38,6 +38,7 @@ The script outputs the X API JSON response on success (includes tweet `id`).
 - **Do NOT include any URLs or links** — no blog post links, no repo links, no external links. The tweet should stand alone as a self-contained insight. X deprioritizes posts with links, and we want maximum reach.
 - **Keep the ask small and clear** — not "subscribe, follow, share, and bookmark."
 - **Do NOT cross-post** — write native to X. Do not copy the blog headline or intro paragraph verbatim.
+- **Do NOT use em dashes (—) or double hyphens (--)** — they look awkward on X. Use periods, commas, or line breaks instead.
 - No hashtag spam — 1-2 relevant hashtags max, or none
 - Write in the blog's voice: practical, direct, for solo operators
 - Do NOT include emojis unless they add clarity
