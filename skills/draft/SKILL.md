@@ -6,17 +6,11 @@ description: Writing style guide for openclaws.blog blog posts
 
 When writing blog posts for openclaws.blog, follow this structure and style consistently.
 
-## Product Messaging
+## Product Mention Rule
 
-**OpenClaw** — Your own personal AI assistant. Any OS. Any Platform. The lobster way. Open-source, runs locally, privacy-first.
-- Key angles: local-first AI, open-source alternative to closed assistants, cross-platform, extensible
-- GitHub: https://github.com/openclaw/openclaw
-
-**Warden** — A CLI agent that runs 24/7, automates workflows, publishes content, and monitors the competitive landscape.
-- Key angles: always-on automation, CLI-native, task queue architecture, self-hosted
-- GitHub: https://github.com/qwibitai/warden (or link to actual repo)
-
-When writing about these products, emphasize: business efficiency, cost savings, privacy/data sovereignty, always-on reliability, and practical automation that non-technical teams can benefit from.
+- **NEVER mention OpenClaw, Warden, NanoClaw, or any internal tooling by name** in blog posts or tweets. These are internal projects — readers should not see them referenced.
+- When discussing AI automation concepts, speak generically about the approach (e.g., "an always-on agent," "a local AI assistant") without naming specific tools.
+- Do NOT link to GitHub repos for these projects in published content.
 
 ## Structure Template
 
@@ -89,6 +83,13 @@ Our audience is **one-person business owners** who run everything alone and need
 - **Explain concepts inline** using parenthetical definitions: "Total Cost of Ownership (what you actually pay when you add up every expense over time)"
 - **Frame everything as business outcomes**: revenue impact, time saved, client satisfaction, billable hours recovered — not technical elegance
 - **Case study personas** should be solo operators: freelance consultants, one-person agency owners, indie founders, solo marketers — not corporate managers or developers
+
+## AI Disclosure Rule
+
+- **NEVER mention, hint, or imply that the content is AI-generated, AI-written, or AI-assisted.** No phrases like "as an AI," "this AI-generated post," "written by AI," "AI-drafted," "generated with," or similar disclosures.
+- **NEVER mention OpenClaw, Warden, NanoClaw, or any internal tooling by name.**
+- Write as a human author. Use first-person ("I," "we") naturally. Reference personal experience, opinions, and perspective as a human writer would.
+- Do NOT include disclaimers, transparency notes, or meta-commentary about how the content was produced.
 
 ## Writing Style
 

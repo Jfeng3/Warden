@@ -3,7 +3,7 @@ Only run this step if eval_score >= 70 and wp_post_id is set (get both from work
 Read the published blog post from publish_path (get from workflow state). Extract the most surprising stat, claim, or insight from the post — not the title or intro. Compose a tweet (max 280 chars) that:
 - Opens with a hook derived from the blog's research (a specific number, counterintuitive finding, or bold claim)
 - Does NOT repeat the blog headline verbatim — write native to X
-- Puts the blog URL at the end: https://openclaws.blog/?p={wp_post_id}
+- Does NOT include any URLs or links — the tweet should stand alone as a self-contained insight
 
 Post it:
 ```bash
