@@ -142,7 +142,7 @@ export default async function DashboardOverview() {
       </div>
 
       {/* Two columns: recent tasks + upcoming cron */}
-      <div className="grid grid-cols-5 gap-6">
+      <div className="grid grid-cols-5 gap-10">
         {/* Recent tasks */}
         <div className="col-span-3">
           <div className="mb-3 flex items-center justify-between">
@@ -156,7 +156,7 @@ export default async function DashboardOverview() {
               View all &rarr;
             </Link>
           </div>
-          <div className="rounded-xl border border-border">
+          <div className="rounded-xl border border-border overflow-hidden">
             {recentTasks.length === 0 ? (
               <p className="px-5 py-8 text-center text-sm text-text-tertiary">
                 No tasks yet
@@ -168,7 +168,7 @@ export default async function DashboardOverview() {
                     <th className="px-4 py-3 font-medium">Instruction</th>
                     <th className="px-4 py-3 w-24 font-medium">Status</th>
                     <th className="px-4 py-3 w-20 font-medium">Duration</th>
-                    <th className="px-4 py-3 w-24 text-right font-medium">When</th>
+                    <th className="px-4 py-3 w-20 text-right font-medium">When</th>
                   </tr>
                 </thead>
                 <tbody>
