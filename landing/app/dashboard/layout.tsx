@@ -4,6 +4,9 @@ const NAV_ITEMS = [
   { href: "/dashboard", label: "Overview", icon: "grid" },
   { href: "/dashboard/tasks", label: "Tasks", icon: "list" },
   { href: "/dashboard/cron", label: "Cron Jobs", icon: "clock" },
+  { href: "/dashboard/research", label: "Research", icon: "beaker" },
+  { href: "/dashboard/topics", label: "Topics", icon: "bulb" },
+  { href: "/dashboard/review", label: "Review", icon: "check" },
   { href: "/dashboard/scans", label: "Scans", icon: "search" },
   { href: "/dashboard/seo", label: "SEO", icon: "chart" },
 ];
@@ -43,6 +46,24 @@ const Icons: Record<string, React.ReactNode> = {
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
       <polyline points="1,12 5,6 9,9 15,2" />
       <polyline points="11,2 15,2 15,6" />
+    </svg>
+  ),
+  beaker: (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M6 1v5L2 14h12L10 6V1" />
+      <line x1="4" y1="1" x2="12" y2="1" />
+      <line x1="3.5" y1="10" x2="12.5" y2="10" strokeOpacity="0.4" />
+    </svg>
+  ),
+  bulb: (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M6 13h4M6.5 14.5h3M8 1a5 5 0 0 0-3 9v2h6v-2a5 5 0 0 0-3-9z" />
+    </svg>
+  ),
+  check: (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <rect x="1" y="1" width="14" height="14" rx="3" />
+      <polyline points="4,8 7,11 12,5" />
     </svg>
   ),
 };
