@@ -1,4 +1,4 @@
-Load skills/youdotcom-cli and skills/publish. Get topic_slug, topic_pillar, primary_keyword, secondary_keywords, and long_tail_keywords from workflow state.
+Load skills/youdotcom-cli and skills/publish. Get briefs_dir, topic_slug, topic_pillar, primary_keyword, secondary_keywords, and long_tail_keywords from workflow state.
 
 Build a structured content brief for the draft step. The brief locks in the outline, sources, and internal links BEFORE writing begins.
 
@@ -74,4 +74,4 @@ DIFFERENTIATION
 [1-2 sentences: what our post will cover that the top-ranking articles miss]
 ```
 
-Save the brief to `cron-jobs/daily-blog-publish/briefs/{topic_slug}.md` (get topic_slug from workflow state). Use set_state to save the full file path as `content_brief_path`.
+Save the brief to `{briefs_dir}/{topic_slug}.md` (get both from workflow state). Use set_state to save the full file path as `content_brief_path`.

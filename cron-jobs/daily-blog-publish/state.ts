@@ -17,7 +17,9 @@ export interface State {
   topic_slug: string;
   /** Which topic pillar this post maps to */
   topic_pillar: string;
-  /** Path to content brief file in briefs/ directory */
+  /** Directory for content brief files */
+  briefs_dir: string;
+  /** Full path to content brief: briefs_dir/<slug>.md (set by step 05b) */
   content_brief_path: string;
   /** Eval score (1-100) from the publish gate */
   eval_score: number;
@@ -36,4 +38,5 @@ export interface State {
 export const defaults: Partial<State> = {
   draft_dir: "/Users/jie/Codes/warden/draft-html",
   publish_dir: "/Users/jie/Codes/warden/publish-html",
+  briefs_dir: "/Users/jie/Codes/warden/cron-jobs/daily-blog-publish/briefs",
 };
