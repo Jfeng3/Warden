@@ -17,6 +17,8 @@ export interface State {
   topic_slug: string;
   /** Which topic pillar this post maps to */
   topic_pillar: string;
+  /** Path to content brief file in briefs/ directory */
+  content_brief_path: string;
   /** Eval score (1-100) from the publish gate */
   eval_score: number;
   /** SEO audit issues found */
